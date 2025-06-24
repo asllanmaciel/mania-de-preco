@@ -10,7 +10,9 @@ use App\Http\Controllers\AvaliacaoLojaController;
 use App\Http\Controllers\AlertaPrecoController;
 use App\Http\Controllers\PlanoAssinaturaController;
 
-// ✅ Rotas públicas (exibição e consulta)
+use App\Http\Controllers\AuthController;
+
+// ✅ Rotas públicas (consulta)
 Route::get('categorias', [CategoriaController::class, 'index']);
 Route::get('categorias/{id}', [CategoriaController::class, 'show']);
 
@@ -37,4 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('avaliacoes', AvaliacaoLojaController::class);
     Route::apiResource('alertas', AlertaPrecoController::class);
     Route::apiResource('planos', PlanoAssinaturaController::class);
+});
+
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login',    [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user',     [AuthController::class, 'user']);
 });
