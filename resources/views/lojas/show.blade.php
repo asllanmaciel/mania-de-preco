@@ -14,8 +14,8 @@
             body { margin:0; min-height:100vh; font-family:"Space Grotesk",sans-serif; color:var(--text); background:radial-gradient(circle at top left, rgba(255,107,44,.18), transparent 28%), radial-gradient(circle at 85% 0%, rgba(15,159,143,.15), transparent 24%), linear-gradient(180deg,#fff7ec 0%, var(--bg) 44%, var(--bg2) 100%); }
             a { color:inherit; text-decoration:none; }
             .container { width:min(calc(100% - 32px), var(--container)); margin:0 auto; }
-            .topbar, .hero, .stats, .section-head, .bar-meta, .review-head, .footer { display:flex; gap:14px; }
-            .topbar, .section-head, .bar-meta, .review-head, .footer { justify-content:space-between; align-items:flex-start; }
+            .topbar, .hero, .stats, .section-head, .bar-meta, .review-head, .footer, .offer-head, .offer-price-row, .offer-actions { display:flex; gap:14px; }
+            .topbar, .section-head, .bar-meta, .review-head, .footer, .offer-head, .offer-price-row, .offer-actions { justify-content:space-between; align-items:flex-start; }
             .topbar { padding:22px 0; align-items:center; }
             .brand { display:inline-flex; align-items:center; gap:14px; font-weight:700; letter-spacing:-.03em; }
             .brand-badge { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#cf4e1b 100%); box-shadow:0 14px 30px rgba(207,78,27,.28); }
@@ -33,11 +33,11 @@
             .button, .button-secondary { display:inline-flex; align-items:center; justify-content:center; padding:14px 18px; border-radius:16px; font-weight:700; border:1px solid transparent; }
             .button { color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#d4511d 100%); box-shadow:0 18px 36px rgba(212,81,29,.28); }
             .button-secondary { background:rgba(255,255,255,.72); border-color:var(--line); }
-            .stats, .grid, .reviews { display:grid; gap:16px; }
+            .stats, .grid, .reviews, .offer-tags, .offer-prices, .offer-metrics { display:grid; gap:16px; }
             .stats { grid-template-columns:repeat(4, minmax(0, 1fr)); margin-top:26px; }
             .grid { grid-template-columns:1fr 1fr; }
-            .stat, .mini, .offer, .review { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
-            .stat strong, .mini strong, .offer strong { display:block; margin-bottom:6px; }
+            .stat, .mini, .offer, .review, .price-pill, .metric-pill { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
+            .stat strong, .mini strong, .offer strong, .price-pill strong, .metric-pill strong { display:block; margin-bottom:6px; }
             .stat strong { font-size:1.5rem; }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
@@ -49,10 +49,25 @@
             .offer-list { grid-template-columns:repeat(2, minmax(0, 1fr)); }
             .badge { background:rgba(15,159,143,.12); color:#0e6e64; font-size:.82rem; }
             .review { display:grid; gap:10px; }
+            .offer { display:grid; gap:16px; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,247,238,.82)); }
+            .offer-head { align-items:flex-start; }
+            .offer-title { display:grid; gap:8px; }
+            .offer-title h3 { font-size:1.28rem; }
+            .offer-tags { grid-template-columns:repeat(2, minmax(0, max-content)); gap:10px; }
+            .offer-prices { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+            .offer-metrics { grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+            .price-pill, .metric-pill { padding:14px; border-radius:16px; background:rgba(255,255,255,.78); }
+            .price-pill strong { font-size:1.46rem; letter-spacing:-.05em; }
+            .metric-pill strong { font-size:1.02rem; }
+            .offer-range { display:grid; gap:10px; }
+            .offer-actions { align-items:center; flex-wrap:wrap; }
+            .offer-actions .button-secondary { padding:12px 16px; }
+            .tag-group { display:flex; flex-wrap:wrap; gap:8px; }
+            .tag-soft { display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px; background:rgba(255,255,255,.86); border:1px solid var(--line); color:var(--muted); font-size:.84rem; }
             .footer { padding:30px 0 48px; color:var(--muted); font-size:.92rem; }
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
-            @media (max-width:1100px) { .hero, .grid, .stats, .offer-list { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
-            @media (max-width:720px) { .topbar, .stats, .review-head { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } }
+            @media (max-width:1100px) { .hero, .grid, .stats, .offer-list, .offer-prices, .offer-metrics { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
+            @media (max-width:720px) { .topbar, .stats, .review-head, .offer-head, .offer-price-row, .offer-actions { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .offer-tags { grid-template-columns:1fr; } }
         </style>
     </head>
     <body>
@@ -67,6 +82,8 @@
 
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <a class="chip" href="{{ route('home') }}">Voltar para ofertas</a>
+                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
                     @endif
@@ -87,20 +104,24 @@
                                 - {{ $loja->bairro }}
                             @endif
                         </p>
-                        <p style="margin-top:12px;">Veja os produtos com melhor preco desta loja, entenda suas categorias mais fortes e confira sinais de confianca para decidir com mais seguranca.</p>
+                        <p style="margin-top:12px;">
+                            {{ $catalogoPublicado
+                                ? 'Veja os produtos com melhor preco desta loja, entenda suas categorias mais fortes e confira sinais de confianca para decidir com mais seguranca.'
+                                : 'Esta loja ja tem perfil publico ativo, mas ainda esta preparando o catalogo para comparacao. Enquanto isso, voce pode explorar outras lojas ja publicadas na vitrine.' }}
+                        </p>
 
                         <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
-                            <a class="button" href="#ofertas">Ver ofertas da loja</a>
+                            <a class="button" href="{{ $catalogoPublicado ? '#ofertas' : route('home') }}">{{ $catalogoPublicado ? 'Ver ofertas da loja' : 'Explorar ofertas ativas' }}</a>
                             @if ($loja->site)
                                 <a class="button-secondary" href="{{ $loja->site }}" target="_blank" rel="noreferrer">Acessar site</a>
                             @endif
                         </div>
 
                         <div class="stats">
-                            <div class="stat"><strong>{{ number_format($loja->precos_count, 0, ',', '.') }}</strong><span>ofertas ativas</span></div>
-                            <div class="stat"><strong>{{ number_format($ofertas->count(), 0, ',', '.') }}</strong><span>produtos unicos</span></div>
+                            <div class="stat"><strong>{{ number_format($loja->precos_count, 0, ',', '.') }}</strong><span>{{ $catalogoPublicado ? 'ofertas ativas' : 'ofertas publicadas' }}</span></div>
+                            <div class="stat"><strong>{{ number_format($ofertas->count(), 0, ',', '.') }}</strong><span>{{ $catalogoPublicado ? 'produtos unicos' : 'produtos comparaveis' }}</span></div>
                             <div class="stat"><strong>{{ number_format($avaliacaoMedia, 1, ',', '.') }}</strong><span>avaliacao media</span></div>
-                            <div class="stat"><strong>R$ {{ number_format($precoMedio, 2, ',', '.') }}</strong><span>preco medio publicado</span></div>
+                            <div class="stat"><strong>{{ $catalogoPublicado ? 'R$ '.number_format($precoMedio, 2, ',', '.') : 'Em breve' }}</strong><span>{{ $catalogoPublicado ? 'preco medio publicado' : 'catalogo em preparacao' }}</span></div>
                         </div>
                     </article>
 
@@ -140,7 +161,7 @@
                             </div>
 
                             @if ($categoriaChart->isEmpty())
-                                <p class="muted">Ainda nao ha categorias suficientes para montar a leitura desta loja.</p>
+                                <p class="muted">{{ $catalogoPublicado ? 'Ainda nao ha categorias suficientes para montar a leitura desta loja.' : 'Assim que a loja publicar ofertas, esta area passa a mostrar as categorias mais fortes do catalogo.' }}</p>
                             @else
                                 <div class="bars">
                                     @foreach ($categoriaChart as $item)
@@ -188,18 +209,106 @@
                         </div>
                     </div>
 
-                    <div class="offer-list">
-                        @foreach ($produtosDestaque as $item)
-                            <article class="offer">
-                                <strong>{{ $item['produto']?->nome ?? 'Produto nao informado' }}</strong>
-                                <span class="small">{{ $item['produto']?->marca?->nome ?? 'Marca nao informada' }}</span>
-                                <span class="small">{{ $item['produto']?->categoria?->nome ?? 'Sem categoria' }}</span>
-                                <span class="small">A partir de R$ {{ number_format($item['menor_preco'], 2, ',', '.') }}</span>
-                                <span class="small">Variacao publicada de R$ {{ number_format($item['variacao'], 2, ',', '.') }}</span>
-                                <span class="small">{{ $item['tipos']->map(fn ($tipo) => ucfirst(str_replace('_', ' ', $tipo)))->implode(' - ') }}</span>
-                            </article>
-                        @endforeach
-                    </div>
+                    @if ($produtosDestaque->isEmpty())
+                        <div class="card">
+                            <div class="muted" style="display:grid; gap:16px;">
+                                <span>Esta loja ainda nao publicou ofertas para comparacao. Para a experiencia continuar util, selecionamos outras lojas da vitrine que ja estao com catalogo ativo.</span>
+
+                                @if ($lojasRecomendadas->isNotEmpty())
+                                    <div class="offer-list">
+                                        @foreach ($lojasRecomendadas as $lojaRecomendada)
+                                            <a class="offer" href="{{ route('lojas.public.show', $lojaRecomendada) }}">
+                                                <strong>{{ $lojaRecomendada->nome }}</strong>
+                                                <span class="small">{{ $lojaRecomendada->cidade ?? 'Sem cidade' }} @if ($lojaRecomendada->uf) - {{ $lojaRecomendada->uf }} @endif</span>
+                                                <span class="small">{{ number_format($lojaRecomendada->precos_count, 0, ',', '.') }} ofertas publicadas</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="offer-list">
+                            @foreach ($produtosDestaque as $item)
+                                <article class="offer">
+                                    <div class="offer-head">
+                                        <div class="offer-title">
+                                            <div class="tag-group">
+                                                <span class="badge">{{ $item['produto']?->categoria?->nome ?? 'Sem categoria' }}</span>
+                                                @if ($item['quantidade_precos'] > 1)
+                                                    <span class="tag-soft">{{ $item['quantidade_precos'] }} condicoes publicadas</span>
+                                                @else
+                                                    <span class="tag-soft">preco unico</span>
+                                                @endif
+                                            </div>
+                                            <h3>{{ $item['produto']?->nome ?? 'Produto nao informado' }}</h3>
+                                            <span class="small">{{ $item['produto']?->marca?->nome ?? 'Marca nao informada' }}</span>
+                                        </div>
+
+                                        <div class="price-pill" style="min-width:170px;">
+                                            <span class="small">melhor valor nesta loja</span>
+                                            <strong>R$ {{ number_format($item['menor_preco'], 2, ',', '.') }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="offer-prices">
+                                        <div class="price-pill">
+                                            <span class="small">faixa interna</span>
+                                            <strong>R$ {{ number_format($item['maior_preco'], 2, ',', '.') }}</strong>
+                                            <span class="small">variacao de R$ {{ number_format($item['variacao'], 2, ',', '.') }}</span>
+                                        </div>
+                                        <div class="price-pill">
+                                            <span class="small">elasticidade por pagamento</span>
+                                            <strong>{{ number_format($item['faixa_percentual'], 1, ',', '.') }}%</strong>
+                                            <span class="small">{{ $item['quantidade_precos'] > 1 ? 'diferenca entre as condicoes publicadas' : 'sem mudanca entre condicoes' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="offer-range">
+                                        <div class="bar-meta">
+                                            <span>Leitura de amplitude</span>
+                                            <span>R$ {{ number_format($item['menor_preco'], 2, ',', '.') }} ate R$ {{ number_format($item['maior_preco'], 2, ',', '.') }}</span>
+                                        </div>
+                                        @php
+                                            $spreadPercent = $item['maior_preco'] > 0 ? min(100, max(6, ($item['variacao'] / $item['maior_preco']) * 100)) : 6;
+                                        @endphp
+                                        <div class="track"><span class="fill" style="width: {{ $spreadPercent }}%;"></span></div>
+                                    </div>
+
+                                    <div class="offer-metrics">
+                                        <div class="metric-pill">
+                                            <span class="small">pagamentos</span>
+                                            <strong>{{ $item['tipos']->count() }}</strong>
+                                            <span class="small">tipos disponiveis</span>
+                                        </div>
+                                        <div class="metric-pill">
+                                            <span class="small">categoria</span>
+                                            <strong>{{ $item['produto']?->categoria?->nome ?? 'Sem categoria' }}</strong>
+                                            <span class="small">linha principal do item</span>
+                                        </div>
+                                        <div class="metric-pill">
+                                            <span class="small">marca</span>
+                                            <strong>{{ $item['produto']?->marca?->nome ?? 'Nao informada' }}</strong>
+                                            <span class="small">referencia associada</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="tag-group">
+                                        @foreach ($item['precos'] as $preco)
+                                            <span class="tag-soft">{{ ucfirst(str_replace('_', ' ', $preco['tipo'])) }}: R$ {{ number_format($preco['valor'], 2, ',', '.') }}</span>
+                                        @endforeach
+                                    </div>
+
+                                    <div class="offer-actions">
+                                        <span class="small">Veja este item no comparativo completo para entender como esta loja se posiciona frente ao restante do mercado.</span>
+                                        @if ($item['produto'])
+                                            <a class="button-secondary" href="{{ route('produtos.public.show', $item['produto']) }}">Abrir comparativo do produto</a>
+                                        @endif
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    @endif
                 </section>
             </main>
 

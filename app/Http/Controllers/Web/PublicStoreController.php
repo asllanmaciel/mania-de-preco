@@ -27,13 +27,24 @@ class PublicStoreController extends Controller
                 $produto = $primeiro?->produto;
                 $menor = (float) $grupo->min('preco');
                 $maior = (float) $grupo->max('preco');
+                $precos = $grupo
+                    ->sortBy('preco')
+                    ->values()
+                    ->map(fn ($preco) => [
+                        'valor' => (float) $preco->preco,
+                        'tipo' => $preco->tipo_preco,
+                    ]);
+                $faixaPercentual = $menor > 0 ? round((($maior - $menor) / $menor) * 100, 1) : 0;
 
                 return [
                     'produto' => $produto,
                     'menor_preco' => $menor,
                     'maior_preco' => $maior,
                     'variacao' => max(0, $maior - $menor),
+                    'faixa_percentual' => max(0, $faixaPercentual),
+                    'quantidade_precos' => $grupo->count(),
                     'tipos' => $grupo->pluck('tipo_preco')->unique()->values(),
+                    'precos' => $precos,
                 ];
             })
             ->sortBy('menor_preco')
@@ -53,6 +64,15 @@ class PublicStoreController extends Controller
         $avaliacaoMedia = round((float) ($loja->avaliacoes_avg_nota ?? 0), 1);
         $avaliacoesRecentes = $loja->avaliacoes->sortByDesc('id')->take(3)->values();
         $produtosDestaque = $ofertas->take(6);
+        $catalogoPublicado = $loja->precos_count > 0;
+        $lojasRecomendadas = Loja::query()
+            ->where('status', 'ativo')
+            ->where('id', '!=', $loja->id)
+            ->whereHas('precos')
+            ->withCount('precos')
+            ->orderByDesc('precos_count')
+            ->take(4)
+            ->get();
 
         return view('lojas.show', [
             'loja' => $loja,
@@ -62,6 +82,8 @@ class PublicStoreController extends Controller
             'precoMedio' => $precoMedio,
             'avaliacaoMedia' => $avaliacaoMedia,
             'avaliacoesRecentes' => $avaliacoesRecentes,
+            'catalogoPublicado' => $catalogoPublicado,
+            'lojasRecomendadas' => $lojasRecomendadas,
         ]);
     }
 }

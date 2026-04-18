@@ -81,6 +81,25 @@ class PublicCatalogTest extends TestCase
             ->assertSee('Excelente atendimento.');
     }
 
+    public function test_public_store_page_handles_empty_catalog_with_recommendations(): void
+    {
+        [$lojaCentro] = $this->seedCatalogoDemo();
+
+        $lojaSemOfertas = Loja::create([
+            'nome' => 'Loja em Preparacao',
+            'cidade' => 'Osasco',
+            'uf' => 'SP',
+            'tipo_loja' => 'fisica',
+            'status' => 'ativo',
+        ]);
+
+        $this->get(route('lojas.public.show', $lojaSemOfertas))
+            ->assertOk()
+            ->assertSee('Esta loja ja tem perfil publico ativo, mas ainda esta preparando o catalogo para comparacao.')
+            ->assertSee('Loja Centro')
+            ->assertDontSee('Excelente atendimento.');
+    }
+
     public function test_public_product_page_renders_price_comparison(): void
     {
         [, , $produto] = $this->seedCatalogoDemo();
@@ -90,6 +109,39 @@ class PublicCatalogTest extends TestCase
             ->assertSee('Resumo de mercado do produto')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Onde comprar agora');
+    }
+
+    public function test_public_project_page_renders_live_product_overview(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $this->get(route('projeto'))
+            ->assertOk()
+            ->assertSee('Um SaaS de varejo com operacao, descoberta e inteligencia no mesmo produto.')
+            ->assertSee('lojas ativas no ecossistema')
+            ->assertSee('Ultimas entregas');
+    }
+
+    public function test_public_updates_page_renders_changelog_timeline(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $this->get(route('novidades.index'))
+            ->assertOk()
+            ->assertSee('As novidades do Mania de Preco em linguagem de produto.')
+            ->assertSee('Seed demo ampliado e filtros publicos mais fortes');
+    }
+
+    public function test_public_updates_detail_page_renders_changelog_content(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $slug = '2026-04-18_155559-seed-demo-ampliado-e-filtros-publicos-mais-fortes';
+
+        $this->get(route('novidades.show', $slug))
+            ->assertOk()
+            ->assertSee('Seed demo ampliado e filtros publicos mais fortes')
+            ->assertSee('O ambiente demo foi fortalecido para que as novas camadas do produto possam ser vistas no navegador sem cadastro manual.');
     }
 
     private function seedCatalogoDemo(): array

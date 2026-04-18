@@ -99,6 +99,8 @@
                     <a class="chip" href="#descoberta">Descoberta</a>
                     <a class="chip" href="#inteligencia">Inteligencia</a>
                     <a class="chip" href="#ofertas">Ofertas</a>
+                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @else

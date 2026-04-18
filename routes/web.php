@@ -13,12 +13,17 @@ use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
 use App\Http\Controllers\Web\Auth\SessionController;
 use App\Http\Controllers\Web\PublicCatalogController;
+use App\Http\Controllers\Web\PublicProjectController;
 use App\Http\Controllers\Web\PublicProductController;
 use App\Http\Controllers\Web\PublicStoreController;
+use App\Http\Controllers\Web\PublicUpdatesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
 Route::get('/ofertas', PublicCatalogController::class)->name('ofertas');
+Route::get('/projeto', PublicProjectController::class)->name('projeto');
+Route::get('/novidades', [PublicUpdatesController::class, 'index'])->name('novidades.index');
+Route::get('/novidades/{slug}', [PublicUpdatesController::class, 'show'])->name('novidades.show');
 Route::get('/lojas/{loja}', PublicStoreController::class)->name('lojas.public.show');
 Route::get('/produtos/{produto}', PublicProductController::class)->name('produtos.public.show');
 

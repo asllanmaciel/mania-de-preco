@@ -66,6 +66,8 @@
 
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <a class="chip" href="{{ route('home') }}">Voltar para ofertas</a>
+                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
                     @endif
