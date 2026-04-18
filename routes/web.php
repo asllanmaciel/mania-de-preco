@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\FinanceiroController as AdminFinanceiroController;
+use App\Http\Controllers\Web\Admin\Financeiro\ContaFinanceiraController as AdminContaFinanceiraController;
+use App\Http\Controllers\Web\Admin\Financeiro\MovimentacaoFinanceiraController as AdminMovimentacaoFinanceiraController;
 use App\Http\Controllers\Web\Admin\LojaController as AdminLojaController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
@@ -18,7 +20,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
-        Route::get('/financeiro', AdminFinanceiroController::class)->name('financeiro.index');
+        Route::prefix('financeiro')->name('financeiro.')->group(function () {
+            Route::get('/', AdminFinanceiroController::class)->name('index');
+            Route::resource('contas', AdminContaFinanceiraController::class)->except(['show']);
+            Route::resource('lancamentos', AdminMovimentacaoFinanceiraController::class)->except(['show']);
+        });
         Route::resource('lojas', AdminLojaController::class)->except(['show']);
         Route::resource('produtos', AdminProdutoController::class)->except(['show']);
         Route::resource('precos', AdminPrecoController::class)->except(['show']);

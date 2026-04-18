@@ -5,6 +5,8 @@
 @section('subheading', 'Uma visao consolidada da saude financeira da conta, com saldos, categorias, movimentacoes e titulos em aberto.')
 
 @section('content')
+    @include('admin.financeiro._nav')
+
     <section class="grid-4">
         <article class="card metric-card">
             <span class="metric-label">Saldo projetado</span>
@@ -95,8 +97,9 @@
                     </div>
                 </div>
 
-                <div class="empty-state">
-                    O passo mais natural agora e liberar operacao direta de lancamentos, contas a pagar e contas a receber pelo navegador, usando essa mesma estrutura visual e o contexto da conta ativa.
+                <div class="mini-grid">
+                    <a class="button" href="{{ route('admin.financeiro.contas.create') }}">Nova conta financeira</a>
+                    <a class="button-secondary" href="{{ route('admin.financeiro.lancamentos.create') }}">Novo lancamento</a>
                 </div>
             </div>
         </article>

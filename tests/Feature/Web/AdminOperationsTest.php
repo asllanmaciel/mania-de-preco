@@ -98,6 +98,79 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Vendas');
     }
 
+    public function test_authenticated_user_can_create_financial_account(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $loja = Loja::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Loja Sul',
+            'tipo_loja' => 'mista',
+            'status' => 'ativo',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.contas.store'), [
+            'loja_id' => $loja->id,
+            'nome' => 'Banco principal',
+            'tipo' => 'banco',
+            'instituicao' => 'Banco Local',
+            'saldo_inicial' => 500,
+            'saldo_atual' => 650,
+            'ativa' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.contas.index'));
+
+        $this->assertDatabaseHas('contas_financeiras', [
+            'conta_id' => $conta->id,
+            'nome' => 'Banco principal',
+            'tipo' => 'banco',
+            'instituicao' => 'Banco Local',
+        ]);
+    }
+
+    public function test_authenticated_user_can_create_financial_movement(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $contaFinanceira = ContaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Caixa principal',
+            'tipo' => 'caixa',
+            'saldo_inicial' => 100,
+            'saldo_atual' => 100,
+            'ativa' => true,
+        ]);
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Operacao',
+            'slug' => 'operacao',
+            'tipo' => 'despesa',
+            'ativa' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.lancamentos.store'), [
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'tipo' => 'despesa',
+            'origem' => 'manual',
+            'descricao' => 'Compra de estoque',
+            'valor' => 80.50,
+            'data_movimentacao' => now()->format('Y-m-d H:i:s'),
+            'status' => 'realizada',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.lancamentos.index'));
+
+        $this->assertDatabaseHas('movimentacoes_financeiras', [
+            'conta_id' => $conta->id,
+            'conta_financeira_id' => $contaFinanceira->id,
+            'descricao' => 'Compra de estoque',
+            'tipo' => 'despesa',
+        ]);
+    }
+
     public function test_authenticated_user_can_create_product_with_new_category_and_brand(): void
     {
         [$user] = $this->criarContaComUsuario();
