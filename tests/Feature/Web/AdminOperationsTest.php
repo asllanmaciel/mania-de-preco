@@ -4,6 +4,8 @@ namespace Tests\Feature\Web;
 
 use App\Models\Conta;
 use App\Models\ContaFinanceira;
+use App\Models\ContaPagar;
+use App\Models\ContaReceber;
 use App\Models\CategoriaFinanceira;
 use App\Models\MovimentacaoFinanceira;
 use App\Models\Loja;
@@ -168,6 +170,70 @@ class AdminOperationsTest extends TestCase
             'conta_financeira_id' => $contaFinanceira->id,
             'descricao' => 'Compra de estoque',
             'tipo' => 'despesa',
+        ]);
+    }
+
+    public function test_authenticated_user_can_create_account_payable(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Fornecedores',
+            'slug' => 'fornecedores',
+            'tipo' => 'despesa',
+            'ativa' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.contas-pagar.store'), [
+            'categoria_financeira_id' => $categoria->id,
+            'fornecedor_nome' => 'Distribuidora Azul',
+            'descricao' => 'Boleto de reposicao',
+            'valor_total' => 320.50,
+            'valor_pago' => 0,
+            'vencimento' => now()->addDays(7)->format('Y-m-d'),
+            'status' => 'aberta',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.contas-pagar.index'));
+
+        $this->assertDatabaseHas('contas_pagar', [
+            'conta_id' => $conta->id,
+            'descricao' => 'Boleto de reposicao',
+            'fornecedor_nome' => 'Distribuidora Azul',
+            'status' => 'aberta',
+        ]);
+    }
+
+    public function test_authenticated_user_can_create_account_receivable(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Cobrancas',
+            'slug' => 'cobrancas',
+            'tipo' => 'receita',
+            'ativa' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.contas-receber.store'), [
+            'categoria_financeira_id' => $categoria->id,
+            'cliente_nome' => 'Mercado Bairro',
+            'descricao' => 'Fatura de abril',
+            'valor_total' => 890.90,
+            'valor_recebido' => 100,
+            'vencimento' => now()->addDays(12)->format('Y-m-d'),
+            'status' => 'parcial',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.contas-receber.index'));
+
+        $this->assertDatabaseHas('contas_receber', [
+            'conta_id' => $conta->id,
+            'descricao' => 'Fatura de abril',
+            'cliente_nome' => 'Mercado Bairro',
+            'status' => 'parcial',
         ]);
     }
 

@@ -14,6 +14,8 @@ class ContaPagar extends Model
     protected $fillable = [
         'conta_id',
         'loja_id',
+        'conta_financeira_id',
+        'movimentacao_financeira_id',
         'categoria_financeira_id',
         'fornecedor_nome',
         'descricao',
@@ -47,5 +49,15 @@ class ContaPagar extends Model
     public function categoriaFinanceira()
     {
         return $this->belongsTo(CategoriaFinanceira::class);
+    }
+
+    public function contaFinanceira()
+    {
+        return $this->belongsTo(ContaFinanceira::class);
+    }
+
+    public function movimentacaoFinanceira()
+    {
+        return $this->belongsTo(MovimentacaoFinanceira::class);
     }
 }

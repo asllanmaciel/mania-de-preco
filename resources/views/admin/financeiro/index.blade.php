@@ -100,6 +100,8 @@
                 <div class="mini-grid">
                     <a class="button" href="{{ route('admin.financeiro.contas.create') }}">Nova conta financeira</a>
                     <a class="button-secondary" href="{{ route('admin.financeiro.lancamentos.create') }}">Novo lancamento</a>
+                    <a class="button-secondary" href="{{ route('admin.financeiro.contas-pagar.create') }}">Nova conta a pagar</a>
+                    <a class="button-secondary" href="{{ route('admin.financeiro.contas-receber.create') }}">Nova conta a receber</a>
                 </div>
             </div>
         </article>

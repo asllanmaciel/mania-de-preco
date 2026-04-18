@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\DashboardController;
+use App\Http\Controllers\Web\Admin\Financeiro\ContaPagarController as AdminContaPagarController;
+use App\Http\Controllers\Web\Admin\Financeiro\ContaReceberController as AdminContaReceberController;
 use App\Http\Controllers\Web\Admin\FinanceiroController as AdminFinanceiroController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaFinanceiraController as AdminContaFinanceiraController;
 use App\Http\Controllers\Web\Admin\Financeiro\MovimentacaoFinanceiraController as AdminMovimentacaoFinanceiraController;
@@ -24,6 +26,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/', AdminFinanceiroController::class)->name('index');
             Route::resource('contas', AdminContaFinanceiraController::class)->except(['show']);
             Route::resource('lancamentos', AdminMovimentacaoFinanceiraController::class)->except(['show']);
+            Route::resource('contas-pagar', AdminContaPagarController::class)->except(['show']);
+            Route::resource('contas-receber', AdminContaReceberController::class)->except(['show']);
         });
         Route::resource('lojas', AdminLojaController::class)->except(['show']);
         Route::resource('produtos', AdminProdutoController::class)->except(['show']);
