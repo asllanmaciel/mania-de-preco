@@ -13,7 +13,7 @@ class OnboardingController extends AdminController
         $conta = $this->contaAtual($request);
 
         return $this->responder($request, 'admin.onboarding', [
-            'onboarding' => $checklist->build($conta),
+            'onboarding' => $checklist->build($conta, $request->user()->capacidadesNaConta($conta)),
         ], $conta);
     }
 }

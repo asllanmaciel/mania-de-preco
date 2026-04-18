@@ -71,9 +71,13 @@
                                         <div class="checklist-actions">
                                             <span class="status-dot {{ $etapa['concluida'] ? 'is-done' : 'is-pending' }}"></span>
                                             <span class="badge {{ ! $etapa['concluida'] ? 'is-warning' : '' }}">{{ $etapa['concluida'] ? 'concluida' : 'pendente' }}</span>
-                                            <a class="{{ $etapa['concluida'] ? 'button-secondary' : 'button' }}" href="{{ $etapa['rota'] }}">
-                                                {{ $etapa['concluida'] ? 'Revisar' : $etapa['cta'] }}
-                                            </a>
+                                            @if ($etapa['rota'])
+                                                <a class="{{ $etapa['concluida'] ? 'button-secondary' : 'button' }}" href="{{ $etapa['rota'] }}">
+                                                    {{ $etapa['concluida'] ? 'Revisar' : $etapa['cta'] }}
+                                                </a>
+                                            @else
+                                                <span class="badge is-muted">sem acesso</span>
+                                            @endif
                                         </div>
                                     </article>
                                 @endforeach
@@ -132,7 +136,7 @@
                     </article>
                 </div>
 
-                @if ($onboarding['proxima_etapa'])
+                @if ($onboarding['proxima_etapa'] && $onboarding['proxima_etapa']['rota'])
                     <a class="button" href="{{ $onboarding['proxima_etapa']['rota'] }}">
                         Avancar em {{ strtolower($onboarding['proxima_etapa']['titulo']) }}
                     </a>

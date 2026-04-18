@@ -111,7 +111,7 @@ class DashboardController extends AdminController
             ->take(5);
 
         $maiorCategoria = max(1, (float) $composicaoCategorias->max('total'));
-        $onboarding = $checklist->build($conta);
+        $onboarding = $checklist->build($conta, $request->user()->capacidadesNaConta($conta));
 
         return $this->responder($request, 'admin.dashboard', [
             'conta' => $conta,

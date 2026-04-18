@@ -15,10 +15,18 @@
             </div>
 
             <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
-                <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir financeiro</a>
-                <a class="button-secondary" href="{{ route('admin.lojas.index') }}">Operar lojas</a>
-                <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Gerir catalogo</a>
-                <a class="button-secondary" href="{{ route('admin.precos.index') }}">Revisar precos</a>
+                @if (in_array('financeiro', $capacidadesConta, true))
+                    <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir financeiro</a>
+                @endif
+                @if (in_array('lojas', $capacidadesConta, true))
+                    <a class="button-secondary" href="{{ route('admin.lojas.index') }}">Operar lojas</a>
+                @endif
+                @if (in_array('catalogo', $capacidadesConta, true))
+                    <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Gerir catalogo</a>
+                @endif
+                @if (in_array('precos', $capacidadesConta, true))
+                    <a class="button-secondary" href="{{ route('admin.precos.index') }}">Revisar precos</a>
+                @endif
             </div>
         </div>
     </section>
@@ -44,7 +52,7 @@
                         </div>
                         <div class="toolbar-actions">
                             <a class="button" href="{{ route('admin.onboarding') }}">Abrir onboarding</a>
-                            @if ($onboarding['proxima_etapa'])
+                            @if ($onboarding['proxima_etapa'] && $onboarding['proxima_etapa']['rota'])
                                 <a class="button-secondary" href="{{ $onboarding['proxima_etapa']['rota'] }}">Executar proxima etapa</a>
                             @endif
                         </div>
@@ -310,10 +318,18 @@
                 </div>
 
                 <div class="mini-grid">
-                    <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir centro financeiro</a>
-                    <a class="button-secondary" href="{{ route('admin.onboarding') }}">Ver onboarding</a>
-                    <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Ver catalogo</a>
-                    <a class="button-secondary" href="{{ route('admin.precos.index') }}">Abrir comparador interno</a>
+                    @if (in_array('financeiro', $capacidadesConta, true))
+                        <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir centro financeiro</a>
+                    @endif
+                    @if (in_array('onboarding', $capacidadesConta, true))
+                        <a class="button-secondary" href="{{ route('admin.onboarding') }}">Ver onboarding</a>
+                    @endif
+                    @if (in_array('catalogo', $capacidadesConta, true))
+                        <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Ver catalogo</a>
+                    @endif
+                    @if (in_array('precos', $capacidadesConta, true))
+                        <a class="button-secondary" href="{{ route('admin.precos.index') }}">Abrir comparador interno</a>
+                    @endif
                 </div>
             </div>
         </article>

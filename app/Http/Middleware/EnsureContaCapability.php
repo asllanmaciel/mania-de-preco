@@ -7,9 +7,9 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureContaRole
+class EnsureContaCapability
 {
-    public function handle(Request $request, Closure $next, string ...$roles): Response
+    public function handle(Request $request, Closure $next, string $capability): Response
     {
         $user = $request->user();
 
@@ -21,10 +21,7 @@ class EnsureContaRole
 
         $papel = (string) $conta->pivot->papel;
 
-        $allowed = collect($roles)
-            ->contains(fn (string $role) => ContaAccess::can($papel, $role) || $papel === $role);
-
-        abort_unless($allowed, 403);
+        abort_unless(ContaAccess::can($papel, $capability), 403);
 
         return $next($request);
     }

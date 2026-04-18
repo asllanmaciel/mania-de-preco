@@ -61,11 +61,11 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->name('admin.')->middleware('panel:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
-        Route::get('/onboarding', OnboardingController::class)->name('onboarding');
+        Route::get('/onboarding', OnboardingController::class)->name('onboarding')->middleware('conta.can:onboarding');
         Route::resource('equipe', AdminEquipeController::class)
             ->except(['show', 'destroy'])
-            ->middleware('conta.role:owner,gestor');
-        Route::prefix('financeiro')->name('financeiro.')->group(function () {
+            ->middleware('conta.can:equipe');
+        Route::prefix('financeiro')->name('financeiro.')->middleware('conta.can:financeiro')->group(function () {
             Route::get('/', AdminFinanceiroController::class)->name('index');
             Route::resource('categorias', AdminCategoriaFinanceiraController::class)->except(['show']);
             Route::resource('contas', AdminContaFinanceiraController::class)->except(['show']);
@@ -73,9 +73,9 @@ Route::middleware('auth')->group(function () {
             Route::resource('contas-pagar', AdminContaPagarController::class)->except(['show']);
             Route::resource('contas-receber', AdminContaReceberController::class)->except(['show']);
         });
-        Route::resource('lojas', AdminLojaController::class)->except(['show']);
-        Route::resource('produtos', AdminProdutoController::class)->except(['show']);
-        Route::resource('precos', AdminPrecoController::class)->except(['show']);
+        Route::resource('lojas', AdminLojaController::class)->except(['show'])->middleware('conta.can:lojas');
+        Route::resource('produtos', AdminProdutoController::class)->except(['show'])->middleware('conta.can:catalogo');
+        Route::resource('precos', AdminPrecoController::class)->except(['show'])->middleware('conta.can:precos');
     });
 
     Route::prefix('cliente')->name('cliente.')->middleware('panel:cliente')->group(function () {

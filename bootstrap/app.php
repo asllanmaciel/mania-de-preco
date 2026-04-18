@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\EnsureContaCapability;
 use App\Http\Middleware\EnsureContaRole;
 use App\Http\Middleware\EnsurePanelAccess;
 
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'panel' => EnsurePanelAccess::class,
+            'conta.can' => EnsureContaCapability::class,
             'conta.role' => EnsureContaRole::class,
         ]);
     })

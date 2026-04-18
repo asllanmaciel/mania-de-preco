@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin;
 
 use Illuminate\Contracts\View\View;
 use App\Models\User;
+use App\Support\Access\ContaAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -142,13 +143,6 @@ class EquipeController extends AdminController
 
     private function papeisDisponiveis(): array
     {
-        return [
-            'owner' => 'Owner',
-            'gestor' => 'Gestor',
-            'financeiro' => 'Financeiro',
-            'operacao' => 'Operacao',
-            'catalogo' => 'Catalogo',
-            'viewer' => 'Viewer',
-        ];
+        return ContaAccess::roles();
     }
 }

@@ -1102,23 +1102,31 @@
                             <span>Onboarding</span>
                             <small>implantacao</small>
                         </a>
-                        <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
-                            <span>Lojas</span>
-                            <small>operacao</small>
-                        </a>
-                        <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
-                            <span>Produtos</span>
-                            <small>catalogo</small>
-                        </a>
-                        <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
-                            <span>Precos</span>
-                            <small>comparador</small>
-                        </a>
-                        <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
-                            <span>Financeiro</span>
-                            <small>caixa e titulos</small>
-                        </a>
-                        @if (in_array($papelAtualConta, ['owner', 'gestor'], true))
+                        @if (in_array('lojas', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
+                                <span>Lojas</span>
+                                <small>operacao</small>
+                            </a>
+                        @endif
+                        @if (in_array('catalogo', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
+                                <span>Produtos</span>
+                                <small>catalogo</small>
+                            </a>
+                        @endif
+                        @if (in_array('precos', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
+                                <span>Precos</span>
+                                <small>comparador</small>
+                            </a>
+                        @endif
+                        @if (in_array('financeiro', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
+                                <span>Financeiro</span>
+                                <small>caixa e titulos</small>
+                            </a>
+                        @endif
+                        @if (in_array('equipe', $capacidadesConta, true))
                             <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
                                 <span>Equipe</span>
                                 <small>acessos e papeis</small>
@@ -1175,24 +1183,30 @@
                 <strong>Inicio</strong>
                 <span>painel</span>
             </a>
-            <a class="mobile-dock-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
-                <strong>Financeiro</strong>
-                <span>caixa</span>
-            </a>
-            <a class="mobile-dock-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
-                <strong>Produtos</strong>
-                <span>catalogo</span>
-            </a>
-            <a class="mobile-dock-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
-                <strong>Lojas</strong>
-                <span>operacao</span>
-            </a>
-            @if (in_array($papelAtualConta, ['owner', 'gestor'], true))
+            @if (in_array('financeiro', $capacidadesConta, true))
+                <a class="mobile-dock-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
+                    <strong>Financeiro</strong>
+                    <span>caixa</span>
+                </a>
+            @endif
+            @if (in_array('catalogo', $capacidadesConta, true))
+                <a class="mobile-dock-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
+                    <strong>Produtos</strong>
+                    <span>catalogo</span>
+                </a>
+            @endif
+            @if (in_array('lojas', $capacidadesConta, true))
+                <a class="mobile-dock-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
+                    <strong>Lojas</strong>
+                    <span>operacao</span>
+                </a>
+            @endif
+            @if (in_array('equipe', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
                     <strong>Equipe</strong>
                     <span>acessos</span>
                 </a>
-            @else
+            @elseif (in_array('onboarding', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
                     <strong>Setup</strong>
                     <span>onboarding</span>

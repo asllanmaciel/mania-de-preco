@@ -185,6 +185,98 @@ class AdminOperationsTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_financial_user_can_access_finance_but_not_catalog(): void
+    {
+        [$owner, $conta] = $this->criarContaComUsuario();
+
+        $financeiro = User::create([
+            'name' => 'Financeiro Conta',
+            'email' => 'financeiro-permissao@conta-web.test',
+            'password' => 'password',
+        ]);
+
+        $conta->usuarios()->attach($financeiro->id, [
+            'papel' => 'financeiro',
+            'ativo' => true,
+            'ultimo_acesso_em' => now(),
+        ]);
+
+        $this->actingAs($financeiro)
+            ->get(route('admin.financeiro.index'))
+            ->assertOk()
+            ->assertSee('Centro financeiro');
+
+        $this->actingAs($financeiro)
+            ->get(route('admin.produtos.index'))
+            ->assertForbidden();
+
+        $this->actingAs($financeiro)
+            ->get(route('admin.precos.index'))
+            ->assertForbidden();
+    }
+
+    public function test_catalog_user_can_access_catalog_but_not_finance(): void
+    {
+        [$owner, $conta] = $this->criarContaComUsuario();
+
+        $catalogo = User::create([
+            'name' => 'Catalogo Conta',
+            'email' => 'catalogo-permissao@conta-web.test',
+            'password' => 'password',
+        ]);
+
+        $conta->usuarios()->attach($catalogo->id, [
+            'papel' => 'catalogo',
+            'ativo' => true,
+            'ultimo_acesso_em' => now(),
+        ]);
+
+        $this->actingAs($catalogo)
+            ->get(route('admin.produtos.index'))
+            ->assertOk()
+            ->assertSee('Catalogo de produtos');
+
+        $this->actingAs($catalogo)
+            ->get(route('admin.precos.index'))
+            ->assertOk()
+            ->assertSee('Tabela de precos');
+
+        $this->actingAs($catalogo)
+            ->get(route('admin.financeiro.index'))
+            ->assertForbidden();
+    }
+
+    public function test_viewer_user_only_keeps_dashboard_access(): void
+    {
+        [$owner, $conta] = $this->criarContaComUsuario();
+
+        $viewer = User::create([
+            'name' => 'Viewer Conta',
+            'email' => 'viewer-permissao@conta-web.test',
+            'password' => 'password',
+        ]);
+
+        $conta->usuarios()->attach($viewer->id, [
+            'papel' => 'viewer',
+            'ativo' => true,
+            'ultimo_acesso_em' => now(),
+        ]);
+
+        $this->actingAs($viewer)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertDontSee('Abrir financeiro')
+            ->assertDontSee('Gerir catalogo');
+
+        $this->actingAs($viewer)
+            ->get(route('admin.onboarding'))
+            ->assertForbidden();
+
+        $this->actingAs($viewer)
+            ->get(route('admin.equipe.index'))
+            ->assertForbidden();
+    }
+
     public function test_dashboard_shows_onboarding_banner_when_setup_is_incomplete(): void
     {
         [$user] = $this->criarContaComUsuario();

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\Access\ContaAccess;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -130,6 +131,16 @@ class User extends Authenticatable
 
     public function podeGerirEquipe(?Conta $conta): bool
     {
-        return in_array($this->papelNaConta($conta), ['owner', 'gestor'], true);
+        return $this->podeNaConta($conta, 'equipe');
+    }
+
+    public function podeNaConta(?Conta $conta, string $capability): bool
+    {
+        return ContaAccess::can($this->papelNaConta($conta), $capability);
+    }
+
+    public function capacidadesNaConta(?Conta $conta): array
+    {
+        return ContaAccess::capabilitiesFor($this->papelNaConta($conta));
     }
 }
