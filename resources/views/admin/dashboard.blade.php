@@ -5,6 +5,37 @@
 @section('subheading', 'Uma leitura mais gerencial da conta logada, conectando operacao, catalogo, precificacao e saude financeira em uma unica visao.')
 
 @section('content')
+    @if ($onboarding['percentual'] < 100)
+        <section class="card">
+            <div class="card-body">
+                <div class="setup-banner">
+                    <div>
+                        <span class="pill">Onboarding da conta</span>
+                        <h2>Seu setup esta em {{ $onboarding['percentual'] }}%</h2>
+                        <p>
+                            {{ $onboarding['proxima_etapa']['titulo'] ?? 'Base principal concluida.' }}
+                            @if ($onboarding['proxima_etapa'])
+                                {{ $onboarding['proxima_etapa']['descricao'] }}
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="setup-banner-actions">
+                        <div class="progress-track">
+                            <span class="progress-fill is-teal" style="width: {{ $onboarding['percentual'] }}%;"></span>
+                        </div>
+                        <div class="toolbar-actions">
+                            <a class="button" href="{{ route('admin.onboarding') }}">Abrir onboarding</a>
+                            @if ($onboarding['proxima_etapa'])
+                                <a class="button-secondary" href="{{ $onboarding['proxima_etapa']['rota'] }}">Executar proxima etapa</a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
     <section class="grid-4">
         <article class="card metric-card">
             <span class="metric-label">Saldo projetado</span>
@@ -262,6 +293,7 @@
 
                 <div class="mini-grid">
                     <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir centro financeiro</a>
+                    <a class="button-secondary" href="{{ route('admin.onboarding') }}">Ver onboarding</a>
                     <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Ver catalogo</a>
                     <a class="button-secondary" href="{{ route('admin.precos.index') }}">Abrir comparador interno</a>
                 </div>

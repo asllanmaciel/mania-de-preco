@@ -769,6 +769,97 @@
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
+            .setup-banner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+            }
+
+            .setup-banner h2 {
+                margin: 14px 0 8px;
+                font-size: clamp(1.4rem, 3vw, 2rem);
+            }
+
+            .setup-banner p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+                max-width: 760px;
+            }
+
+            .setup-banner-actions {
+                display: grid;
+                gap: 12px;
+                min-width: min(360px, 100%);
+            }
+
+            .onboarding-groups,
+            .checklist-stack {
+                display: grid;
+                gap: 14px;
+            }
+
+            .onboarding-group {
+                display: grid;
+                gap: 12px;
+                padding: 18px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(76, 42, 22, 0.08);
+            }
+
+            .checklist-item {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 16px;
+                align-items: center;
+                padding: 16px 18px;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.82);
+                border: 1px solid rgba(76, 42, 22, 0.08);
+            }
+
+            .checklist-item.is-done {
+                background: rgba(226, 255, 249, 0.72);
+                border-color: rgba(15, 159, 143, 0.12);
+            }
+
+            .checklist-item strong {
+                display: block;
+                margin-bottom: 6px;
+            }
+
+            .checklist-item span {
+                color: var(--muted);
+                line-height: 1.6;
+            }
+
+            .checklist-actions {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .status-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: rgba(60, 34, 24, 0.16);
+            }
+
+            .status-dot.is-done {
+                background: var(--accent-2);
+                box-shadow: 0 0 0 6px rgba(15, 159, 143, 0.12);
+            }
+
+            .status-dot.is-pending {
+                background: var(--accent);
+                box-shadow: 0 0 0 6px rgba(255, 107, 44, 0.12);
+            }
+
             .highlight-card {
                 padding: 18px;
                 border-radius: 20px;
@@ -846,6 +937,7 @@
                     padding: 18px;
                 }
 
+                .setup-banner,
                 .topbar {
                     flex-direction: column;
                     align-items: stretch;
@@ -858,9 +950,14 @@
                 .filter-row,
                 .form-actions,
                 .list-actions,
-                .subnav {
+                .subnav,
+                .checklist-actions {
                     flex-direction: column;
                     align-items: stretch;
+                }
+
+                .checklist-item {
+                    grid-template-columns: 1fr;
                 }
             }
         </style>
@@ -888,6 +985,10 @@
                         <a class="menu-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
                             <span>Dashboard</span>
                             <small>visao geral</small>
+                        </a>
+                        <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
+                            <span>Onboarding</span>
+                            <small>implantacao</small>
                         </a>
                         <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
                             <span>Lojas</span>

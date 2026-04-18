@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Models\Preco;
 use App\Models\Produto;
+use App\Support\Onboarding\ContaOnboardingChecklist;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -11,7 +12,7 @@ use Illuminate\View\View;
 
 class DashboardController extends AdminController
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, ContaOnboardingChecklist $checklist): View
     {
         $conta = $request->user()->contas()
             ->wherePivot('ativo', true)
@@ -110,6 +111,7 @@ class DashboardController extends AdminController
             ->take(5);
 
         $maiorCategoria = max(1, (float) $composicaoCategorias->max('total'));
+        $onboarding = $checklist->build($conta);
 
         return $this->responder($request, 'admin.dashboard', [
             'conta' => $conta,
@@ -131,6 +133,7 @@ class DashboardController extends AdminController
             'rankingLojas' => $rankingLojas,
             'composicaoCategorias' => $composicaoCategorias,
             'maiorCategoria' => $maiorCategoria,
+            'onboarding' => $onboarding,
         ], $conta);
     }
 

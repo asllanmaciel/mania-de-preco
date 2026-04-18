@@ -100,6 +100,29 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Vendas');
     }
 
+    public function test_authenticated_user_can_open_onboarding_page(): void
+    {
+        [$user] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.onboarding'))
+            ->assertOk()
+            ->assertSee('Onboarding da conta')
+            ->assertSee('Cadastrar a primeira loja')
+            ->assertSee('Publicar o primeiro preco');
+    }
+
+    public function test_dashboard_shows_onboarding_banner_when_setup_is_incomplete(): void
+    {
+        [$user] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('Onboarding da conta')
+            ->assertSee('Abrir onboarding');
+    }
+
     public function test_finance_page_applies_selected_period_to_recent_movements(): void
     {
         [$user, $conta] = $this->criarContaComUsuario();
