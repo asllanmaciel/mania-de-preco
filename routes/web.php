@@ -12,9 +12,11 @@ use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
 use App\Http\Controllers\Web\Auth\SessionController;
+use App\Http\Controllers\Web\PublicCatalogController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', PublicCatalogController::class)->name('home');
+Route::get('/ofertas', PublicCatalogController::class)->name('ofertas');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SessionController::class, 'create'])->name('login');
