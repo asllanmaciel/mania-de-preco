@@ -13,6 +13,10 @@ class Preco extends Model
         'produto_id', 'loja_id', 'preco', 'tipo_preco', 'url_produto'
     ];
 
+    protected $casts = [
+        'preco' => 'decimal:2',
+    ];
+
     public function produto()
     {
         return $this->belongsTo(Produto::class);

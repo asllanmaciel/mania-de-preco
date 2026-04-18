@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conta;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -12,24 +15,47 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return response()->json($user, 201);
+            $conta = Conta::create([
+                'nome_fantasia' => $request->name,
+                'slug' => $this->gerarSlugConta($request->name),
+                'email' => $request->email,
+                'status' => 'trial',
+                'trial_ends_at' => now()->addDays(14),
+            ]);
+
+            $conta->usuarios()->attach($user->id, [
+                'papel' => 'owner',
+                'ativo' => true,
+                'ultimo_acesso_em' => now(),
+            ]);
+
+            return $user;
+        });
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user->load('contas'),
+            'token' => $token,
+        ], 201);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -44,7 +70,7 @@ class AuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user'  => $user,
+            'user' => $user->load('contas'),
             'token' => $token,
         ]);
     }
@@ -58,6 +84,20 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json($request->user()->load('contas'));
+    }
+
+    private function gerarSlugConta(string $nome): string
+    {
+        $slugBase = Str::slug($nome);
+        $slug = $slugBase !== '' ? $slugBase : 'conta';
+        $contador = 1;
+
+        while (Conta::where('slug', $slug)->exists()) {
+            $slug = "{$slugBase}-{$contador}";
+            $contador++;
+        }
+
+        return $slug;
     }
 }

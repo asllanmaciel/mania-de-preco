@@ -32,4 +32,9 @@ class Produto extends Model
     {
         return $this->hasMany(Preco::class);
     }
+
+    public function alertasPreco()
+    {
+        return $this->hasMany(AlertaPreco::class);
+    }
 }

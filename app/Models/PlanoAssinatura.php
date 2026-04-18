@@ -13,6 +13,11 @@ class PlanoAssinatura extends Model
         'loja_id', 'nome_plano', 'valor', 'validade', 'status'
     ];
 
+    protected $casts = [
+        'valor' => 'decimal:2',
+        'validade' => 'date',
+    ];
+
     public function loja()
     {
         return $this->belongsTo(Loja::class);

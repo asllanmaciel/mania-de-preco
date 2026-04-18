@@ -10,11 +10,16 @@ class Loja extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome', 'cnpj', 'telefone', 'whatsapp', 'email',
+        'conta_id', 'nome', 'cnpj', 'telefone', 'whatsapp', 'email',
         'site', 'instagram', 'facebook', 'endereco', 'numero',
         'bairro', 'cidade', 'uf', 'cep', 'latitude', 'longitude',
         'tipo_loja', 'status', 'logo'
     ];
+
+    public function conta()
+    {
+        return $this->belongsTo(Conta::class);
+    }
 
     public function precos()
     {
@@ -29,5 +34,25 @@ class Loja extends Model
     public function plano()
     {
         return $this->hasOne(PlanoAssinatura::class);
+    }
+
+    public function contasFinanceiras()
+    {
+        return $this->hasMany(ContaFinanceira::class);
+    }
+
+    public function movimentacoesFinanceiras()
+    {
+        return $this->hasMany(MovimentacaoFinanceira::class);
+    }
+
+    public function contasPagar()
+    {
+        return $this->hasMany(ContaPagar::class);
+    }
+
+    public function contasReceber()
+    {
+        return $this->hasMany(ContaReceber::class);
     }
 }

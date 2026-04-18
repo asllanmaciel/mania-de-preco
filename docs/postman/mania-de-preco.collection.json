@@ -1,0 +1,168 @@
+{
+  "info": {
+    "_postman_id": "80f91932-7f5a-4f3d-b44e-a38dbcb16401",
+    "name": "Mania de Preco",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "conta_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Conta Demo\",\n  \"email\": \"demo@maniadepreco.com\",\n  \"password\": \"123456\",\n  \"password_confirmation\": \"123456\"\n}"
+            },
+            "url": "{{base_url}}/api/register"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@maniadepreco.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{base_url}}/api/login"
+          }
+        },
+        {
+          "name": "User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contas",
+      "item": [
+        {
+          "name": "Listar Contas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/contas"
+          }
+        },
+        {
+          "name": "Criar Categoria Financeira",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Vendas Online\",\n  \"tipo\": \"receita\",\n  \"cor\": \"#2563eb\",\n  \"icone\": \"shopping-cart\"\n}"
+            },
+            "url": "{{base_url}}/api/contas/{{conta_id}}/categorias-financeiras"
+          }
+        },
+        {
+          "name": "Criar Conta Financeira",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Caixa Principal\",\n  \"tipo\": \"caixa\",\n  \"saldo_inicial\": 1000,\n  \"saldo_atual\": 1000\n}"
+            },
+            "url": "{{base_url}}/api/contas/{{conta_id}}/contas-financeiras"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Publico",
+      "item": [
+        {
+          "name": "Categorias",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/categorias"
+          }
+        },
+        {
+          "name": "Produtos",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/produtos"
+          }
+        },
+        {
+          "name": "Lojas",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/lojas"
+          }
+        },
+        {
+          "name": "Precos",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/precos"
+          }
+        }
+      ]
+    }
+  ]
+}
