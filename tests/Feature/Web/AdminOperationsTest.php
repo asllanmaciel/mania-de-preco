@@ -237,6 +237,114 @@ class AdminOperationsTest extends TestCase
         ]);
     }
 
+    public function test_paid_account_payable_creates_movement_and_updates_balance(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $contaFinanceira = ContaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Banco operacional',
+            'tipo' => 'banco',
+            'saldo_inicial' => 1000,
+            'saldo_atual' => 1000,
+            'ativa' => true,
+        ]);
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Fornecedores',
+            'slug' => 'fornecedores',
+            'tipo' => 'despesa',
+            'ativa' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.contas-pagar.store'), [
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'fornecedor_nome' => 'Distribuidora Azul',
+            'descricao' => 'Pagamento de fornecedor',
+            'valor_total' => 250,
+            'valor_pago' => 250,
+            'vencimento' => now()->format('Y-m-d'),
+            'pago_em' => now()->format('Y-m-d H:i:s'),
+            'status' => 'paga',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.contas-pagar.index'));
+
+        $titulo = ContaPagar::first();
+
+        $this->assertNotNull($titulo->movimentacao_financeira_id);
+        $this->assertDatabaseHas('movimentacoes_financeiras', [
+            'id' => $titulo->movimentacao_financeira_id,
+            'conta_financeira_id' => $contaFinanceira->id,
+            'tipo' => 'despesa',
+            'descricao' => 'Pagamento de fornecedor',
+        ]);
+
+        $this->assertEquals('750.00', ContaFinanceira::find($contaFinanceira->id)->saldo_atual);
+    }
+
+    public function test_reopening_account_receivable_removes_automatic_movement_and_restores_balance(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $contaFinanceira = ContaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Caixa loja',
+            'tipo' => 'caixa',
+            'saldo_inicial' => 100,
+            'saldo_atual' => 100,
+            'ativa' => true,
+        ]);
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Recebimentos',
+            'slug' => 'recebimentos',
+            'tipo' => 'receita',
+            'ativa' => true,
+        ]);
+
+        $this->actingAs($user)->post(route('admin.financeiro.contas-receber.store'), [
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'cliente_nome' => 'Cliente Ouro',
+            'descricao' => 'Recebimento da semana',
+            'valor_total' => 300,
+            'valor_recebido' => 300,
+            'vencimento' => now()->format('Y-m-d'),
+            'recebido_em' => now()->format('Y-m-d H:i:s'),
+            'status' => 'recebida',
+        ]);
+
+        $titulo = ContaReceber::first();
+        $movimentacaoId = $titulo->movimentacao_financeira_id;
+
+        $this->assertNotNull($movimentacaoId);
+        $this->assertEquals('400.00', ContaFinanceira::find($contaFinanceira->id)->saldo_atual);
+
+        $response = $this->actingAs($user)->put(route('admin.financeiro.contas-receber.update', $titulo), [
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'cliente_nome' => 'Cliente Ouro',
+            'descricao' => 'Recebimento da semana',
+            'valor_total' => 300,
+            'valor_recebido' => 0,
+            'vencimento' => now()->format('Y-m-d'),
+            'status' => 'aberta',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.contas-receber.edit', $titulo));
+
+        $this->assertDatabaseMissing('movimentacoes_financeiras', [
+            'id' => $movimentacaoId,
+        ]);
+
+        $this->assertNull($titulo->fresh()->movimentacao_financeira_id);
+        $this->assertEquals('100.00', ContaFinanceira::find($contaFinanceira->id)->saldo_atual);
+    }
+
     public function test_authenticated_user_can_create_product_with_new_category_and_brand(): void
     {
         [$user] = $this->criarContaComUsuario();

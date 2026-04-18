@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Financeiro;
 
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Models\ContaReceber;
+use App\Services\Financeiro\TituloFinanceiroSynchronizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,7 @@ class ContaReceberController extends AdminController
         $status = (string) $request->string('status');
 
         $titulos = $conta->contasReceber()
-            ->with(['loja', 'categoriaFinanceira'])
+            ->with(['loja', 'categoriaFinanceira', 'contaFinanceira'])
             ->when(in_array($status, ['aberta', 'parcial', 'recebida', 'vencida', 'cancelada'], true), fn ($query) => $query->where('status', $status))
             ->orderBy('vencimento')
             ->paginate(10)
@@ -37,18 +38,21 @@ class ContaReceberController extends AdminController
             'titulo' => new ContaReceber(),
             'lojas' => $conta->lojas()->orderBy('nome')->get(),
             'categorias' => $conta->categoriasFinanceiras()->orderBy('nome')->get(),
+            'contasFinanceiras' => $conta->contasFinanceiras()->where('ativa', true)->orderBy('nome')->get(),
         ], $conta);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $dados = $this->validar($request, $conta->id);
 
-        $conta->contasReceber()->create([
+        $titulo = $conta->contasReceber()->create([
             ...$dados,
             'valor_recebido' => $dados['valor_recebido'] ?? 0,
         ]);
+
+        $synchronizer->syncContaReceber($titulo, $request->user()->id);
 
         return redirect()
             ->route('admin.financeiro.contas-receber.index')
@@ -64,10 +68,11 @@ class ContaReceberController extends AdminController
             'titulo' => $contas_receber,
             'lojas' => $conta->lojas()->orderBy('nome')->get(),
             'categorias' => $conta->categoriasFinanceiras()->orderBy('nome')->get(),
+            'contasFinanceiras' => $conta->contasFinanceiras()->where('ativa', true)->orderBy('nome')->get(),
         ], $conta);
     }
 
-    public function update(Request $request, ContaReceber $contas_receber): RedirectResponse
+    public function update(Request $request, ContaReceber $contas_receber, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $this->garantirTituloDaConta($contas_receber, $conta->id);
@@ -78,16 +83,19 @@ class ContaReceberController extends AdminController
             'valor_recebido' => $dados['valor_recebido'] ?? $contas_receber->valor_recebido,
         ]);
 
+        $synchronizer->syncContaReceber($contas_receber->fresh(), $request->user()->id);
+
         return redirect()
             ->route('admin.financeiro.contas-receber.edit', $contas_receber)
             ->with('status', 'Conta a receber atualizada com sucesso.');
     }
 
-    public function destroy(Request $request, ContaReceber $contas_receber): RedirectResponse
+    public function destroy(Request $request, ContaReceber $contas_receber, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $this->garantirTituloDaConta($contas_receber, $conta->id);
 
+        $synchronizer->removeContaReceber($contas_receber);
         $contas_receber->delete();
 
         return redirect()
@@ -99,6 +107,11 @@ class ContaReceberController extends AdminController
     {
         return $request->validate([
             'loja_id' => ['nullable', Rule::exists('lojas', 'id')->where('conta_id', $contaId)],
+            'conta_financeira_id' => [
+                'nullable',
+                Rule::exists('contas_financeiras', 'id')->where('conta_id', $contaId),
+                Rule::requiredIf(fn () => $request->input('status') === 'recebida'),
+            ],
             'categoria_financeira_id' => ['nullable', Rule::exists('categorias_financeiras', 'id')->where('conta_id', $contaId)],
             'cliente_nome' => ['nullable', 'string', 'max:255'],
             'descricao' => ['required', 'string', 'max:255'],

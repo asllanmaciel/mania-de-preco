@@ -76,12 +76,22 @@
 
                             <div>
                                 <span class="pill">{{ $item->fornecedor_nome ?: 'Fornecedor nao informado' }}</span>
-                                <small style="display: block; margin-top: 8px;">{{ $item->categoriaFinanceira?->nome ?? 'Sem categoria' }}</small>
+                                <small style="display: block; margin-top: 8px;">
+                                    {{ $item->categoriaFinanceira?->nome ?? 'Sem categoria' }}
+                                    @if ($item->contaFinanceira)
+                                        · {{ $item->contaFinanceira->nome }}
+                                    @endif
+                                </small>
                             </div>
 
                             <div>
                                 <span class="badge is-warning">R$ {{ number_format((float) $item->valor_total, 2, ',', '.') }}</span>
-                                <small style="display: block; margin-top: 8px;">{{ $item->status }} · pago R$ {{ number_format((float) $item->valor_pago, 2, ',', '.') }}</small>
+                                <small style="display: block; margin-top: 8px;">
+                                    {{ $item->status }} · pago R$ {{ number_format((float) $item->valor_pago, 2, ',', '.') }}
+                                    @if ($item->movimentacao_financeira_id)
+                                        · baixa automatica ativa
+                                    @endif
+                                </small>
                             </div>
 
                             <div class="list-actions">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Financeiro;
 
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Models\ContaPagar;
+use App\Services\Financeiro\TituloFinanceiroSynchronizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,7 @@ class ContaPagarController extends AdminController
         $status = (string) $request->string('status');
 
         $titulos = $conta->contasPagar()
-            ->with(['loja', 'categoriaFinanceira'])
+            ->with(['loja', 'categoriaFinanceira', 'contaFinanceira'])
             ->when(in_array($status, ['aberta', 'parcial', 'paga', 'vencida', 'cancelada'], true), fn ($query) => $query->where('status', $status))
             ->orderBy('vencimento')
             ->paginate(10)
@@ -37,18 +38,21 @@ class ContaPagarController extends AdminController
             'titulo' => new ContaPagar(),
             'lojas' => $conta->lojas()->orderBy('nome')->get(),
             'categorias' => $conta->categoriasFinanceiras()->orderBy('nome')->get(),
+            'contasFinanceiras' => $conta->contasFinanceiras()->where('ativa', true)->orderBy('nome')->get(),
         ], $conta);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $dados = $this->validar($request, $conta->id);
 
-        $conta->contasPagar()->create([
+        $titulo = $conta->contasPagar()->create([
             ...$dados,
             'valor_pago' => $dados['valor_pago'] ?? 0,
         ]);
+
+        $synchronizer->syncContaPagar($titulo, $request->user()->id);
 
         return redirect()
             ->route('admin.financeiro.contas-pagar.index')
@@ -64,10 +68,11 @@ class ContaPagarController extends AdminController
             'titulo' => $contas_pagar,
             'lojas' => $conta->lojas()->orderBy('nome')->get(),
             'categorias' => $conta->categoriasFinanceiras()->orderBy('nome')->get(),
+            'contasFinanceiras' => $conta->contasFinanceiras()->where('ativa', true)->orderBy('nome')->get(),
         ], $conta);
     }
 
-    public function update(Request $request, ContaPagar $contas_pagar): RedirectResponse
+    public function update(Request $request, ContaPagar $contas_pagar, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $this->garantirTituloDaConta($contas_pagar, $conta->id);
@@ -78,16 +83,19 @@ class ContaPagarController extends AdminController
             'valor_pago' => $dados['valor_pago'] ?? $contas_pagar->valor_pago,
         ]);
 
+        $synchronizer->syncContaPagar($contas_pagar->fresh(), $request->user()->id);
+
         return redirect()
             ->route('admin.financeiro.contas-pagar.edit', $contas_pagar)
             ->with('status', 'Conta a pagar atualizada com sucesso.');
     }
 
-    public function destroy(Request $request, ContaPagar $contas_pagar): RedirectResponse
+    public function destroy(Request $request, ContaPagar $contas_pagar, TituloFinanceiroSynchronizer $synchronizer): RedirectResponse
     {
         $conta = $this->contaAtual($request);
         $this->garantirTituloDaConta($contas_pagar, $conta->id);
 
+        $synchronizer->removeContaPagar($contas_pagar);
         $contas_pagar->delete();
 
         return redirect()
@@ -99,6 +107,11 @@ class ContaPagarController extends AdminController
     {
         return $request->validate([
             'loja_id' => ['nullable', Rule::exists('lojas', 'id')->where('conta_id', $contaId)],
+            'conta_financeira_id' => [
+                'nullable',
+                Rule::exists('contas_financeiras', 'id')->where('conta_id', $contaId),
+                Rule::requiredIf(fn () => $request->input('status') === 'paga'),
+            ],
             'categoria_financeira_id' => ['nullable', Rule::exists('categorias_financeiras', 'id')->where('conta_id', $contaId)],
             'fornecedor_nome' => ['nullable', 'string', 'max:255'],
             'descricao' => ['required', 'string', 'max:255'],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\InterageComConta;
 use App\Models\Conta;
 use App\Models\ContaReceber;
+use App\Services\Financeiro\TituloFinanceiroSynchronizer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,17 +18,22 @@ class ContaReceberController extends Controller
         $this->garantirAcessoConta($request, $conta);
 
         return $conta->contasReceber()
-            ->with(['loja', 'categoriaFinanceira'])
+            ->with(['loja', 'categoriaFinanceira', 'contaFinanceira', 'movimentacaoFinanceira'])
             ->orderBy('vencimento')
             ->paginate(20);
     }
 
-    public function store(Request $request, Conta $conta)
+    public function store(Request $request, Conta $conta, TituloFinanceiroSynchronizer $synchronizer)
     {
         $this->garantirAcessoConta($request, $conta);
 
         $data = $request->validate([
             'loja_id' => ['nullable', Rule::exists('lojas', 'id')->where('conta_id', $conta->id)],
+            'conta_financeira_id' => [
+                'nullable',
+                Rule::exists('contas_financeiras', 'id')->where('conta_id', $conta->id),
+                Rule::requiredIf(fn () => $request->input('status') === 'recebida'),
+            ],
             'categoria_financeira_id' => ['nullable', Rule::exists('categorias_financeiras', 'id')->where('conta_id', $conta->id)],
             'cliente_nome' => 'nullable|string|max:255',
             'descricao' => 'required|string|max:255',
@@ -45,7 +51,9 @@ class ContaReceberController extends Controller
             'valor_recebido' => $data['valor_recebido'] ?? 0,
         ]);
 
-        return response()->json($contaReceber->load(['loja', 'categoriaFinanceira']), 201);
+        $synchronizer->syncContaReceber($contaReceber, $request->user()->id);
+
+        return response()->json($contaReceber->load(['loja', 'categoriaFinanceira', 'contaFinanceira', 'movimentacaoFinanceira']), 201);
     }
 
     public function show(Request $request, Conta $conta, ContaReceber $contas_receber)
@@ -53,16 +61,21 @@ class ContaReceberController extends Controller
         $this->garantirAcessoConta($request, $conta);
         $this->garantirRecursoDaConta($contas_receber, $conta);
 
-        return $contas_receber->load(['loja', 'categoriaFinanceira']);
+        return $contas_receber->load(['loja', 'categoriaFinanceira', 'contaFinanceira', 'movimentacaoFinanceira']);
     }
 
-    public function update(Request $request, Conta $conta, ContaReceber $contas_receber)
+    public function update(Request $request, Conta $conta, ContaReceber $contas_receber, TituloFinanceiroSynchronizer $synchronizer)
     {
         $this->garantirAcessoConta($request, $conta);
         $this->garantirRecursoDaConta($contas_receber, $conta);
 
         $data = $request->validate([
             'loja_id' => ['nullable', Rule::exists('lojas', 'id')->where('conta_id', $conta->id)],
+            'conta_financeira_id' => [
+                'nullable',
+                Rule::exists('contas_financeiras', 'id')->where('conta_id', $conta->id),
+                Rule::requiredIf(fn () => $request->input('status') === 'recebida'),
+            ],
             'categoria_financeira_id' => ['nullable', Rule::exists('categorias_financeiras', 'id')->where('conta_id', $conta->id)],
             'cliente_nome' => 'nullable|string|max:255',
             'descricao' => 'required|string|max:255',
@@ -80,14 +93,17 @@ class ContaReceberController extends Controller
             'valor_recebido' => $data['valor_recebido'] ?? $contas_receber->valor_recebido,
         ]);
 
-        return response()->json($contas_receber->load(['loja', 'categoriaFinanceira']), 200);
+        $synchronizer->syncContaReceber($contas_receber->fresh(), $request->user()->id);
+
+        return response()->json($contas_receber->load(['loja', 'categoriaFinanceira', 'contaFinanceira', 'movimentacaoFinanceira']), 200);
     }
 
-    public function destroy(Request $request, Conta $conta, ContaReceber $contas_receber)
+    public function destroy(Request $request, Conta $conta, ContaReceber $contas_receber, TituloFinanceiroSynchronizer $synchronizer)
     {
         $this->garantirAcessoConta($request, $conta);
         $this->garantirRecursoDaConta($contas_receber, $conta);
 
+        $synchronizer->removeContaReceber($contas_receber);
         $contas_receber->delete();
 
         return response()->json(null, 204);

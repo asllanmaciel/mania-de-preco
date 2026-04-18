@@ -28,6 +28,17 @@
     </div>
 
     <div class="field-group">
+        <label for="conta_financeira_id">Conta financeira da baixa</label>
+        <select id="conta_financeira_id" name="conta_financeira_id">
+            <option value="">Selecionar conta</option>
+            @foreach ($contasFinanceiras as $contaFinanceira)
+                <option value="{{ $contaFinanceira->id }}" @selected((string) old('conta_financeira_id', $titulo->conta_financeira_id) === (string) $contaFinanceira->id)>{{ $contaFinanceira->nome }}</option>
+            @endforeach
+        </select>
+        <small>Obrigatoria quando o status for `paga`, porque a baixa automatica gera lancamento e ajusta saldo.</small>
+    </div>
+
+    <div class="field-group">
         <label for="categoria_financeira_id">Categoria</label>
         <select id="categoria_financeira_id" name="categoria_financeira_id">
             <option value="">Sem categoria</option>
