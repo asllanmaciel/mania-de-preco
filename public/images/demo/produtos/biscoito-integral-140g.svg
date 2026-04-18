@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#fff7e7"/>
+  <circle cx="98" cy="362" r="88" fill="#d69a27" fill-opacity=".12"/>
+  <circle cx="540" cy="102" r="78" fill="#ff6b2c" fill-opacity=".10"/>
+  <rect x="180" y="106" width="280" height="266" rx="28" fill="#e2ad47"/>
+  <rect x="206" y="130" width="228" height="64" rx="20" fill="#fff7ef"/>
+  <text x="320" y="172" font-family="Arial, sans-serif" font-size="28" font-weight="700" text-anchor="middle" fill="#7d5411">BISCOITO</text>
+  <text x="320" y="236" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#fff6eb">Integral</text>
+  <text x="320" y="270" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#faebc5">140 g</text>
+  <circle cx="282" cy="320" r="28" fill="#8b5d26"/>
+  <circle cx="356" cy="320" r="28" fill="#8b5d26"/>
+  <g fill="#d9b47f">
+    <circle cx="270" cy="310" r="4"/>
+    <circle cx="290" cy="328" r="4"/>
+    <circle cx="348" cy="310" r="4"/>
+    <circle cx="366" cy="328" r="4"/>
+  </g>
+</svg>

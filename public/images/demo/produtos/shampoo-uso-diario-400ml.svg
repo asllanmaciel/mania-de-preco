@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#fff1f3"/>
+  <circle cx="120" cy="110" r="80" fill="#ff6b2c" fill-opacity=".10"/>
+  <circle cx="510" cy="370" r="96" fill="#d84fa6" fill-opacity=".10"/>
+  <path d="M280 92h80l18 42v192c0 44-26 78-58 78s-58-34-58-78V134l18-42Z" fill="#ff8ac3"/>
+  <rect x="290" y="62" width="60" height="42" rx="12" fill="#8d2d64"/>
+  <rect x="254" y="180" width="132" height="94" rx="24" fill="#fff8fb"/>
+  <text x="320" y="220" font-family="Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#9f2f6e">SHAMPOO</text>
+  <text x="320" y="250" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#7f5a69">400 ml</text>
+  <path d="M288 314c12-18 20-18 32 0 12-18 20-18 32 0 12-18 20-18 32 0" fill="none" stroke="#fff0f7" stroke-width="12" stroke-linecap="round"/>
+</svg>

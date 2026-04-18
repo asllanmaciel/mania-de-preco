@@ -39,6 +39,9 @@
             .stat, .mini, .offer, .related-card { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
             .stat strong, .mini strong, .offer strong, .related-card strong { display:block; margin-bottom:6px; }
             .stat strong { font-size:1.5rem; }
+            .product-media { position:relative; overflow:hidden; border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,239,225,.94)); border:1px solid rgba(66,37,21,.08); min-height:260px; }
+            .product-media img { width:100%; height:100%; min-height:260px; object-fit:cover; display:block; }
+            .related-card img { width:100%; height:140px; object-fit:cover; border-radius:16px; margin-bottom:14px; background:#fff; border:1px solid rgba(66,37,21,.08); }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
             .bar-meta { font-size:.92rem; }
@@ -98,6 +101,10 @@
                     </article>
 
                     <aside class="card">
+                        <div class="product-media" style="margin-bottom:18px;">
+                            <img src="{{ $produto->imagem_url }}" alt="{{ $produto->nome }}">
+                        </div>
+
                         <div class="section-head">
                             <div>
                                 <h3>Resumo de mercado do produto</h3>
@@ -183,6 +190,7 @@
                         <div class="related">
                             @foreach ($categoriaRelacionados as $relacionado)
                                 <a class="related-card" href="{{ route('produtos.public.show', $relacionado) }}">
+                                    <img src="{{ $relacionado->imagem_url }}" alt="{{ $relacionado->nome }}">
                                     <strong>{{ $relacionado->nome }}</strong>
                                     <span class="small">{{ $relacionado->marca?->nome ?? 'Marca nao informada' }}</span>
                                     <span class="small">A partir de R$ {{ number_format((float) ($relacionado->menor_preco ?? 0), 2, ',', '.') }}</span>

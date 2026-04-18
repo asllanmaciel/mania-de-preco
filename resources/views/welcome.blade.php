@@ -69,6 +69,9 @@
             .range-line::before { left:-6px; border:3px solid var(--accent); }
             .range-line::after { right:-6px; border:3px solid var(--accent2); }
             .offer-card { display:grid; gap:16px; }
+            .offer-media { position:relative; overflow:hidden; min-height:220px; border-radius:20px; background:linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,239,225,.92)); border:1px solid rgba(76,42,22,.08); }
+            .offer-media img { width:100%; height:220px; object-fit:cover; display:block; }
+            .offer-media .badge { position:absolute; top:14px; left:14px; }
             .offer-top { display:grid; gap:10px; }
             .offer-price-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
             .offer-list strong { display:flex; justify-content:space-between; gap:12px; font-size:.98rem; }
@@ -313,9 +316,13 @@
                                     $economia = max(0, $maiorPreco - $menorPreco);
                                 @endphp
                                 <article class="card offer-card">
+                                    <div class="offer-media">
+                                        <img src="{{ $produto->imagem_url }}" alt="{{ $produto->nome }}">
+                                        <span class="badge warm">{{ $produto->categoria?->nome ?? 'Sem categoria' }}</span>
+                                    </div>
+
                                     <div class="offer-head">
                                         <div class="offer-top">
-                                            <span class="badge warm">{{ $produto->categoria?->nome ?? 'Sem categoria' }}</span>
                                             <h3><a href="{{ route('produtos.public.show', $produto) }}">{{ $produto->nome }}</a></h3>
                                             <span class="small">{{ $produto->marca?->nome ?? 'Marca nao informada' }}</span>
                                         </div>

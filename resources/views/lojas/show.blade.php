@@ -51,6 +51,8 @@
             .review { display:grid; gap:10px; }
             .offer { display:grid; gap:16px; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,247,238,.82)); }
             .offer-head { align-items:flex-start; }
+            .offer-media { overflow:hidden; border-radius:20px; min-height:210px; background:linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,239,225,.94)); border:1px solid rgba(66,37,21,.08); }
+            .offer-media img { width:100%; height:210px; object-fit:cover; display:block; }
             .offer-title { display:grid; gap:8px; }
             .offer-title h3 { font-size:1.28rem; }
             .offer-tags { grid-template-columns:repeat(2, minmax(0, max-content)); gap:10px; }
@@ -231,6 +233,10 @@
                         <div class="offer-list">
                             @foreach ($produtosDestaque as $item)
                                 <article class="offer">
+                                    <div class="offer-media">
+                                        <img src="{{ $item['produto']?->imagem_url }}" alt="{{ $item['produto']?->nome ?? 'Produto' }}">
+                                    </div>
+
                                     <div class="offer-head">
                                         <div class="offer-title">
                                             <div class="tag-group">

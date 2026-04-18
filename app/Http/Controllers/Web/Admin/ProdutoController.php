@@ -104,7 +104,7 @@ class ProdutoController extends AdminController
             'nova_marca_nome' => ['nullable', 'string', 'max:255'],
             'descricao' => ['nullable', 'string'],
             'especificacoes_texto' => ['nullable', 'string'],
-            'imagem_principal' => ['nullable', 'string', 'max:255'],
+            'imagem_principal' => ['nullable', 'string', 'max:2048'],
             'status' => ['required', Rule::in(['ativo', 'inativo'])],
         ]);
     }
@@ -132,7 +132,7 @@ class ProdutoController extends AdminController
             'marca_id' => $marcaId,
             'descricao' => ($dados['descricao'] ?? null) ?: null,
             'especificacoes' => $this->normalizarEspecificacoes($dados['especificacoes_texto'] ?? null),
-            'imagem_principal' => ($dados['imagem_principal'] ?? null) ?: null,
+            'imagem_principal' => trim((string) ($dados['imagem_principal'] ?? '')) ?: null,
             'status' => $dados['status'],
         ];
     }

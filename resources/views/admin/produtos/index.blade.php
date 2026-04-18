@@ -68,10 +68,17 @@
                 <div class="list-grid">
                     @foreach ($produtos as $produto)
                         <article class="list-row">
-                            <div>
-                                <strong>{{ $produto->nome }}</strong>
-                                <small>{{ $produto->descricao ? \Illuminate\Support\Str::limit($produto->descricao, 90) : 'sem descricao' }}</small><br>
-                                <code>{{ $produto->slug }}</code>
+                            <div style="display:flex; gap:14px; align-items:center;">
+                                <img
+                                    src="{{ $produto->imagem_url }}"
+                                    alt="{{ $produto->nome }}"
+                                    style="width:68px; height:68px; object-fit:cover; border-radius:18px; border:1px solid rgba(15, 23, 42, 0.08); background:#fff; flex-shrink:0;"
+                                >
+                                <div>
+                                    <strong>{{ $produto->nome }}</strong>
+                                    <small>{{ $produto->descricao ? \Illuminate\Support\Str::limit($produto->descricao, 90) : 'sem descricao' }}</small><br>
+                                    <code>{{ $produto->slug }}</code>
+                                </div>
                             </div>
 
                             <div>

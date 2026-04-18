@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#eaf6ff"/>
+  <path d="M0 342c88-28 138-28 226 0s138 28 226 0 138-28 188 0v138H0V342Z" fill="#ccecff"/>
+  <path d="M290 90h60l20 46v188c0 44-22 76-50 76s-50-32-50-76V136l20-46Z" fill="#7bc8ff"/>
+  <rect x="298" y="58" width="44" height="44" rx="12" fill="#1c8be8"/>
+  <rect x="268" y="184" width="104" height="82" rx="22" fill="#f6fbff"/>
+  <text x="320" y="228" font-family="Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#1570c8">AGUA</text>
+  <text x="320" y="258" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#5d7f9d">1,5 L</text>
+  <path d="M320 300c24 28 28 42 28 56a28 28 0 0 1-56 0c0-14 4-28 28-56Z" fill="#1c8be8" fill-opacity=".65"/>
+</svg>

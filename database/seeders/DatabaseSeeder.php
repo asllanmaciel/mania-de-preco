@@ -340,6 +340,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'casa-do-grao',
                 'descricao' => 'Cafe especial para consumo diario com boa margem de revenda.',
                 'especificacoes' => ['Torra media', 'Pacote 500g', 'Linha premium'],
+                'imagem_principal' => '/images/demo/produtos/cafe-premium-500g.svg',
             ],
             [
                 'nome' => 'Arroz Tipo 1 5kg',
@@ -348,6 +349,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'serra-verde',
                 'descricao' => 'Item de alto giro usado para comparação de preço entre lojas.',
                 'especificacoes' => ['Pacote 5kg', 'Tipo 1', 'Linha economica'],
+                'imagem_principal' => '/images/demo/produtos/arroz-tipo-1-5kg.svg',
             ],
             [
                 'nome' => 'Detergente Neutro 500ml',
@@ -356,6 +358,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'limpax',
                 'descricao' => 'Produto recorrente na seção de limpeza.',
                 'especificacoes' => ['500ml', 'Uso domestico'],
+                'imagem_principal' => '/images/demo/produtos/detergente-neutro-500ml.svg',
             ],
             [
                 'nome' => 'Agua Mineral 1,5L',
@@ -364,6 +367,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'serra-verde',
                 'descricao' => 'Produto simples para validar comparação rápida.',
                 'especificacoes' => ['Garrafa 1,5L', 'Sem gas'],
+                'imagem_principal' => '/images/demo/produtos/agua-mineral-1-5l.svg',
             ],
             [
                 'nome' => 'Shampoo Uso Diario 400ml',
@@ -372,6 +376,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'vita-care',
                 'descricao' => 'Produto de higiene para compor o catálogo da conta demo.',
                 'especificacoes' => ['400ml', 'Uso diario'],
+                'imagem_principal' => '/images/demo/produtos/shampoo-uso-diario-400ml.svg',
             ],
             [
                 'nome' => 'Desinfetante Lavanda 2L',
@@ -380,6 +385,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'brilho-max',
                 'descricao' => 'Exemplo de item com preço competitivo em dois canais.',
                 'especificacoes' => ['2L', 'Fragrancia lavanda'],
+                'imagem_principal' => '/images/demo/produtos/desinfetante-lavanda-2l.svg',
             ],
             [
                 'nome' => 'Racao Premium Caes 10kg',
@@ -388,6 +394,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'pet-feliz',
                 'descricao' => 'Produto de ticket mais alto para destacar variacao e economia.',
                 'especificacoes' => ['10kg', 'Adultos', 'Sabor carne'],
+                'imagem_principal' => '/images/demo/produtos/racao-premium-caes-10kg.svg',
             ],
             [
                 'nome' => 'Biscoito Integral 140g',
@@ -396,6 +403,7 @@ class DatabaseSeeder extends Seeder
                 'marca' => 'noite-leve',
                 'descricao' => 'Item de conveniencia com disputa de preco mais apertada.',
                 'especificacoes' => ['140g', 'Integral'],
+                'imagem_principal' => '/images/demo/produtos/biscoito-integral-140g.svg',
             ],
         ] as $dados) {
             $produtos[$dados['slug']] = Produto::updateOrCreate(
@@ -406,6 +414,7 @@ class DatabaseSeeder extends Seeder
                     'marca_id' => $catalogo['marcas'][$dados['marca']]->id,
                     'descricao' => $dados['descricao'],
                     'especificacoes' => $dados['especificacoes'],
+                    'imagem_principal' => $dados['imagem_principal'],
                     'status' => 'ativo',
                 ]
             );

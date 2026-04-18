@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#fff4ea"/>
+  <circle cx="118" cy="110" r="84" fill="#ff6b2c" fill-opacity=".12"/>
+  <circle cx="532" cy="376" r="92" fill="#d69a27" fill-opacity=".12"/>
+  <rect x="192" y="70" width="256" height="344" rx="28" fill="#c4763b"/>
+  <rect x="220" y="100" width="200" height="74" rx="20" fill="#fff6ef"/>
+  <text x="320" y="146" font-family="Arial, sans-serif" font-size="30" font-weight="700" text-anchor="middle" fill="#7b451f">RACAO</text>
+  <text x="320" y="214" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#fff4eb">Premium Caes</text>
+  <text x="320" y="248" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#ffe2ce">Pacote 10 kg</text>
+  <path d="M286 308c0-26 18-46 34-46 12 0 18 8 22 16 4-8 10-16 22-16 16 0 34 20 34 46 0 20-12 40-34 40H320c-22 0-34-20-34-40Z" fill="#6d3b25"/>
+  <circle cx="304" cy="298" r="8" fill="#6d3b25"/>
+  <circle cx="336" cy="298" r="8" fill="#6d3b25"/>
+</svg>

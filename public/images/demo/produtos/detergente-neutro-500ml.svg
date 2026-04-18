@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#eef7f7"/>
+  <circle cx="100" cy="380" r="94" fill="#0f9f8f" fill-opacity=".12"/>
+  <circle cx="550" cy="90" r="82" fill="#ff6b2c" fill-opacity=".10"/>
+  <path d="M266 112h108l22 42v184c0 40-34 72-76 72s-76-32-76-72V154l22-42Z" fill="#7de5d8"/>
+  <rect x="286" y="86" width="68" height="42" rx="12" fill="#0f9f8f"/>
+  <rect x="254" y="184" width="132" height="80" rx="22" fill="#fffdf8"/>
+  <text x="320" y="228" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#19776d">NEUTRO</text>
+  <text x="320" y="258" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#5a635f">500 ml</text>
+  <circle cx="320" cy="328" r="34" fill="#0f9f8f" fill-opacity=".16"/>
+  <circle cx="304" cy="320" r="10" fill="#0f9f8f"/>
+  <circle cx="334" cy="328" r="14" fill="#0f9f8f" fill-opacity=".8"/>
+</svg>

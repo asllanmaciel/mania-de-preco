@@ -7,6 +7,22 @@
 @endif
 
 <div class="form-grid">
+    <div class="field-group-full">
+        <label>Preview</label>
+        <div style="display:flex; gap:18px; align-items:center; padding:16px; border:1px solid rgba(15, 23, 42, 0.08); border-radius:18px; background:rgba(248, 250, 252, 0.9);">
+            <img
+                id="imagemPreview"
+                src="{{ $produto->imagem_url }}"
+                alt="Preview da imagem do produto"
+                style="width:120px; height:120px; object-fit:cover; border-radius:20px; border:1px solid rgba(15, 23, 42, 0.08); background:#fff;"
+            >
+            <div style="display:grid; gap:8px;">
+                <strong style="font-size:1rem;">Imagem principal do produto</strong>
+                <small>Use uma URL valida ou um caminho local publico, como <code>/images/demo/produtos/cafe-premium-500g.svg</code>. Se ficar vazio, o sistema gera um placeholder visual automaticamente.</small>
+            </div>
+        </div>
+    </div>
+
     <div class="field-group">
         <label for="nome">Nome do produto</label>
         <input id="nome" type="text" name="nome" value="{{ old('nome', $produto->nome) }}" required>
@@ -56,7 +72,7 @@
     <div class="field-group-full">
         <label for="imagem_principal">Imagem principal</label>
         <input id="imagem_principal" type="text" name="imagem_principal" value="{{ old('imagem_principal', $produto->imagem_principal) }}">
-        <small>Pode ser uma URL ou referencia para a proxima fase de midia do sistema.</small>
+        <small>Ela sera usada no painel, na vitrine publica, na pagina da loja e no comparativo do produto.</small>
     </div>
 
     <div class="field-group-full">
@@ -75,3 +91,24 @@
     <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Voltar para produtos</a>
     <button class="button" type="submit">{{ $submitLabel }}</button>
 </div>
+
+<script>
+    (() => {
+        const input = document.getElementById('imagem_principal');
+        const preview = document.getElementById('imagemPreview');
+
+        if (!input || !preview) {
+            return;
+        }
+
+        const fallback = preview.getAttribute('src');
+
+        const updatePreview = () => {
+            const value = input.value.trim();
+            preview.src = value !== '' ? value : fallback;
+        };
+
+        input.addEventListener('input', updatePreview);
+        input.addEventListener('change', updatePreview);
+    })();
+</script>
