@@ -660,6 +660,159 @@
                 background: rgba(255, 240, 230, 0.9);
             }
 
+            .panel-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+                gap: 18px;
+            }
+
+            .month-grid {
+                display: grid;
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+                gap: 12px;
+                align-items: end;
+            }
+
+            .month-card {
+                padding: 16px 14px;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(76, 42, 22, 0.08);
+            }
+
+            .month-card strong {
+                display: block;
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+                color: var(--muted);
+            }
+
+            .month-bars {
+                display: grid;
+                gap: 8px;
+            }
+
+            .month-bar-group {
+                display: grid;
+                gap: 6px;
+            }
+
+            .month-bar {
+                position: relative;
+                height: 10px;
+                border-radius: 999px;
+                background: rgba(44, 24, 17, 0.08);
+                overflow: hidden;
+            }
+
+            .month-bar > span {
+                display: block;
+                height: 100%;
+                border-radius: inherit;
+            }
+
+            .month-bar.is-receita > span {
+                background: linear-gradient(90deg, #0f9f8f, #34d399);
+            }
+
+            .month-bar.is-despesa > span {
+                background: linear-gradient(90deg, #ff6b2c, #f59e0b);
+            }
+
+            .month-legend {
+                display: grid;
+                gap: 4px;
+                margin-top: 10px;
+                color: var(--muted);
+                font-size: 0.82rem;
+            }
+
+            .progress-stack {
+                display: grid;
+                gap: 14px;
+            }
+
+            .progress-row {
+                display: grid;
+                gap: 8px;
+            }
+
+            .progress-meta {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                color: var(--muted);
+                font-size: 0.9rem;
+            }
+
+            .progress-track {
+                height: 12px;
+                border-radius: 999px;
+                background: rgba(44, 24, 17, 0.08);
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                display: block;
+                height: 100%;
+                border-radius: inherit;
+                background: linear-gradient(90deg, var(--accent), #ffb16c);
+            }
+
+            .progress-fill.is-teal {
+                background: linear-gradient(90deg, var(--accent-2), #5eead4);
+            }
+
+            .highlight-grid {
+                display: grid;
+                gap: 14px;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .highlight-card {
+                padding: 18px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(76, 42, 22, 0.08);
+            }
+
+            .highlight-card strong {
+                display: block;
+                font-size: 1.6rem;
+                margin-bottom: 8px;
+            }
+
+            .highlight-card span,
+            .highlight-card small {
+                color: var(--muted);
+                line-height: 1.6;
+            }
+
+            .signal-list {
+                display: grid;
+                gap: 12px;
+            }
+
+            .signal-item {
+                display: grid;
+                gap: 6px;
+                padding: 16px 18px;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(76, 42, 22, 0.08);
+            }
+
+            .signal-item strong {
+                display: block;
+                font-size: 1rem;
+            }
+
+            .signal-item small,
+            .signal-item span {
+                color: var(--muted);
+                line-height: 1.6;
+            }
+
             @media (max-width: 1180px) {
                 .admin-shell {
                     grid-template-columns: 1fr;
@@ -673,7 +826,10 @@
                 .grid-3,
                 .grid-2,
                 .stats-grid,
-                .form-grid {
+                .form-grid,
+                .panel-grid,
+                .highlight-grid,
+                .month-grid {
                     grid-template-columns: 1fr;
                 }
 
