@@ -1084,6 +1084,11 @@
                     <span class="account-chip">
                         {{ $assinaturaAtual?->status ?? 'sem assinatura' }}
                     </span>
+                    @if (! empty($papelAtualConta))
+                        <span class="account-chip" style="margin-left:8px;">
+                            {{ $papelAtualConta }}
+                        </span>
+                    @endif
                 </section>
 
                 <nav class="menu-card">
@@ -1113,6 +1118,12 @@
                             <span>Financeiro</span>
                             <small>caixa e titulos</small>
                         </a>
+                        @if (in_array($papelAtualConta, ['owner', 'gestor'], true))
+                            <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
+                                <span>Equipe</span>
+                                <small>acessos e papeis</small>
+                            </a>
+                        @endif
                     </div>
                 </nav>
 
@@ -1176,10 +1187,17 @@
                 <strong>Lojas</strong>
                 <span>operacao</span>
             </a>
-            <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
-                <strong>Setup</strong>
-                <span>onboarding</span>
-            </a>
+            @if (in_array($papelAtualConta, ['owner', 'gestor'], true))
+                <a class="mobile-dock-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
+                    <strong>Equipe</strong>
+                    <span>acessos</span>
+                </a>
+            @else
+                <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
+                    <strong>Setup</strong>
+                    <span>onboarding</span>
+                </a>
+            @endif
         </nav>
     </body>
 </html>

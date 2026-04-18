@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Admin\Financeiro\ContaReceberController as AdminCon
 use App\Http\Controllers\Web\Admin\FinanceiroController as AdminFinanceiroController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaFinanceiraController as AdminContaFinanceiraController;
 use App\Http\Controllers\Web\Admin\Financeiro\MovimentacaoFinanceiraController as AdminMovimentacaoFinanceiraController;
+use App\Http\Controllers\Web\Admin\EquipeController as AdminEquipeController;
 use App\Http\Controllers\Web\Admin\LojaController as AdminLojaController;
 use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('panel:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding');
+        Route::resource('equipe', AdminEquipeController::class)
+            ->except(['show', 'destroy'])
+            ->middleware('conta.role:owner,gestor');
         Route::prefix('financeiro')->name('financeiro.')->group(function () {
             Route::get('/', AdminFinanceiroController::class)->name('index');
             Route::resource('categorias', AdminCategoriaFinanceiraController::class)->except(['show']);

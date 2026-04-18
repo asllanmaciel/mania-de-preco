@@ -25,6 +25,7 @@ abstract class AdminController extends Controller
             'user' => $request->user(),
             'conta' => $conta,
             'assinaturaAtual' => $conta->assinaturas()->latest('id')->first(),
+            'papelAtualConta' => $request->user()->papelNaConta($conta),
         ];
     }
 

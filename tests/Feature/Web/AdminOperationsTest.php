@@ -115,6 +115,76 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Publicar o primeiro preco');
     }
 
+    public function test_owner_can_manage_team_members(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.equipe.index'))
+            ->assertOk()
+            ->assertSee('Gestao da equipe');
+
+        $response = $this->actingAs($user)->post(route('admin.equipe.store'), [
+            'name' => 'Financeiro Conta',
+            'email' => 'financeiro@conta-web.test',
+            'password' => 'password',
+            'papel' => 'financeiro',
+            'ativo' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.equipe.index'));
+
+        $membro = User::where('email', 'financeiro@conta-web.test')->firstOrFail();
+
+        $this->assertDatabaseHas('conta_user', [
+            'conta_id' => $conta->id,
+            'user_id' => $membro->id,
+            'papel' => 'financeiro',
+            'ativo' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->put(route('admin.equipe.update', $membro), [
+                'name' => 'Financeiro Lider',
+                'email' => 'financeiro@conta-web.test',
+                'papel' => 'gestor',
+                'ativo' => '1',
+            ])
+            ->assertRedirect(route('admin.equipe.edit', $membro));
+
+        $this->assertDatabaseHas('users', [
+            'id' => $membro->id,
+            'name' => 'Financeiro Lider',
+        ]);
+
+        $this->assertDatabaseHas('conta_user', [
+            'conta_id' => $conta->id,
+            'user_id' => $membro->id,
+            'papel' => 'gestor',
+        ]);
+    }
+
+    public function test_operational_user_cannot_manage_team_members(): void
+    {
+        [$owner, $conta] = $this->criarContaComUsuario();
+
+        $operador = User::create([
+            'name' => 'Operador Conta',
+            'email' => 'operador@conta-web.test',
+            'password' => 'password',
+        ]);
+
+        $conta->usuarios()->attach($operador->id, [
+            'papel' => 'operacao',
+            'ativo' => true,
+            'ultimo_acesso_em' => now(),
+        ]);
+
+        $this->actingAs($operador)
+            ->get(route('admin.equipe.index'))
+            ->assertForbidden();
+    }
+
     public function test_dashboard_shows_onboarding_banner_when_setup_is_incomplete(): void
     {
         [$user] = $this->criarContaComUsuario();

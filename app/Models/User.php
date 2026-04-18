@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,7 +50,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function contas()
+    public function contas(): BelongsToMany
     {
         return $this->belongsToMany(Conta::class, 'conta_user')
             ->withPivot(['papel', 'ativo', 'ultimo_acesso_em'])
@@ -106,5 +107,29 @@ class User extends Authenticatable
             'admin' => route('admin.dashboard'),
             default => route('cliente.dashboard'),
         };
+    }
+
+    public function papelNaConta(?Conta $conta): ?string
+    {
+        if (! $conta) {
+            return null;
+        }
+
+        $pivotConta = $this->contas->firstWhere('id', $conta->id);
+
+        if ($pivotConta?->pivot) {
+            return (string) $pivotConta->pivot->papel;
+        }
+
+        $contaVinculada = $this->contas()
+            ->where('conta_id', $conta->id)
+            ->first();
+
+        return $contaVinculada?->pivot?->papel;
+    }
+
+    public function podeGerirEquipe(?Conta $conta): bool
+    {
+        return in_array($this->papelNaConta($conta), ['owner', 'gestor'], true);
     }
 }

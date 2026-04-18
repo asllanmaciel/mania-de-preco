@@ -77,6 +77,24 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
+            $gestora = User::updateOrCreate(
+                ['email' => 'gestora.demo@maniadepreco.com.br'],
+                [
+                    'name' => 'Gestora Demo',
+                    'password' => Hash::make('password'),
+                    'is_super_admin' => false,
+                ]
+            );
+
+            $financeiro = User::updateOrCreate(
+                ['email' => 'financeiro.demo@maniadepreco.com.br'],
+                [
+                    'name' => 'Financeiro Demo',
+                    'password' => Hash::make('password'),
+                    'is_super_admin' => false,
+                ]
+            );
+
             $conta = Conta::updateOrCreate(
                 ['slug' => 'conta-demo'],
                 [
@@ -95,6 +113,16 @@ class DatabaseSeeder extends Seeder
                     'papel' => 'owner',
                     'ativo' => true,
                     'ultimo_acesso_em' => now(),
+                ],
+                $gestora->id => [
+                    'papel' => 'gestor',
+                    'ativo' => true,
+                    'ultimo_acesso_em' => now()->subDay(),
+                ],
+                $financeiro->id => [
+                    'papel' => 'financeiro',
+                    'ativo' => true,
+                    'ultimo_acesso_em' => now()->subDays(2),
                 ],
             ]);
 
