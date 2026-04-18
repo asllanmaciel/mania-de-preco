@@ -24,12 +24,17 @@
                     <span>precos cadastrados nas lojas da conta</span>
                 </article>
                 <article class="stat-card-soft">
-                    <strong>{{ number_format($lojasDaConta->count(), 0, ',', '.') }}</strong>
-                    <span>lojas disponiveis para precificacao</span>
+                    <strong>
+                        {{ number_format($usoPlano['metricas']['produtos']['usado'], 0, ',', '.') }}
+                        @if (! $usoPlano['metricas']['produtos']['ilimitado'])
+                            / {{ number_format($usoPlano['metricas']['produtos']['limite'], 0, ',', '.') }}
+                        @endif
+                    </strong>
+                    <span>produtos conectados ao plano</span>
                 </article>
                 <article class="stat-card-soft">
-                    <strong>{{ number_format($precos->getCollection()->sum('preco'), 2, ',', '.') }}</strong>
-                    <span>soma dos valores exibidos nesta pagina</span>
+                    <strong>{{ $usoPlano['metricas']['produtos']['ilimitado'] ? 'sem limite' : number_format($usoPlano['metricas']['produtos']['disponivel'], 0, ',', '.') }}</strong>
+                    <span>produtos ainda disponiveis para precificacao</span>
                 </article>
             </div>
 

@@ -134,9 +134,9 @@ class DatabaseSeeder extends Seeder
                     'descricao' => 'Plano inicial para pequenas lojas.',
                     'valor_mensal' => 49.90,
                     'valor_anual' => 499.00,
-                    'limite_usuarios' => 3,
-                    'limite_lojas' => 3,
-                    'limite_produtos' => 800,
+                    'limite_usuarios' => 8,
+                    'limite_lojas' => 8,
+                    'limite_produtos' => 50,
                     'recursos' => [
                         'controle_financeiro',
                         'catalogo_publico',

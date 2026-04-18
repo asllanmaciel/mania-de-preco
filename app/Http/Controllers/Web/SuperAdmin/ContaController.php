@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conta;
+use App\Support\Billing\ContaUsageMeter;
+use App\Support\Inteligencia\ContaHealthAnalyzer;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -43,7 +45,12 @@ class ContaController extends Controller
         ]);
     }
 
-    public function show(Request $request, Conta $conta): View
+    public function show(
+        Request $request,
+        Conta $conta,
+        ContaUsageMeter $usageMeter,
+        ContaHealthAnalyzer $healthAnalyzer
+    ): View
     {
         $conta->load([
             'usuarios' => fn ($query) => $query->orderBy('name'),
@@ -61,6 +68,8 @@ class ContaController extends Controller
             'user' => $request->user(),
             'conta' => $conta,
             'assinaturaAtual' => $assinaturaAtual,
+            'usoPlano' => $usageMeter->resumo($conta),
+            'saudeConta' => $healthAnalyzer->analisar($conta),
             'metricas' => [
                 'usuarios' => $conta->usuarios->count(),
                 'lojas' => $conta->lojas->count(),

@@ -25,6 +25,39 @@
         </div>
     </section>
 
+    <section class="card">
+        <div class="card-body">
+            <div class="section-head">
+                <div>
+                    <h2 style="margin:0;">Saude da conta</h2>
+                    <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Leitura executiva para sucesso do cliente, retencao, upgrade e priorizacao de suporte.</p>
+                </div>
+                <span class="chip">{{ $saudeConta['nivel']['nome'] }} | {{ $saudeConta['score'] }}/100</span>
+            </div>
+
+            <div class="grid-2" style="margin-top:18px;">
+                <article class="mini-card">
+                    <strong>{{ $saudeConta['proxima_acao']['titulo'] ?? 'Conta estavel' }}</strong>
+                    <span>{{ $saudeConta['proxima_acao']['descricao'] ?? 'Nenhuma acao critica identificada neste momento.' }}</span>
+                </article>
+                <article class="mini-card">
+                    <strong>{{ number_format(count($saudeConta['sinais']), 0, ',', '.') }} sinais</strong>
+                    <span>{{ $saudeConta['nivel']['descricao'] }}</span>
+                </article>
+            </div>
+
+            <div class="grid-4" style="margin-top:18px;">
+                @foreach ($saudeConta['pilares'] as $pilar)
+                    <article class="mini-card">
+                        <strong>{{ $pilar['score'] }}/100</strong>
+                        <span>{{ $pilar['nome'] }}</span>
+                        <small>{{ $pilar['descricao'] }}</small>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <section class="grid-3">
         <article class="metric"><strong>{{ number_format($metricas['usuarios'], 0, ',', '.') }}</strong><span>usuarios vinculados</span></article>
         <article class="metric"><strong>{{ number_format($metricas['lojas'], 0, ',', '.') }}</strong><span>lojas operando</span></article>
@@ -32,6 +65,33 @@
         <article class="metric"><strong>{{ number_format($metricas['movimentacoes'], 0, ',', '.') }}</strong><span>movimentacoes recentes no recorte</span></article>
         <article class="metric"><strong>{{ number_format($metricas['pagar_aberto'], 0, ',', '.') }}</strong><span>titulos a pagar abertos</span></article>
         <article class="metric"><strong>{{ number_format($metricas['receber_aberto'], 0, ',', '.') }}</strong><span>titulos a receber abertos</span></article>
+    </section>
+
+    <section class="card">
+        <div class="card-body">
+            <div class="section-head">
+                <div>
+                    <h2 style="margin:0;">Uso comercial do plano</h2>
+                    <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Consumo real da conta contra os limites contratados, pronto para orientar upgrade, suporte e risco operacional.</p>
+                </div>
+                <span class="chip">{{ $usoPlano['plano']?->nome ?? 'Sem plano' }}</span>
+            </div>
+
+            <div class="grid-3" style="margin-top:18px;">
+                @foreach ($usoPlano['metricas'] as $metrica)
+                    <article class="mini-card">
+                        <strong>
+                            {{ number_format($metrica['usado'], 0, ',', '.') }}
+                            @if (! $metrica['ilimitado'])
+                                / {{ number_format($metrica['limite'], 0, ',', '.') }}
+                            @endif
+                        </strong>
+                        <span>{{ ucfirst($metrica['rotulo']) }} consumidos</span>
+                        <small>{{ $metrica['ilimitado'] ? 'sem limite configurado' : $metrica['disponivel'] . ' disponiveis' }}</small>
+                    </article>
+                @endforeach
+            </div>
+        </div>
     </section>
 
     <section class="grid-2">

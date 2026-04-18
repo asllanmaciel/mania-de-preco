@@ -6,11 +6,13 @@ use App\Models\Conta;
 use App\Models\ContaFinanceira;
 use App\Models\ContaPagar;
 use App\Models\ContaReceber;
+use App\Models\Assinatura;
 use App\Models\CategoriaFinanceira;
 use App\Models\HistoricoPreco;
 use App\Models\MovimentacaoFinanceira;
 use App\Models\Loja;
 use App\Models\Preco;
+use App\Models\Plano;
 use App\Models\Produto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -45,6 +47,34 @@ class AdminOperationsTest extends TestCase
             'user_id' => $user->id,
             'area' => 'lojas',
             'acao' => 'loja_criada',
+        ]);
+    }
+
+    public function test_plan_limits_block_store_creation_when_store_limit_is_reached(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+        $this->assinarContaComPlanoLimitado($conta, ['limite_lojas' => 1]);
+
+        Loja::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Loja Matriz',
+            'tipo_loja' => 'fisica',
+            'status' => 'ativo',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.lojas.store'), [
+            'nome' => 'Loja Extra',
+            'tipo_loja' => 'mista',
+            'status' => 'ativo',
+        ]);
+
+        $response
+            ->assertRedirect(route('admin.lojas.index'))
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseMissing('lojas', [
+            'conta_id' => $conta->id,
+            'nome' => 'Loja Extra',
         ]);
     }
 
@@ -181,6 +211,28 @@ class AdminOperationsTest extends TestCase
             'user_id' => $user->id,
             'area' => 'equipe',
             'acao' => 'membro_atualizado',
+        ]);
+    }
+
+    public function test_plan_limits_block_team_member_creation_when_user_limit_is_reached(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+        $this->assinarContaComPlanoLimitado($conta, ['limite_usuarios' => 1]);
+
+        $response = $this->actingAs($user)->post(route('admin.equipe.store'), [
+            'name' => 'Novo Financeiro',
+            'email' => 'novo.financeiro@conta-web.test',
+            'password' => 'password',
+            'papel' => 'financeiro',
+            'ativo' => '1',
+        ]);
+
+        $response
+            ->assertRedirect(route('admin.equipe.index'))
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'novo.financeiro@conta-web.test',
         ]);
     }
 
@@ -330,6 +382,8 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('Onboarding da conta')
+            ->assertSee('Saude da conta')
+            ->assertSee('Score executivo')
             ->assertSee('Abrir onboarding');
     }
 
@@ -756,6 +810,61 @@ class AdminOperationsTest extends TestCase
         ]);
     }
 
+    public function test_plan_limits_block_new_product_price_when_product_limit_is_reached(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+        $this->assinarContaComPlanoLimitado($conta, ['limite_produtos' => 1]);
+
+        $loja = Loja::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Loja Norte',
+            'tipo_loja' => 'fisica',
+            'status' => 'ativo',
+        ]);
+
+        $categoriaId = \App\Models\Categoria::create([
+            'nome' => 'Alimentos',
+            'slug' => 'alimentos',
+        ])->id;
+
+        $produtoPermitido = Produto::create([
+            'nome' => 'Arroz Tipo 1',
+            'slug' => 'arroz-tipo-1',
+            'categoria_id' => $categoriaId,
+            'status' => 'ativo',
+        ]);
+
+        $produtoBloqueado = Produto::create([
+            'nome' => 'Feijao Tipo 1',
+            'slug' => 'feijao-tipo-1',
+            'categoria_id' => $categoriaId,
+            'status' => 'ativo',
+        ]);
+
+        Preco::create([
+            'produto_id' => $produtoPermitido->id,
+            'loja_id' => $loja->id,
+            'preco' => 29.90,
+            'tipo_preco' => 'pix',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.precos.store'), [
+            'produto_id' => $produtoBloqueado->id,
+            'loja_id' => $loja->id,
+            'preco' => 8.90,
+            'tipo_preco' => 'pix',
+        ]);
+
+        $response
+            ->assertRedirect(route('admin.precos.index'))
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseMissing('precos', [
+            'produto_id' => $produtoBloqueado->id,
+            'loja_id' => $loja->id,
+        ]);
+    }
+
     public function test_updating_price_registers_history_with_variation(): void
     {
         [$user, $conta] = $this->criarContaComUsuario();
@@ -830,5 +939,31 @@ class AdminOperationsTest extends TestCase
         ]);
 
         return [$user, $conta];
+    }
+
+    private function assinarContaComPlanoLimitado(Conta $conta, array $limites = []): Plano
+    {
+        $plano = Plano::create([
+            'nome' => 'Plano Limitado',
+            'slug' => 'plano-limitado-' . $conta->id,
+            'descricao' => 'Plano usado para validar limites operacionais.',
+            'valor_mensal' => 49.90,
+            'valor_anual' => 499.00,
+            'limite_usuarios' => $limites['limite_usuarios'] ?? 3,
+            'limite_lojas' => $limites['limite_lojas'] ?? 3,
+            'limite_produtos' => $limites['limite_produtos'] ?? 3,
+            'status' => 'ativo',
+        ]);
+
+        Assinatura::create([
+            'conta_id' => $conta->id,
+            'plano_id' => $plano->id,
+            'status' => 'ativa',
+            'ciclo_cobranca' => 'mensal',
+            'valor' => 49.90,
+            'inicia_em' => now()->toDateString(),
+        ]);
+
+        return $plano;
     }
 }

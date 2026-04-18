@@ -8,8 +8,13 @@
     <section class="grid-3">
         <article class="metric-card card">
             <span class="metric-label">Membros ativos</span>
-            <strong class="metric-value">{{ number_format($usuarios->where('pivot.ativo', true)->count(), 0, ',', '.') }}</strong>
-            <span class="metric-trend">time operacional habilitado</span>
+            <strong class="metric-value">
+                {{ number_format($usoPlano['metricas']['usuarios']['usado'], 0, ',', '.') }}
+                @if (! $usoPlano['metricas']['usuarios']['ilimitado'])
+                    / {{ number_format($usoPlano['metricas']['usuarios']['limite'], 0, ',', '.') }}
+                @endif
+            </strong>
+            <span class="metric-trend">uso do limite de usuarios do plano</span>
         </article>
         <article class="metric-card card">
             <span class="metric-label">Owners e gestores</span>
@@ -17,9 +22,11 @@
             <span class="metric-trend">governanca da conta</span>
         </article>
         <article class="metric-card card">
-            <span class="metric-label">Funcoes ativas</span>
-            <strong class="metric-value">{{ number_format(collect($contagemPorPapel)->filter(fn ($total) => $total > 0)->count(), 0, ',', '.') }}</strong>
-            <span class="metric-trend">papeis em uso</span>
+            <span class="metric-label">Espacos disponiveis</span>
+            <strong class="metric-value">
+                {{ $usoPlano['metricas']['usuarios']['ilimitado'] ? 'sem limite' : number_format($usoPlano['metricas']['usuarios']['disponivel'], 0, ',', '.') }}
+            </strong>
+            <span class="metric-trend">capacidade restante para novos acessos</span>
         </article>
     </section>
 

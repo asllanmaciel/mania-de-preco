@@ -122,6 +122,7 @@ class AdminAccessTest extends TestCase
             ->get("/super-admin/contas/{$conta->id}")
             ->assertOk()
             ->assertSee('Conta Estrutural')
+            ->assertSee('Saude da conta')
             ->assertSee('Assinaturas')
             ->assertSee('Usuarios da conta');
     }

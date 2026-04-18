@@ -20,16 +20,21 @@
 
             <div class="stats-grid">
                 <article class="stat-card-soft">
-                    <strong>{{ number_format($lojas->total(), 0, ',', '.') }}</strong>
-                    <span>lojas cadastradas na conta</span>
+                    <strong>
+                        {{ number_format($usoPlano['metricas']['lojas']['usado'], 0, ',', '.') }}
+                        @if (! $usoPlano['metricas']['lojas']['ilimitado'])
+                            / {{ number_format($usoPlano['metricas']['lojas']['limite'], 0, ',', '.') }}
+                        @endif
+                    </strong>
+                    <span>uso do limite de lojas do plano</span>
                 </article>
                 <article class="stat-card-soft">
                     <strong>{{ number_format($lojas->getCollection()->where('status', 'ativo')->count(), 0, ',', '.') }}</strong>
                     <span>lojas ativas nesta pagina</span>
                 </article>
                 <article class="stat-card-soft">
-                    <strong>{{ number_format($lojas->getCollection()->sum('precos_count'), 0, ',', '.') }}</strong>
-                    <span>precos vinculados nas lojas listadas</span>
+                    <strong>{{ $usoPlano['metricas']['lojas']['ilimitado'] ? 'sem limite' : number_format($usoPlano['metricas']['lojas']['disponivel'], 0, ',', '.') }}</strong>
+                    <span>lojas ainda disponiveis no plano atual</span>
                 </article>
             </div>
 

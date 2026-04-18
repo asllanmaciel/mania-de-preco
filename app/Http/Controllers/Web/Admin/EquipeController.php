@@ -6,13 +6,17 @@ use Illuminate\Contracts\View\View;
 use App\Models\User;
 use App\Services\Auditoria\AuditLogger;
 use App\Support\Access\ContaAccess;
+use App\Support\Billing\ContaUsageMeter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class EquipeController extends AdminController
 {
-    public function __construct(private readonly AuditLogger $audit)
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly ContaUsageMeter $usageMeter
+    )
     {
     }
 
@@ -45,6 +49,7 @@ class EquipeController extends AdminController
             'papelSelecionado' => $papel,
             'contagemPorPapel' => $contagemPorPapel,
             'papeisDisponiveis' => $this->papeisDisponiveis(),
+            'usoPlano' => $this->usageMeter->resumo($conta),
         ], $conta);
     }
 
@@ -59,6 +64,13 @@ class EquipeController extends AdminController
     public function store(Request $request): RedirectResponse
     {
         $conta = $this->contaAtual($request);
+
+        if (! $this->usageMeter->podeAdicionar($conta, 'usuarios')) {
+            return redirect()
+                ->route('admin.equipe.index')
+                ->with('status', $this->usageMeter->mensagemBloqueio($conta, 'usuarios'));
+        }
+
         $dados = $this->validarMembro($request);
 
         $usuario = User::where('email', $dados['email'])->first();

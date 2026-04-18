@@ -62,6 +62,93 @@
         </section>
     @endif
 
+    <section class="card">
+        <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <h2>Saude da conta</h2>
+                    <p>Score executivo que combina assinatura, operacao, financeiro e governanca para indicar onde agir primeiro.</p>
+                </div>
+                <span class="pill">{{ $saudeConta['nivel']['nome'] }}</span>
+            </div>
+
+            <div class="highlight-grid">
+                <article class="highlight-card">
+                    <strong>{{ $saudeConta['score'] }}/100</strong>
+                    <span>{{ $saudeConta['nivel']['descricao'] }}</span>
+                </article>
+
+                <article class="highlight-card">
+                    <strong>{{ $saudeConta['proxima_acao']['titulo'] ?? 'Conta em ritmo bom' }}</strong>
+                    <span>{{ $saudeConta['proxima_acao']['descricao'] ?? 'Continue acompanhando os sinais da operacao.' }}</span>
+                </article>
+
+                <article class="highlight-card">
+                    <strong>{{ number_format(count($saudeConta['sinais']), 0, ',', '.') }}</strong>
+                    <span>sinais priorizados para orientar a proxima decisao</span>
+                </article>
+            </div>
+
+            <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));">
+                @foreach ($saudeConta['pilares'] as $pilar)
+                    <article class="mini-card">
+                        <strong>{{ $pilar['score'] }}/100</strong>
+                        <span>{{ $pilar['nome'] }}</span>
+                        <div class="progress-track" style="margin-top:12px;">
+                            <span class="progress-fill {{ $pilar['score'] >= 70 ? 'is-teal' : '' }}" style="width: {{ $pilar['score'] }}%;"></span>
+                        </div>
+                        <small class="helper-text">{{ $pilar['descricao'] }}</small>
+                    </article>
+                @endforeach
+            </div>
+
+            <div class="signal-list">
+                @foreach (array_slice($saudeConta['sinais'], 0, 3) as $sinal)
+                    <article class="signal-item">
+                        <strong>{{ $sinal['titulo'] }}</strong>
+                        <span>{{ $sinal['descricao'] }}</span>
+                        @if (! empty($sinal['rota']))
+                            <a class="ghost-link" href="{{ route($sinal['rota']) }}">{{ $sinal['acao'] }}</a>
+                        @else
+                            <small class="helper-text">{{ $sinal['acao'] }}</small>
+                        @endif
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <h2>Uso do plano</h2>
+                    <p>Leitura de capacidade da conta para evitar crescimento desorganizado e antecipar upgrade quando a operacao estiver perto do limite.</p>
+                </div>
+                <span class="pill">{{ $usoPlano['plano']?->nome ?? 'Plano nao definido' }}</span>
+            </div>
+
+            <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
+                @foreach ($usoPlano['metricas'] as $metrica)
+                    <article class="mini-card">
+                        <strong>{{ number_format($metrica['usado'], 0, ',', '.') }}{{ $metrica['ilimitado'] ? '' : ' / ' . number_format($metrica['limite'], 0, ',', '.') }}</strong>
+                        <span>{{ ucfirst($metrica['rotulo']) }} em uso</span>
+                        @if (! $metrica['ilimitado'])
+                            <div class="progress-track" style="margin-top:12px;">
+                                <span class="progress-fill {{ $metrica['excedido'] ? '' : 'is-teal' }}" style="width: {{ $metrica['percentual'] }}%;"></span>
+                            </div>
+                            <small class="helper-text">
+                                {{ $metrica['disponivel'] }} disponiveis no plano atual
+                            </small>
+                        @else
+                            <small class="helper-text">sem limite operacional configurado</small>
+                        @endif
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <section class="grid-4">
         <article class="card metric-card">
             <span class="metric-label">Saldo projetado</span>

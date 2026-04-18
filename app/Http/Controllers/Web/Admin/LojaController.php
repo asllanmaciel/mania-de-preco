@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Models\Loja;
 use App\Services\Auditoria\AuditLogger;
+use App\Support\Billing\ContaUsageMeter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class LojaController extends AdminController
 {
-    public function __construct(private readonly AuditLogger $audit)
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly ContaUsageMeter $usageMeter
+    )
     {
     }
 
@@ -37,6 +41,7 @@ class LojaController extends AdminController
         return $this->responder($request, 'admin.lojas.index', [
             'busca' => $busca,
             'lojas' => $lojas,
+            'usoPlano' => $this->usageMeter->resumo($conta),
         ], $conta);
     }
 
@@ -50,6 +55,13 @@ class LojaController extends AdminController
     public function store(Request $request): RedirectResponse
     {
         $conta = $this->contaAtual($request);
+
+        if (! $this->usageMeter->podeAdicionar($conta, 'lojas')) {
+            return redirect()
+                ->route('admin.lojas.index')
+                ->with('status', $this->usageMeter->mensagemBloqueio($conta, 'lojas'));
+        }
+
         $dados = $this->validarLoja($request);
         $dados['conta_id'] = $conta->id;
         $dados['uf'] = $dados['uf'] ? strtoupper($dados['uf']) : null;

@@ -6,6 +6,7 @@ use App\Models\Loja;
 use App\Models\Preco;
 use App\Models\Produto;
 use App\Services\Auditoria\AuditLogger;
+use App\Support\Billing\ContaUsageMeter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -13,7 +14,10 @@ use Illuminate\View\View;
 
 class PrecoController extends AdminController
 {
-    public function __construct(private readonly AuditLogger $audit)
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly ContaUsageMeter $usageMeter
+    )
     {
     }
 
@@ -36,6 +40,7 @@ class PrecoController extends AdminController
             'lojaIdSelecionada' => $lojaId,
             'lojasDaConta' => $lojasDaConta,
             'precos' => $precos,
+            'usoPlano' => $this->usageMeter->resumo($conta),
         ], $conta);
     }
 
@@ -54,6 +59,12 @@ class PrecoController extends AdminController
     {
         $conta = $this->contaAtual($request);
         $dados = $this->validarPreco($request, $conta);
+
+        if (! $this->usageMeter->podeVincularProduto($conta, (int) $dados['produto_id'])) {
+            return redirect()
+                ->route('admin.precos.index')
+                ->with('status', $this->usageMeter->mensagemBloqueio($conta, 'produtos'));
+        }
 
         $preco = Preco::create($dados);
 
@@ -87,6 +98,13 @@ class PrecoController extends AdminController
         $this->garantirPrecoDaConta($preco, $conta);
 
         $dados = $this->validarPreco($request, $conta);
+
+        if (! $this->usageMeter->podeVincularProduto($conta, (int) $dados['produto_id'], $preco)) {
+            return redirect()
+                ->route('admin.precos.edit', $preco)
+                ->with('status', $this->usageMeter->mensagemBloqueio($conta, 'produtos'));
+        }
+
         $antes = $preco->only(['produto_id', 'loja_id', 'preco', 'tipo_preco']);
         $preco->update($dados);
 
