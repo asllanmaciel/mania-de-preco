@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $produto->nome }} | Mania de Preco</title>
-        <meta name="description" content="Compare ofertas de {{ $produto->nome }} em lojas reais e encontre o melhor preco com contexto.">
+        <title>{{ $produto->nome }} | Mania de Preço</title>
+        <meta name="description" content="Compare ofertas de {{ $produto->nome }} em lojas reais e encontre o melhor preço com contexto.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -77,13 +77,13 @@
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
                     <span class="brand-badge">MP</span>
-                    <span>Mania de Preco</span>
+                    <span>Mania de Preço</span>
                 </a>
 
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <a class="chip" href="{{ route('home') }}">Voltar para ofertas</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
                     @endif
@@ -96,7 +96,7 @@
                         <span class="badge">{{ $produto->categoria?->nome ?? 'Sem categoria' }}</span>
                         <h1>{{ $produto->nome }}</h1>
                         <p>{{ $produto->marca?->nome ?? 'Marca nao informada' }}</p>
-                        <p style="margin-top:12px;">{{ $produto->descricao ?: 'Compare este item entre lojas ativas e descubra rapido qual oferta faz mais sentido para voce.' }}</p>
+                        <p style="margin-top:12px;">{{ $produto->descricao ?: 'Compare este item entre lojas ativas e descubra rápido qual oferta faz mais sentido para você.' }}</p>
 
                         <div class="hero-actions">
                             @if ($melhorOferta && $melhorOferta->loja)
@@ -106,7 +106,7 @@
                         </div>
 
                         <div class="stats">
-                            <div class="stat"><strong>R$ {{ number_format($menorPreco, 2, ',', '.') }}</strong><span>melhor preco</span></div>
+                            <div class="stat"><strong>R$ {{ number_format($menorPreco, 2, ',', '.') }}</strong><span>melhor preço</span></div>
                             <div class="stat"><strong>R$ {{ number_format($economia, 2, ',', '.') }}</strong><span>economia potencial</span></div>
                             <div class="stat"><strong>{{ number_format($ofertas->count(), 0, ',', '.') }}</strong><span>ofertas ativas</span></div>
                             <div class="stat"><strong>{{ number_format($cidades->count(), 0, ',', '.') }}</strong><span>cidades no comparativo</span></div>
@@ -137,15 +137,15 @@
 
                         <div class="section-head">
                             <div>
-                                <h3>Resumo rapido para decidir</h3>
+                                <h3>Resumo rápido para decidir</h3>
                                 <p class="muted" style="margin:8px 0 0;">Uma leitura direta para entender disponibilidade, tipos de pagamento e onde vale clicar primeiro.</p>
                             </div>
                         </div>
 
                         <div class="grid" style="grid-template-columns:1fr;">
                             <div class="mini">
-                                <strong>Faixa de preco</strong>
-                                <span>De R$ {{ number_format($menorPreco, 2, ',', '.') }} ate R$ {{ number_format($maiorPreco, 2, ',', '.') }}</span>
+                                <strong>Faixa de preço</strong>
+                                <span>De R$ {{ number_format($menorPreco, 2, ',', '.') }} até R$ {{ number_format($maiorPreco, 2, ',', '.') }}</span>
                             </div>
                             <div class="mini">
                                 <strong>Tipos de pagamento</strong>
@@ -159,8 +159,8 @@
 
                         <div class="trust-list" style="margin-top:16px;">
                             <div class="trust-item">
-                                <strong>Comparacao feita para decidir rapido</strong>
-                                <span class="small">Galeria, preco e chamada principal ficam proximos para reduzir rolagem e acelerar a escolha.</span>
+                                <strong>Comparação feita para decidir rápido</strong>
+                                <span class="small">Galeria, preço e chamada principal ficam próximos para reduzir rolagem e acelerar a escolha.</span>
                             </div>
                             <div class="trust-item">
                                 <strong>Oferta mais competitiva em destaque</strong>
@@ -176,7 +176,7 @@
                             <div class="section-head">
                                 <div>
                                     <h2>Ranking de lojas</h2>
-                                    <p class="muted">Veja rapidamente como o preco se distribui entre as lojas participantes.</p>
+                                    <p class="muted">Veja rapidamente como o preço se distribui entre as lojas participantes.</p>
                                 </div>
                             </div>
 
@@ -194,7 +194,7 @@
                             <div class="section-head">
                                 <div>
                                     <h2>Onde comprar agora</h2>
-                                    <p class="muted">Ofertas ordenadas para reduzir atrito na decisao e acelerar o clique.</p>
+                                    <p class="muted">Ofertas ordenadas para reduzir atrito na decisão e acelerar o clique.</p>
                                 </div>
                             </div>
 
@@ -243,7 +243,7 @@
             </main>
 
             <footer class="footer">
-                <span>Comparacao de produto pensada para reduzir atrito, destacar a melhor oferta e levar voce mais rapido ate a loja certa.</span>
+                <span>Comparação de produto pensada para reduzir atrito, destacar a melhor oferta e levar você mais rápido até a loja certa.</span>
             </footer>
         </div>
 

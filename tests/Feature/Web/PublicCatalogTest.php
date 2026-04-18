@@ -22,7 +22,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Compare precos reais e descubra onde vale comprar hoje.')
+            ->assertSee('Compare preços reais e descubra onde vale comprar hoje.')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Loja Centro');
     }
@@ -106,7 +106,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('produtos.public.show', $produto))
             ->assertOk()
-            ->assertSee('Resumo rapido para decidir')
+            ->assertSee('Resumo rápido para decidir')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Onde comprar agora')
             ->assertSee('/images/demo/produtos/shared/contexto-prateleira.svg');
@@ -118,9 +118,9 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('projeto'))
             ->assertOk()
-            ->assertSee('Sua loja aparece melhor quando preco, vitrine e operacao falam a mesma lingua.')
+            ->assertSee('Sua loja aparece melhor quando preço, vitrine e operação falam a mesma língua.')
             ->assertSee('lojas com vitrine ativa')
-            ->assertSee('Recursos ja no ar');
+            ->assertSee('Recursos já no ar');
     }
 
     public function test_public_updates_page_renders_changelog_timeline(): void
@@ -129,7 +129,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('novidades.index'))
             ->assertOk()
-            ->assertSee('Lancamentos que deixam a experiencia melhor para comprar e vender.')
+            ->assertSee('Lançamentos que deixam a experiência melhor para comprar e vender.')
             ->assertSee('Seed demo ampliado e filtros publicos mais fortes');
     }
 

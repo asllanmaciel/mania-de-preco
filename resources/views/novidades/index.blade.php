@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Lancamentos | Mania de Preco</title>
-        <meta name="description" content="Acompanhe os lancamentos mais recentes do Mania de Preco e veja o que esta deixando a experiencia melhor para comprar e vender.">
+        <title>Lançamentos | Mania de Preço</title>
+        <meta name="description" content="Acompanhe os lançamentos mais recentes do Mania de Preço e veja o que está deixando a experiência melhor para comprar e vender.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -55,13 +55,13 @@
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
                     <span class="brand-badge">MP</span>
-                    <span>Mania de Preco</span>
+                    <span>Mania de Preço</span>
                 </a>
 
                 <nav class="top-links">
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @endif
@@ -72,8 +72,8 @@
                 <section class="hero">
                     <article class="hero-card">
                         <span class="eyebrow">o que acabou de entrar no ar</span>
-                        <h1>Lancamentos que deixam a experiencia melhor para comprar e vender.</h1>
-                        <p>Esta pagina reune as melhorias mais recentes do Mania de Preco de um jeito facil de entender, com foco no que mudou e no valor que isso entrega para quem usa a plataforma.</p>
+                        <h1>Lançamentos que deixam a experiência melhor para comprar e vender.</h1>
+                        <p>Esta página reúne as melhorias mais recentes do Mania de Preço de um jeito fácil de entender, com foco no que mudou e no valor que isso entrega para quem usa a plataforma.</p>
 
                         <div class="buttons">
                             <a class="button" href="{{ route('home') }}">Ver ofertas</a>

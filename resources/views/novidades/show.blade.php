@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $entry['title'] }} | Mania de Preco</title>
-        <meta name="description" content="Veja os detalhes do lancamento {{ $entry['title'] }} e entenda como essa melhoria fortalece a experiencia no Mania de Preco.">
+        <title>{{ $entry['title'] }} | Mania de Preço</title>
+        <meta name="description" content="Veja os detalhes do lançamento {{ $entry['title'] }} e entenda como essa melhoria fortalece a experiência no Mania de Preço.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -56,13 +56,13 @@
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
                     <span class="brand-badge">MP</span>
-                    <span>Mania de Preco</span>
+                    <span>Mania de Preço</span>
                 </a>
 
                 <nav class="top-links">
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @endif

@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Mania de Preco</title>
-        <meta name="description" content="Compare precos reais, descubra onde comprar melhor hoje e encontre ofertas publicadas por lojas ativas perto de voce.">
+        <title>Mania de Preço</title>
+        <meta name="description" content="Compare preços reais, descubra onde comprar melhor hoje e encontre ofertas publicadas por lojas ativas perto de você.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -22,11 +22,13 @@
             .top-links { flex-wrap:wrap; justify-content:flex-end; align-items:center; }
             .chip, .badge, .kicker { display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:999px; }
             .chip { border:1px solid var(--line); background:rgba(255,255,255,.58); color:var(--muted); font-size:.92rem; }
-            .hero, .chart-grid, .offer-grid, .metrics-grid { display:grid; gap:16px; }
+            .hero, .chart-grid, .offer-grid, .metrics-grid, .trust-grid, .cta-grid { display:grid; gap:16px; }
             .hero { grid-template-columns:1.08fr .92fr; padding:12px 0 22px; }
             .chart-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
             .offer-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
             .metrics-grid { grid-template-columns:repeat(4, minmax(0, 1fr)); }
+            .trust-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+            .cta-grid { grid-template-columns:1.08fr .92fr; }
             .card, .hero-card { background:var(--surface); border:1px solid rgba(255,255,255,.62); box-shadow:var(--shadow); backdrop-filter:blur(16px); }
             .hero-card { position:relative; overflow:hidden; padding:38px; border-radius:var(--r1); }
             .hero-card::before { content:""; position:absolute; inset:0; background:linear-gradient(120deg, rgba(255,107,44,.1), transparent 40%), linear-gradient(160deg, transparent 55%, rgba(15,159,143,.12)); pointer-events:none; }
@@ -44,10 +46,11 @@
             .button-secondary { background:rgba(255,255,255,.72); border-color:var(--line); }
             .hero-actions { margin-top:28px; flex-wrap:wrap; }
             .stats { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:30px; }
-            .stat, .metric, .offer-price, .mini { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
+            .stat, .metric, .offer-price, .mini, .trust-card { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
             .stat strong, .metric strong, .offer-price strong, .mini strong { display:block; margin-bottom:6px; }
             .stat strong { font-size:1.4rem; }
             .metric strong { font-size:1.7rem; letter-spacing:-.05em; }
+            .trust-card strong { display:block; margin-bottom:8px; font-size:1.08rem; }
             .pulse-wrap, .offer-list article { padding:16px; border-radius:18px; background:rgba(255,255,255,.72); border:1px solid rgba(76,42,22,.08); }
             .badge { background:rgba(15,159,143,.12); color:#0e6e64; font-size:.82rem; }
             .badge.warm { background:rgba(255,107,44,.12); color:#bf542e; }
@@ -80,7 +83,7 @@
             .pagination-wrap svg { width:18px; height:18px; }
             .footer { display:flex; justify-content:space-between; gap:14px; align-items:center; padding:30px 0 48px; color:var(--muted); font-size:.92rem; }
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
-            @media (max-width:1100px) { .hero, .chart-grid, .offer-grid, .metrics-grid, form.filter { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
+            @media (max-width:1100px) { .hero, .chart-grid, .offer-grid, .metrics-grid, .trust-grid, .cta-grid, form.filter { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
             @media (max-width:720px) { .topbar, .top-links, .hero-actions, .section-head, .grid-head, .pulse-meta, .footer { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .stats, .offer-price-grid { grid-template-columns:1fr; } .button, .button-secondary, .chip { width:100%; justify-content:center; } .offer-media img { height:190px; } }
         </style>
     </head>
@@ -95,7 +98,7 @@
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
                     <span class="brand-badge">MP</span>
-                    <span>Mania de Preco</span>
+                    <span>Mania de Preço</span>
                 </a>
 
                 <nav class="top-links">
@@ -103,7 +106,7 @@
                     <a class="chip" href="#inteligencia">Como economizar</a>
                     <a class="chip" href="#ofertas">Mais procurados</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @else
@@ -116,8 +119,8 @@
                 <section class="hero">
                     <article class="hero-card">
                         <div class="eyebrow"><span class="dot"></span> ofertas reais publicadas por lojas ativas</div>
-                        <h1>Compare precos reais e descubra onde vale comprar hoje.</h1>
-                        <p>Busque produtos do dia a dia, veja ofertas publicadas por lojas ativas e escolha com mais seguranca sem perder tempo abrindo varias abas.</p>
+                        <h1>Compare preços reais e descubra onde vale comprar hoje.</h1>
+                        <p>Busque produtos do dia a dia, veja ofertas publicadas por lojas ativas e escolha com mais segurança sem perder tempo abrindo várias abas.</p>
 
                         <div class="hero-actions">
                             <a class="button" href="#ofertas">Explorar ofertas</a>
@@ -125,17 +128,17 @@
                         </div>
 
                         <div class="stats">
-                            <div class="stat"><strong>{{ number_format($totalOfertas, 0, ',', '.') }}</strong><span>ofertas publicas monitoradas</span></div>
-                            <div class="stat"><strong>{{ number_format($totalResultados, 0, ',', '.') }}</strong><span>produtos comparaveis nesta busca</span></div>
-                            <div class="stat"><strong>R$ {{ number_format($faixaMedia, 2, ',', '.') }}</strong><span>faixa media entre melhor e pior preco</span></div>
+                            <div class="stat"><strong>{{ number_format($totalOfertas, 0, ',', '.') }}</strong><span>ofertas públicas monitoradas</span></div>
+                            <div class="stat"><strong>{{ number_format($totalResultados, 0, ',', '.') }}</strong><span>produtos comparáveis nesta busca</span></div>
+                            <div class="stat"><strong>R$ {{ number_format($faixaMedia, 2, ',', '.') }}</strong><span>faixa média entre melhor e pior preço</span></div>
                         </div>
                     </article>
 
                     <aside class="card">
                         <div class="grid-head">
                             <div>
-                                <h3>Radar de precos</h3>
-                                <p class="muted" style="margin:8px 0 0;">Uma leitura rapida da faixa publicada agora para mostrar onde esta a melhor chance de economizar.</p>
+                                <h3>Radar de preços</h3>
+                                <p class="muted" style="margin:8px 0 0;">Uma leitura rápida da faixa publicada agora para mostrar onde está a melhor chance de economizar.</p>
                             </div>
                             <span class="badge">ao vivo</span>
                         </div>
@@ -155,7 +158,7 @@
                                     @endforeach
                                 </svg>
                             @else
-                                <div class="empty">Ainda nao ha ofertas suficientes para desenhar o pulse do mercado.</div>
+                                <div class="empty">Ainda não há ofertas suficientes para desenhar o pulso do mercado.</div>
                             @endif
                             <div class="pulse-meta">
                                 <span>menor oferta: R$ {{ number_format($pulse['menor'], 2, ',', '.') }}</span>
@@ -167,18 +170,43 @@
                             <div class="metric"><strong>{{ number_format($lojasAtivas, 0, ',', '.') }}</strong><span>lojas ativas</span></div>
                             <div class="metric"><strong>{{ $cidade !== '' ? $cidade : 'todas' }}</strong><span>cidade selecionada</span></div>
                             <div class="metric"><strong>{{ $categoriaSlug !== '' ? 'filtrada' : 'aberta' }}</strong><span>leitura por categoria</span></div>
-                            <div class="metric"><strong>{{ $ordenar === 'maior_economia' ? 'economia' : ($ordenar === 'mais_ofertas' ? 'volume' : 'preco') }}</strong><span>ranking atual</span></div>
+                            <div class="metric"><strong>{{ $ordenar === 'maior_economia' ? 'economia' : ($ordenar === 'mais_ofertas' ? 'volume' : 'preço') }}</strong><span>ranking atual</span></div>
                         </div>
                     </aside>
+                </section>
+
+                <section class="section">
+                    <div class="section-head">
+                        <div>
+                            <span class="kicker">confianca</span>
+                            <h2>Mais clareza para decidir, menos dúvida antes do clique.</h2>
+                        </div>
+                        <p class="muted">A experiência foi desenhada para fazer a comparação parecer simples, confiável e rápida já no primeiro contato.</p>
+                    </div>
+
+                    <div class="trust-grid">
+                        <article class="trust-card">
+                            <strong>Preços publicados por lojas ativas</strong>
+                            <span class="small">Você não cai em uma lista genérica. Cada oferta aparece ligada a uma loja real, com contexto de cidade e condições de pagamento.</span>
+                        </article>
+                        <article class="trust-card">
+                            <strong>Comparação feita para celular</strong>
+                            <span class="small">O caminho até a melhor oferta foi pensado para toque, leitura rápida e menos rolagem, especialmente no mobile.</span>
+                        </article>
+                        <article class="trust-card">
+                            <strong>Economia visível sem esforço</strong>
+                            <span class="small">Melhor valor, diferença entre ofertas e atalhos para lojas ficam próximos para reduzir atrito e acelerar a escolha.</span>
+                        </article>
+                    </div>
                 </section>
 
                 <section class="section" id="descoberta">
                     <div class="section-head">
                         <div>
                             <span class="kicker">descoberta</span>
-                            <h2>Encontre mais rapido o que cabe no seu bolso.</h2>
+                            <h2>Encontre mais rápido o que cabe no seu bolso.</h2>
                         </div>
-                        <p class="muted">Filtros simples, comparacao direta e menos friccao para sair da busca e chegar na decisao.</p>
+                        <p class="muted">Filtros simples, comparação direta e menos fricção para sair da busca e chegar na decisão.</p>
                     </div>
 
                     <article class="card">
@@ -210,15 +238,15 @@
                                     @endforeach
                                 </select>
                             </label>
-                            <label>Preco maximo
+                            <label>Preço máximo
                                 <input type="number" step="0.01" min="0" name="preco_ate" value="{{ $precoAte ?? '' }}" placeholder="Ex: 25.90">
                             </label>
                             <label>Ordenar por
                                 <select name="ordenar">
-                                    <option value="menor_preco" @selected($ordenar === 'menor_preco')>Menor preco</option>
+                                    <option value="menor_preco" @selected($ordenar === 'menor_preco')>Menor preço</option>
                                     <option value="maior_economia" @selected($ordenar === 'maior_economia')>Maior economia</option>
                                     <option value="mais_ofertas" @selected($ordenar === 'mais_ofertas')>Mais ofertas</option>
-                                    <option value="alfabetica" @selected($ordenar === 'alfabetica')>Ordem alfabetica</option>
+                                    <option value="alfabetica" @selected($ordenar === 'alfabetica')>Ordem alfabética</option>
                                 </select>
                             </label>
                             <div class="hero-actions" style="margin:0;">
@@ -235,16 +263,16 @@
                     <div class="section-head">
                         <div>
                             <span class="kicker">inteligencia</span>
-                            <h2>Menos rolagem, mais decisao.</h2>
+                            <h2>Menos rolagem, mais decisão.</h2>
                         </div>
-                        <p class="muted">Os graficos ajudam voce a enxergar concentracao de ofertas, cidades mais ativas e o espaco real para economizar.</p>
+                        <p class="muted">Os gráficos ajudam você a enxergar concentração de ofertas, cidades mais ativas e o espaço real para economizar.</p>
                     </div>
 
                     <div class="chart-grid">
                         <article class="card">
-                            <div class="grid-head"><h3>Concentracao por categoria</h3></div>
+                            <div class="grid-head"><h3>Concentração por categoria</h3></div>
                             @if ($categoriaChart->isEmpty())
-                                <div class="empty">Ainda nao ha dados suficientes para a leitura por categoria.</div>
+                                <div class="empty">Ainda não há dados suficientes para a leitura por categoria.</div>
                             @else
                                 <div class="bars">
                                     @foreach ($categoriaChart as $item)
@@ -274,9 +302,9 @@
                         </article>
 
                         <article class="card">
-                            <div class="grid-head"><h3>Amplitude de preco</h3></div>
+                            <div class="grid-head"><h3>Amplitude de preço</h3></div>
                             @if ($spreadChart->isEmpty())
-                                <div class="empty">Nao ha comparacao suficiente para mostrar amplitude de preco.</div>
+                                <div class="empty">Não há comparação suficiente para mostrar amplitude de preço.</div>
                             @else
                                 <div class="ranges">
                                     @foreach ($spreadChart as $item)
@@ -300,9 +328,9 @@
                     <div class="section-head">
                         <div>
                             <span class="kicker">ofertas</span>
-                            <h2>Ofertas que ja merecem seu clique.</h2>
+                            <h2>Ofertas que já merecem seu clique.</h2>
                         </div>
-                        <p class="muted">Veja o melhor valor, a economia possivel e a loja que esta puxando o preco para baixo em cada item.</p>
+                        <p class="muted">Veja o melhor valor, a economia possível e a loja que está puxando o preço para baixo em cada item.</p>
                     </div>
 
                     @if ($produtos->isEmpty())
@@ -324,21 +352,21 @@
                                     <div class="offer-head">
                                         <div class="offer-top">
                                             <h3><a href="{{ route('produtos.public.show', $produto) }}">{{ $produto->nome }}</a></h3>
-                                            <span class="small">{{ $produto->marca?->nome ?? 'Marca nao informada' }}</span>
-                                        </div>
-                                        <span class="badge">{{ $produto->precos_count }} ofertas</span>
+                                        <span class="small">{{ $produto->marca?->nome ?? 'Marca não informada' }}</span>
                                     </div>
+                                    <span class="badge">{{ $produto->precos_count }} ofertas</span>
+                                </div>
 
                                     <div class="offer-price-grid">
-                                        <div class="offer-price"><span class="small">melhor preco</span><strong>R$ {{ number_format($menorPreco, 2, ',', '.') }}</strong></div>
-                                        <div class="offer-price"><span class="small">economia possivel</span><strong>R$ {{ number_format($economia, 2, ',', '.') }}</strong></div>
+                                        <div class="offer-price"><span class="small">melhor preço</span><strong>R$ {{ number_format($menorPreco, 2, ',', '.') }}</strong></div>
+                                        <div class="offer-price"><span class="small">economia possível</span><strong>R$ {{ number_format($economia, 2, ',', '.') }}</strong></div>
                                     </div>
 
                                     <div class="offer-list">
                                         @foreach ($produto->melhores_ofertas as $oferta)
                                             <article>
                                                 <strong>
-                                                    <a href="{{ route('lojas.public.show', $oferta->loja) }}">{{ $oferta->loja?->nome ?? 'Loja nao informada' }}</a>
+                                                    <a href="{{ route('lojas.public.show', $oferta->loja) }}">{{ $oferta->loja?->nome ?? 'Loja não informada' }}</a>
                                                     <span>R$ {{ number_format((float) $oferta->preco, 2, ',', '.') }}</span>
                                                 </strong>
                                                 <small>{{ $oferta->loja?->cidade ?? 'Sem cidade' }} @if ($oferta->loja?->uf) / {{ $oferta->loja->uf }} @endif - {{ ucfirst(str_replace('_', ' ', $oferta->tipo_preco)) }}</small>
@@ -358,10 +386,32 @@
                         <div class="pagination-wrap" style="margin-top:20px;">{{ $produtos->links() }}</div>
                     @endif
                 </section>
+
+                <section class="section">
+                    <article class="hero-card">
+                        <div class="cta-grid">
+                            <div>
+                                <span class="kicker">para lojas</span>
+                                <h2 style="margin-top:14px;">Quer colocar sua loja na frente de quem já está comparando?</h2>
+                                <p>Publique ofertas, ganhe presença nas buscas e organize sua operação em uma experiência que já nasce pensada para celular e para conversão.</p>
+                            </div>
+                            <div class="card" style="background:rgba(255,255,255,.58);">
+                                <div class="mini" style="background:rgba(255,255,255,.82);">
+                                    <strong>Mais visibilidade</strong>
+                                    <span>Suas ofertas entram em páginas de produto e comparativos prontos para converter interesse em visita.</span>
+                                </div>
+                                <div class="hero-actions" style="margin-top:16px;">
+                                    <a class="button" href="{{ auth()->check() ? route('admin.dashboard') : route('login') }}">{{ auth()->check() ? 'Abrir meu painel' : 'Começar com minha loja' }}</a>
+                                    <a class="button-secondary" href="{{ route('projeto') }}">Ver recursos para lojas</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
             </main>
 
             <footer class="footer">
-                <span>Ofertas reais, comparacao clara e descoberta rapida para quem quer comprar melhor.</span>
+                <span>Ofertas reais, comparação clara e descoberta rápida para quem quer comprar melhor.</span>
             </footer>
         </div>
     </body>
