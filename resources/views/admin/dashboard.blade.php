@@ -104,10 +104,19 @@
 
             <div class="signal-list">
                 @foreach (array_slice($saudeConta['sinais'], 0, 3) as $sinal)
+                    @php
+                        $capacidadeSinal = [
+                            'admin.configuracoes.edit' => 'gestao',
+                            'admin.financeiro.index' => 'financeiro',
+                            'admin.precos.index' => 'precos',
+                            'admin.equipe.index' => 'equipe',
+                        ][$sinal['rota'] ?? ''] ?? null;
+                        $podeAbrirSinal = ! $capacidadeSinal || in_array($capacidadeSinal, $capacidadesConta, true);
+                    @endphp
                     <article class="signal-item">
                         <strong>{{ $sinal['titulo'] }}</strong>
                         <span>{{ $sinal['descricao'] }}</span>
-                        @if (! empty($sinal['rota']))
+                        @if (! empty($sinal['rota']) && $podeAbrirSinal)
                             <a class="ghost-link" href="{{ route($sinal['rota']) }}">{{ $sinal['acao'] }}</a>
                         @else
                             <small class="helper-text">{{ $sinal['acao'] }}</small>

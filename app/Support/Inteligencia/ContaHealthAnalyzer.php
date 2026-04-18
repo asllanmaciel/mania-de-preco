@@ -30,6 +30,7 @@ class ContaHealthAnalyzer
             'saldo_contas' => (float) $conta->contasFinanceiras()->sum('saldo_atual'),
             'titulos_criticos' => $this->titulosCriticos($conta),
             'logs_auditoria' => $conta->auditLogs()->count(),
+            'configuracao_percentual' => $this->configuracaoPercentual($conta),
         ];
 
         $metricas['saldo_operacional'] = $metricas['receitas'] - $metricas['despesas'];
@@ -113,6 +114,7 @@ class ContaHealthAnalyzer
         $score = 0;
         $score += $metricas['usuarios_ativos'] > 1 ? 25 : 10;
         $score += $metricas['logs_auditoria'] > 0 ? 25 : 0;
+        $score += $metricas['configuracao_percentual'] >= 80 ? 15 : 5;
 
         foreach ($usoPlano['metricas'] as $metrica) {
             if ($metrica['ilimitado']) {
@@ -166,6 +168,17 @@ class ContaHealthAnalyzer
                 'descricao' => "{$metricas['titulos_criticos']} titulo(s) vencem em ate sete dias ou estao em aberto no curto prazo.",
                 'acao' => 'Abrir financeiro',
                 'rota' => 'admin.financeiro.index',
+            ];
+        }
+
+        if ($metricas['configuracao_percentual'] < 80) {
+            $sinais[] = [
+                'tipo' => 'oportunidade',
+                'prioridade' => 'media',
+                'titulo' => 'Dados da empresa incompletos',
+                'descricao' => 'Completar identidade, contato e operacao melhora suporte, cobranca e leitura de maturidade da conta.',
+                'acao' => 'Abrir configuracoes',
+                'rota' => 'admin.configuracoes.edit',
             ];
         }
 
@@ -236,5 +249,27 @@ class ContaHealthAnalyzer
                 ->whereNotIn('status', ['recebida', 'cancelada'])
                 ->whereDate('vencimento', '<=', now()->addDays(7))
                 ->count();
+    }
+
+    private function configuracaoPercentual(Conta $conta): int
+    {
+        $campos = [
+            'nome_fantasia',
+            'razao_social',
+            'documento',
+            'email',
+            'telefone',
+            'segmento',
+            'porte',
+            'cidade',
+            'uf',
+            'timezone',
+        ];
+
+        $preenchidos = collect($campos)
+            ->filter(fn (string $campo) => filled($conta->{$campo}))
+            ->count();
+
+        return (int) round(($preenchidos / count($campos)) * 100);
     }
 }

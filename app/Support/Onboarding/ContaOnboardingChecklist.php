@@ -15,6 +15,7 @@ class ContaOnboardingChecklist
             : Preco::query()->whereIn('loja_id', $lojasIds)->count();
 
         $totais = [
+            'configuracao' => $conta->documento && $conta->email && $conta->telefone,
             'lojas' => $conta->lojas()->count(),
             'categorias' => $conta->categoriasFinanceiras()->count(),
             'contas_financeiras' => $conta->contasFinanceiras()->count(),
@@ -24,6 +25,16 @@ class ContaOnboardingChecklist
         ];
 
         $etapas = collect([
+            [
+                'codigo' => 'configuracao',
+                'capacidade' => 'gestao',
+                'grupo' => 'fundacao',
+                'titulo' => 'Completar dados da empresa',
+                'descricao' => 'Dados comerciais e de contato deixam a conta pronta para cobranca, suporte e operacao real.',
+                'rota' => $this->rotaPermitida($capacidades, 'gestao', 'admin.configuracoes.edit'),
+                'cta' => 'Abrir configuracoes',
+                'concluida' => (bool) $totais['configuracao'],
+            ],
             [
                 'codigo' => 'loja',
                 'capacidade' => 'lojas',

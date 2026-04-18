@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\Admin\LojaController as AdminLojaController;
 use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
+use App\Http\Controllers\Web\Admin\ConfiguracaoContaController as AdminConfiguracaoContaController;
 use App\Http\Controllers\Web\Auth\SessionController;
 use App\Http\Controllers\Web\Cliente\DashboardController as ClienteDashboardController;
 use App\Http\Controllers\Web\PanelRedirectController;
@@ -64,6 +65,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding')->middleware('conta.can:onboarding');
         Route::get('/auditoria', AdminAuditoriaController::class)->name('auditoria')->middleware('conta.can:equipe');
+        Route::get('/configuracoes', [AdminConfiguracaoContaController::class, 'edit'])
+            ->name('configuracoes.edit')
+            ->middleware('conta.can:gestao');
+        Route::put('/configuracoes', [AdminConfiguracaoContaController::class, 'update'])
+            ->name('configuracoes.update')
+            ->middleware('conta.can:gestao');
         Route::resource('equipe', AdminEquipeController::class)
             ->except(['show', 'destroy'])
             ->middleware('conta.can:equipe');

@@ -147,8 +147,62 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.onboarding'))
             ->assertOk()
             ->assertSee('Onboarding da conta')
+            ->assertSee('Completar dados da empresa')
             ->assertSee('Cadastrar a primeira loja')
             ->assertSee('Publicar o primeiro preco');
+    }
+
+    public function test_owner_can_manage_account_settings(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.configuracoes.edit'))
+            ->assertOk()
+            ->assertSee('Configuracoes da conta')
+            ->assertSee('Dados da empresa');
+
+        $response = $this->actingAs($user)->put(route('admin.configuracoes.update'), [
+            'nome_fantasia' => 'Conta Web Premium',
+            'razao_social' => 'Conta Web Premium Ltda',
+            'documento' => '98.765.432/0001-10',
+            'email' => 'premium@example.com',
+            'telefone' => '(11) 98888-7777',
+            'site' => 'https://premium.example.com',
+            'instagram' => '@premium.web',
+            'segmento' => 'mercado',
+            'porte' => 'media',
+            'endereco' => 'Avenida Central',
+            'numero' => '123',
+            'bairro' => 'Centro',
+            'cidade' => 'Sao Paulo',
+            'uf' => 'sp',
+            'cep' => '01000-000',
+            'cor_marca' => '#0f9f8f',
+            'descricao_publica' => 'Operacao premium para validacao das configuracoes da conta.',
+            'timezone' => 'America/Sao_Paulo',
+            'canal_suporte' => 'whatsapp',
+            'frequencia_relatorio' => 'semanal',
+            'receber_alertas_operacionais' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.configuracoes.edit'));
+
+        $this->assertDatabaseHas('contas', [
+            'id' => $conta->id,
+            'nome_fantasia' => 'Conta Web Premium',
+            'email' => 'premium@example.com',
+            'uf' => 'SP',
+            'segmento' => 'mercado',
+            'porte' => 'media',
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'configuracoes',
+            'acao' => 'conta_atualizada',
+        ]);
     }
 
     public function test_owner_can_manage_team_members(): void
@@ -258,6 +312,10 @@ class AdminOperationsTest extends TestCase
 
         $this->actingAs($operador)
             ->get(route('admin.auditoria'))
+            ->assertForbidden();
+
+        $this->actingAs($operador)
+            ->get(route('admin.configuracoes.edit'))
             ->assertForbidden();
     }
 

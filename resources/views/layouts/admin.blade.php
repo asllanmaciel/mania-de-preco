@@ -1102,6 +1102,12 @@
                             <span>Onboarding</span>
                             <small>implantacao</small>
                         </a>
+                        @if (in_array('gestao', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
+                                <span>Configuracoes</span>
+                                <small>minha empresa</small>
+                            </a>
+                        @endif
                         @if (in_array('lojas', $capacidadesConta, true))
                             <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
                                 <span>Lojas</span>
@@ -1209,6 +1215,11 @@
                 <a class="mobile-dock-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
                     <strong>Equipe</strong>
                     <span>acessos</span>
+                </a>
+            @elseif (in_array('gestao', $capacidadesConta, true))
+                <a class="mobile-dock-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
+                    <strong>Conta</strong>
+                    <span>empresa</span>
                 </a>
             @elseif (in_array('onboarding', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
