@@ -9,6 +9,8 @@ class AlertaPreco extends Model
 {
     use HasFactory;
 
+    protected $table = 'alertas_precos';
+
     protected $fillable = [
         'user_id', 'produto_id', 'preco_desejado', 'status'
     ];

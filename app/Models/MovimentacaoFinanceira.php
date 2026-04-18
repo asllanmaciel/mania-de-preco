@@ -9,6 +9,8 @@ class MovimentacaoFinanceira extends Model
 {
     use HasFactory;
 
+    protected $table = 'movimentacoes_financeiras';
+
     protected $fillable = [
         'conta_id',
         'loja_id',

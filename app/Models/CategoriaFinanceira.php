@@ -9,6 +9,8 @@ class CategoriaFinanceira extends Model
 {
     use HasFactory;
 
+    protected $table = 'categorias_financeiras';
+
     protected $fillable = [
         'conta_id',
         'nome',
