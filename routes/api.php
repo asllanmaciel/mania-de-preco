@@ -9,12 +9,14 @@ use App\Http\Controllers\ContaController;
 use App\Http\Controllers\ContaFinanceiraController;
 use App\Http\Controllers\ContaPagarController;
 use App\Http\Controllers\ContaReceberController;
+use App\Http\Controllers\HistoricoPrecoController;
 use App\Http\Controllers\LojaController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\MovimentacaoFinanceiraController;
 use App\Http\Controllers\PlanoAssinaturaController;
 use App\Http\Controllers\PrecoController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\Web\Webhooks\AsaasWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('categorias', [CategoriaController::class, 'index']);
@@ -25,6 +27,7 @@ Route::get('marcas/{id}', [MarcaController::class, 'show']);
 
 Route::get('produtos', [ProdutoController::class, 'index']);
 Route::get('produtos/{id}', [ProdutoController::class, 'show']);
+Route::get('produtos/{id}/historico-precos', [HistoricoPrecoController::class, 'produto']);
 
 Route::get('lojas', [LojaController::class, 'index']);
 Route::get('lojas/{id}', [LojaController::class, 'show']);
@@ -34,6 +37,7 @@ Route::get('precos/{id}', [PrecoController::class, 'show']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('billing/webhooks/asaas', AsaasWebhookController::class)->name('billing.webhooks.asaas');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('contas', ContaController::class)->only(['index', 'store', 'show']);

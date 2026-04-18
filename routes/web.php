@@ -12,11 +12,18 @@ use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
 use App\Http\Controllers\Web\Auth\SessionController;
+use App\Http\Controllers\Web\Cliente\DashboardController as ClienteDashboardController;
+use App\Http\Controllers\Web\PanelRedirectController;
 use App\Http\Controllers\Web\PublicCatalogController;
 use App\Http\Controllers\Web\PublicProjectController;
 use App\Http\Controllers\Web\PublicProductController;
 use App\Http\Controllers\Web\PublicStoreController;
 use App\Http\Controllers\Web\PublicUpdatesController;
+use App\Http\Controllers\Web\SuperAdmin\ContaAssinaturaController as SuperAdminContaAssinaturaController;
+use App\Http\Controllers\Web\SuperAdmin\AssinaturaBillingController as SuperAdminAssinaturaBillingController;
+use App\Http\Controllers\Web\SuperAdmin\ContaController as SuperAdminContaController;
+use App\Http\Controllers\Web\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\Web\SuperAdmin\PlanoController as SuperAdminPlanoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
@@ -33,7 +40,25 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/painel', PanelRedirectController::class)->name('painel.redirect');
+
+    Route::prefix('super-admin')->name('super-admin.')->middleware('panel:super-admin')->group(function () {
+        Route::get('/', SuperAdminDashboardController::class)->name('dashboard');
+        Route::resource('contas', SuperAdminContaController::class)->only(['index', 'show']);
+        Route::resource('planos', SuperAdminPlanoController::class)->except(['show', 'destroy']);
+        Route::get('contas/{conta}/assinaturas/nova', [SuperAdminContaAssinaturaController::class, 'create'])
+            ->name('contas.assinaturas.create');
+        Route::post('contas/{conta}/assinaturas', [SuperAdminContaAssinaturaController::class, 'store'])
+            ->name('contas.assinaturas.store');
+        Route::get('contas/{conta}/assinaturas/{assinatura}/editar', [SuperAdminContaAssinaturaController::class, 'edit'])
+            ->name('contas.assinaturas.edit');
+        Route::put('contas/{conta}/assinaturas/{assinatura}', [SuperAdminContaAssinaturaController::class, 'update'])
+            ->name('contas.assinaturas.update');
+        Route::post('contas/{conta}/assinaturas/{assinatura}/sincronizar', SuperAdminAssinaturaBillingController::class)
+            ->name('assinaturas.billing.sync');
+    });
+
+    Route::prefix('admin')->name('admin.')->middleware('panel:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding');
         Route::prefix('financeiro')->name('financeiro.')->group(function () {
@@ -47,6 +72,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('lojas', AdminLojaController::class)->except(['show']);
         Route::resource('produtos', AdminProdutoController::class)->except(['show']);
         Route::resource('precos', AdminPrecoController::class)->except(['show']);
+    });
+
+    Route::prefix('cliente')->name('cliente.')->middleware('panel:cliente')->group(function () {
+        Route::get('/', ClienteDashboardController::class)->name('dashboard');
     });
 
     Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');

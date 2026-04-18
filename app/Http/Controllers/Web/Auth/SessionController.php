@@ -39,7 +39,7 @@ class SessionController extends Controller
             ]);
         });
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended(route('painel.redirect'));
     }
 
     public function destroy(Request $request): RedirectResponse

@@ -7,6 +7,7 @@ use App\Models\ContaFinanceira;
 use App\Models\ContaPagar;
 use App\Models\ContaReceber;
 use App\Models\CategoriaFinanceira;
+use App\Models\HistoricoPreco;
 use App\Models\MovimentacaoFinanceira;
 use App\Models\Loja;
 use App\Models\Preco;
@@ -517,6 +518,64 @@ class AdminOperationsTest extends TestCase
         $this->assertDatabaseHas('precos', [
             'produto_id' => $produto->id,
             'loja_id' => $loja->id,
+            'tipo_preco' => 'pix',
+        ]);
+
+        $this->assertDatabaseHas('historicos_precos', [
+            'produto_id' => $produto->id,
+            'loja_id' => $loja->id,
+            'evento' => 'criado',
+            'preco_atual' => 29.90,
+        ]);
+    }
+
+    public function test_updating_price_registers_history_with_variation(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $loja = Loja::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Loja Oeste',
+            'tipo_loja' => 'fisica',
+            'status' => 'ativo',
+        ]);
+
+        $produto = Produto::create([
+            'nome' => 'Feijao Carioca',
+            'slug' => 'feijao-carioca',
+            'categoria_id' => \App\Models\Categoria::create([
+                'nome' => 'Mercearia',
+                'slug' => 'mercearia',
+            ])->id,
+            'status' => 'ativo',
+        ]);
+
+        $preco = Preco::create([
+            'produto_id' => $produto->id,
+            'loja_id' => $loja->id,
+            'preco' => 8.50,
+            'tipo_preco' => 'dinheiro',
+        ]);
+
+        $response = $this->actingAs($user)->put(route('admin.precos.update', $preco), [
+            'produto_id' => $produto->id,
+            'loja_id' => $loja->id,
+            'preco' => 9.20,
+            'tipo_preco' => 'pix',
+            'url_produto' => 'https://example.com/feijao',
+        ]);
+
+        $response->assertRedirect(route('admin.precos.edit', $preco));
+
+        $this->assertSame(2, HistoricoPreco::count());
+
+        $this->assertDatabaseHas('historicos_precos', [
+            'produto_id' => $produto->id,
+            'loja_id' => $loja->id,
+            'evento' => 'atualizado',
+            'preco_anterior' => 8.50,
+            'preco_atual' => 9.20,
+            'variacao_valor' => 0.70,
             'tipo_preco' => 'pix',
         ]);
     }

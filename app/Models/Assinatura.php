@@ -19,6 +19,12 @@ class Assinatura extends Model
         'expira_em',
         'cancelada_em',
         'observacoes',
+        'billing_provider',
+        'billing_subscription_id',
+        'billing_checkout_url',
+        'billing_status',
+        'billing_last_synced_at',
+        'billing_payload',
     ];
 
     protected $casts = [
@@ -26,6 +32,8 @@ class Assinatura extends Model
         'inicia_em' => 'date',
         'expira_em' => 'date',
         'cancelada_em' => 'datetime',
+        'billing_last_synced_at' => 'datetime',
+        'billing_payload' => 'array',
     ];
 
     public function conta()

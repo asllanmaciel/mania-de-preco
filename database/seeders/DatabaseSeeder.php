@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Assinatura;
+use App\Models\AlertaPreco;
 use App\Models\AvaliacaoLoja;
 use App\Models\Categoria;
 use App\Models\CategoriaFinanceira;
@@ -18,6 +19,7 @@ use App\Models\Preco;
 use App\Models\Produto;
 use App\Models\User;
 use App\Services\Financeiro\TituloFinanceiroSynchronizer;
+use App\Services\Precos\AlertaPrecoEvaluator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +37,16 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Conta Demo',
                     'password' => Hash::make('password'),
+                    'is_super_admin' => false,
+                ]
+            );
+
+            User::updateOrCreate(
+                ['email' => 'admin@maniadepreco.com.br'],
+                [
+                    'name' => 'Super Admin',
+                    'password' => Hash::make('password'),
+                    'is_super_admin' => true,
                 ]
             );
 
@@ -43,6 +55,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Cliente Demo',
                     'password' => Hash::make('password'),
+                    'is_super_admin' => false,
                 ]
             );
 
@@ -51,6 +64,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Compradora Demo',
                     'password' => Hash::make('password'),
+                    'is_super_admin' => false,
                 ]
             );
 
@@ -59,6 +73,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Familia Demo',
                     'password' => Hash::make('password'),
+                    'is_super_admin' => false,
                 ]
             );
 
@@ -66,8 +81,10 @@ class DatabaseSeeder extends Seeder
                 ['slug' => 'conta-demo'],
                 [
                     'nome_fantasia' => 'Conta Demo',
+                    'razao_social' => 'Conta Demo Comercio Digital Ltda',
                     'email' => $owner->email,
                     'telefone' => '(11) 4000-1122',
+                    'documento' => '12.345.678/0001-99',
                     'status' => 'ativo',
                     'trial_ends_at' => now()->addDays(14),
                 ]
@@ -101,6 +118,46 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
+            Plano::updateOrCreate(
+                ['slug' => 'growth'],
+                [
+                    'nome' => 'Growth',
+                    'descricao' => 'Plano para operacoes em aceleracao, com mais lojas e time comercial ativo.',
+                    'valor_mensal' => 149.90,
+                    'valor_anual' => 1499.00,
+                    'limite_usuarios' => 10,
+                    'limite_lojas' => 8,
+                    'limite_produtos' => 5000,
+                    'recursos' => [
+                        'controle_financeiro_avancado',
+                        'catalogo_publico_multiloja',
+                        'alertas_inteligentes',
+                        'governanca_de_assinatura',
+                    ],
+                    'status' => 'ativo',
+                ]
+            );
+
+            Plano::updateOrCreate(
+                ['slug' => 'scale'],
+                [
+                    'nome' => 'Scale',
+                    'descricao' => 'Plano para contas com estrutura regional e foco em maturidade operacional.',
+                    'valor_mensal' => 299.90,
+                    'valor_anual' => 2999.00,
+                    'limite_usuarios' => 30,
+                    'limite_lojas' => 25,
+                    'limite_produtos' => 25000,
+                    'recursos' => [
+                        'multiunidade',
+                        'billing_integrado',
+                        'dashboards_executivos',
+                        'operacao_expandida',
+                    ],
+                    'status' => 'ativo',
+                ]
+            );
+
             Assinatura::updateOrCreate(
                 ['conta_id' => $conta->id, 'plano_id' => $plano->id],
                 [
@@ -118,10 +175,11 @@ class DatabaseSeeder extends Seeder
             $contasFinanceiras = $this->seedContasFinanceiras($conta, $lojas);
             $catalogo = $this->seedCatalogo();
 
-            $this->seedProdutosEPrecos($catalogo, $lojas);
+            $catalogo['produtos'] = $this->seedProdutosEPrecos($catalogo, $lojas);
             $this->seedAvaliacoes($lojas, [$cliente, $clienteDois, $clienteTres]);
             $this->seedMovimentacoes($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas);
             $this->seedTitulos($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas, $synchronizer);
+            $this->seedAlertas($owner, $catalogo['produtos'] ?? []);
             $this->recalcularSaldos($conta);
         });
     }
@@ -328,7 +386,7 @@ class DatabaseSeeder extends Seeder
         return compact('categorias', 'marcas');
     }
 
-    private function seedProdutosEPrecos(array $catalogo, array $lojas): void
+    private function seedProdutosEPrecos(array $catalogo, array $lojas): array
     {
         $produtos = [];
 
@@ -465,6 +523,45 @@ class DatabaseSeeder extends Seeder
                     'url_produto' => 'https://demo.maniadepreco.com.br/' . $produto->slug,
                 ]
             );
+        }
+
+        return $produtos;
+    }
+
+    private function seedAlertas(User $owner, array $produtos): void
+    {
+        $evaluator = app(AlertaPrecoEvaluator::class);
+
+        foreach ([
+            [
+                'produto_slug' => 'cafe-premium-500g',
+                'preco_desejado' => 18.50,
+                'status' => 'ativo',
+            ],
+            [
+                'produto_slug' => 'racao-premium-caes-10kg',
+                'preco_desejado' => 105.00,
+                'status' => 'ativo',
+            ],
+        ] as $dados) {
+            $produto = $produtos[$dados['produto_slug']] ?? null;
+
+            if (! $produto) {
+                continue;
+            }
+
+            $alerta = AlertaPreco::updateOrCreate(
+                [
+                    'user_id' => $owner->id,
+                    'produto_id' => $produto->id,
+                ],
+                [
+                    'preco_desejado' => $dados['preco_desejado'],
+                    'status' => $dados['status'],
+                ]
+            );
+
+            $evaluator->avaliar($alerta);
         }
     }
 

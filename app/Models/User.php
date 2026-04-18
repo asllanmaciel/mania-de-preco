@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_super_admin',
     ];
 
     /**
@@ -44,6 +45,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
         ];
     }
 
@@ -67,5 +69,42 @@ class User extends Authenticatable
     public function movimentacoesFinanceiras()
     {
         return $this->hasMany(MovimentacaoFinanceira::class);
+    }
+
+    public function contasAtivas()
+    {
+        return $this->contas()->wherePivot('ativo', true);
+    }
+
+    public function ehSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
+    }
+
+    public function possuiAcessoAdmin(): bool
+    {
+        return $this->contasAtivas()->exists();
+    }
+
+    public function perfilPainel(): string
+    {
+        if ($this->ehSuperAdmin()) {
+            return 'super-admin';
+        }
+
+        if ($this->possuiAcessoAdmin()) {
+            return 'admin';
+        }
+
+        return 'cliente';
+    }
+
+    public function rotaInicialPainel(): string
+    {
+        return match ($this->perfilPainel()) {
+            'super-admin' => route('super-admin.dashboard'),
+            'admin' => route('admin.dashboard'),
+            default => route('cliente.dashboard'),
+        };
     }
 }

@@ -18,10 +18,16 @@ class Conta extends Model
         'telefone',
         'status',
         'trial_ends_at',
+        'billing_provider',
+        'billing_customer_id',
+        'billing_synced_at',
+        'billing_metadata',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
+        'billing_synced_at' => 'datetime',
+        'billing_metadata' => 'array',
     ];
 
     public function usuarios()
@@ -64,5 +70,10 @@ class Conta extends Model
     public function assinaturas()
     {
         return $this->hasMany(Assinatura::class);
+    }
+
+    public function assinaturaAtual()
+    {
+        return $this->hasOne(Assinatura::class)->latestOfMany();
     }
 }

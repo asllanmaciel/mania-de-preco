@@ -58,6 +58,11 @@ class Produto extends Model
         return $this->hasMany(Preco::class);
     }
 
+    public function historicoPrecos()
+    {
+        return $this->hasMany(HistoricoPreco::class);
+    }
+
     public function alertasPreco()
     {
         return $this->hasMany(AlertaPreco::class);
