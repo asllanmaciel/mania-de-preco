@@ -19,6 +19,8 @@ class PublicCatalogController extends Controller
         $busca = trim((string) $request->string('busca'));
         $categoriaSlug = trim((string) $request->string('categoria'));
         $cidade = trim((string) $request->string('cidade'));
+        $tipoPreco = trim((string) $request->string('tipo_preco'));
+        $precoAte = $request->filled('preco_ate') ? (float) $request->input('preco_ate') : null;
         $ordenar = trim((string) $request->string('ordenar', 'menor_preco'));
 
         $produtosBase = Produto::query()
@@ -37,7 +39,9 @@ class PublicCatalogController extends Controller
                 });
             })
             ->when($categoriaSlug !== '', fn (Builder $query) => $query->whereHas('categoria', fn (Builder $categoriaQuery) => $categoriaQuery->where('slug', $categoriaSlug)))
-            ->when($cidade !== '', fn (Builder $query) => $query->whereHas('precos.loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $cidade)));
+            ->when($cidade !== '', fn (Builder $query) => $query->whereHas('precos.loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $cidade)))
+            ->when($tipoPreco !== '', fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('tipo_preco', $tipoPreco)))
+            ->when($precoAte !== null, fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('preco', '<=', $precoAte)));
 
         $produtos = (clone $produtosBase)
             ->when($ordenar === 'maior_economia', fn (Builder $query) => $query->orderByRaw('(COALESCE(maior_preco, 0) - COALESCE(menor_preco, 0)) desc'))
@@ -47,10 +51,12 @@ class PublicCatalogController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $produtos->getCollection()->transform(function (Produto $produto) use ($cidade) {
+        $produtos->getCollection()->transform(function (Produto $produto) use ($cidade, $tipoPreco, $precoAte) {
             $melhoresOfertas = $produto->precos()
                 ->with('loja')
                 ->when($cidade !== '', fn (Builder $query) => $query->whereHas('loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $cidade)))
+                ->when($tipoPreco !== '', fn (Builder $query) => $query->where('tipo_preco', $tipoPreco))
+                ->when($precoAte !== null, fn (Builder $query) => $query->where('preco', '<=', $precoAte))
                 ->orderBy('preco')
                 ->take(3)
                 ->get();
@@ -74,6 +80,8 @@ class PublicCatalogController extends Controller
             })
             ->when($categoriaSlug !== '', fn ($query) => $query->where('categorias.slug', $categoriaSlug))
             ->when($cidade !== '', fn ($query) => $query->where('lojas.cidade', $cidade))
+            ->when($tipoPreco !== '', fn ($query) => $query->where('precos.tipo_preco', $tipoPreco))
+            ->when($precoAte !== null, fn ($query) => $query->where('precos.preco', '<=', $precoAte))
             ->get();
 
         $categorias = Categoria::query()
@@ -86,6 +94,11 @@ class PublicCatalogController extends Controller
             ->distinct()
             ->orderBy('cidade')
             ->pluck('cidade');
+
+        $tiposPreco = Preco::query()
+            ->distinct()
+            ->orderBy('tipo_preco')
+            ->pluck('tipo_preco');
 
         $totalResultados = $produtos->total();
         $totalOfertas = $precosFiltrados->count();
@@ -101,9 +114,12 @@ class PublicCatalogController extends Controller
             'busca' => $busca,
             'categoriaSlug' => $categoriaSlug,
             'cidade' => $cidade,
+            'tipoPreco' => $tipoPreco,
+            'precoAte' => $precoAte,
             'ordenar' => $ordenar,
             'categorias' => $categorias,
             'cidades' => $cidades,
+            'tiposPreco' => $tiposPreco,
             'produtos' => $produtos,
             'totalResultados' => $totalResultados,
             'totalOfertas' => $totalOfertas,

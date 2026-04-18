@@ -46,6 +46,22 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
+            $clienteDois = User::updateOrCreate(
+                ['email' => 'compradora.demo@maniadepreco.com.br'],
+                [
+                    'name' => 'Compradora Demo',
+                    'password' => Hash::make('password'),
+                ]
+            );
+
+            $clienteTres = User::updateOrCreate(
+                ['email' => 'familia.demo@maniadepreco.com.br'],
+                [
+                    'name' => 'Familia Demo',
+                    'password' => Hash::make('password'),
+                ]
+            );
+
             $conta = Conta::updateOrCreate(
                 ['slug' => 'conta-demo'],
                 [
@@ -103,7 +119,7 @@ class DatabaseSeeder extends Seeder
             $catalogo = $this->seedCatalogo();
 
             $this->seedProdutosEPrecos($catalogo, $lojas);
-            $this->seedAvaliacoes($lojas, $cliente);
+            $this->seedAvaliacoes($lojas, [$cliente, $clienteDois, $clienteTres]);
             $this->seedMovimentacoes($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas);
             $this->seedTitulos($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas, $synchronizer);
             $this->recalcularSaldos($conta);
@@ -147,9 +163,14 @@ class DatabaseSeeder extends Seeder
                 'email' => 'centro@maniadepreco.com.br',
                 'telefone' => '(11) 3232-1000',
                 'whatsapp' => '(11) 99999-1000',
+                'site' => 'https://centro.demo.maniadepreco.com.br',
+                'instagram' => '@lojacentro.demo',
                 'cidade' => 'Sao Paulo',
                 'uf' => 'SP',
                 'bairro' => 'Republica',
+                'endereco' => 'Avenida Ipiranga',
+                'numero' => '115',
+                'cep' => '01046-010',
                 'tipo_loja' => 'fisica',
                 'status' => 'ativo',
             ],
@@ -159,9 +180,14 @@ class DatabaseSeeder extends Seeder
                 'email' => 'express@maniadepreco.com.br',
                 'telefone' => '(11) 3555-2200',
                 'whatsapp' => '(11) 99999-2200',
+                'site' => 'https://express.demo.maniadepreco.com.br',
+                'instagram' => '@emporioexpress.demo',
                 'cidade' => 'Sao Paulo',
                 'uf' => 'SP',
                 'bairro' => 'Pinheiros',
+                'endereco' => 'Rua dos Pinheiros',
+                'numero' => '848',
+                'cep' => '05422-001',
                 'tipo_loja' => 'mista',
                 'status' => 'ativo',
             ],
@@ -171,10 +197,32 @@ class DatabaseSeeder extends Seeder
                 'email' => 'online@maniadepreco.com.br',
                 'telefone' => '(11) 3777-3300',
                 'whatsapp' => '(11) 99999-3300',
+                'site' => 'https://online.demo.maniadepreco.com.br',
+                'instagram' => '@maniaonline.demo',
                 'cidade' => 'Barueri',
                 'uf' => 'SP',
                 'bairro' => 'Alphaville',
+                'endereco' => 'Alameda Rio Negro',
+                'numero' => '503',
+                'cep' => '06454-000',
                 'tipo_loja' => 'online',
+                'status' => 'ativo',
+            ],
+            [
+                'key' => 'bairro',
+                'nome' => 'Mercado do Bairro',
+                'email' => 'bairro@maniadepreco.com.br',
+                'telefone' => '(11) 4111-4400',
+                'whatsapp' => '(11) 99999-4400',
+                'site' => 'https://bairro.demo.maniadepreco.com.br',
+                'instagram' => '@mercadodobairro.demo',
+                'cidade' => 'Osasco',
+                'uf' => 'SP',
+                'bairro' => 'Vila Yara',
+                'endereco' => 'Avenida dos Autonomistas',
+                'numero' => '2300',
+                'cep' => '06020-012',
+                'tipo_loja' => 'fisica',
                 'status' => 'ativo',
             ],
         ] as $dados) {
@@ -184,9 +232,14 @@ class DatabaseSeeder extends Seeder
                     'email' => $dados['email'],
                     'telefone' => $dados['telefone'],
                     'whatsapp' => $dados['whatsapp'],
+                    'site' => $dados['site'],
+                    'instagram' => $dados['instagram'],
                     'cidade' => $dados['cidade'],
                     'uf' => $dados['uf'],
                     'bairro' => $dados['bairro'],
+                    'endereco' => $dados['endereco'],
+                    'numero' => $dados['numero'],
+                    'cep' => $dados['cep'],
                     'tipo_loja' => $dados['tipo_loja'],
                     'status' => $dados['status'],
                 ]
@@ -253,6 +306,8 @@ class DatabaseSeeder extends Seeder
             ['nome' => 'Bebidas', 'slug' => 'bebidas'],
             ['nome' => 'Limpeza', 'slug' => 'limpeza'],
             ['nome' => 'Higiene', 'slug' => 'higiene'],
+            ['nome' => 'Pet', 'slug' => 'pet'],
+            ['nome' => 'Conveniencia', 'slug' => 'conveniencia'],
         ] as $dados) {
             $categorias[$dados['slug']] = Categoria::updateOrCreate(
                 ['slug' => $dados['slug']],
@@ -263,7 +318,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        foreach (['Casa do Grao', 'Serra Verde', 'Limpax', 'Brilho Max', 'Vita Care'] as $nome) {
+        foreach (['Casa do Grao', 'Serra Verde', 'Limpax', 'Brilho Max', 'Vita Care', 'Pet Feliz', 'Noite Leve'] as $nome) {
             $marcas[Str::slug($nome)] = Marca::updateOrCreate(
                 ['nome' => $nome],
                 ['logo' => null]
@@ -326,6 +381,22 @@ class DatabaseSeeder extends Seeder
                 'descricao' => 'Exemplo de item com preço competitivo em dois canais.',
                 'especificacoes' => ['2L', 'Fragrancia lavanda'],
             ],
+            [
+                'nome' => 'Racao Premium Caes 10kg',
+                'slug' => 'racao-premium-caes-10kg',
+                'categoria' => 'pet',
+                'marca' => 'pet-feliz',
+                'descricao' => 'Produto de ticket mais alto para destacar variacao e economia.',
+                'especificacoes' => ['10kg', 'Adultos', 'Sabor carne'],
+            ],
+            [
+                'nome' => 'Biscoito Integral 140g',
+                'slug' => 'biscoito-integral-140g',
+                'categoria' => 'conveniencia',
+                'marca' => 'noite-leve',
+                'descricao' => 'Item de conveniencia com disputa de preco mais apertada.',
+                'especificacoes' => ['140g', 'Integral'],
+            ],
         ] as $dados) {
             $produtos[$dados['slug']] = Produto::updateOrCreate(
                 ['slug' => $dados['slug']],
@@ -353,6 +424,17 @@ class DatabaseSeeder extends Seeder
             [$produtos['shampoo-uso-diario-400ml'], $lojas['express'], 16.40, 'pix'],
             [$produtos['desinfetante-lavanda-2l'], $lojas['centro'], 8.49, 'pix'],
             [$produtos['desinfetante-lavanda-2l'], $lojas['online'], 7.99, 'boleto'],
+            [$produtos['desinfetante-lavanda-2l'], $lojas['bairro'], 8.19, 'dinheiro'],
+            [$produtos['cafe-premium-500g'], $lojas['bairro'], 18.40, 'dinheiro'],
+            [$produtos['arroz-tipo-1-5kg'], $lojas['bairro'], 28.40, 'pix'],
+            [$produtos['detergente-neutro-500ml'], $lojas['bairro'], 4.09, 'dinheiro'],
+            [$produtos['agua-mineral-1-5l'], $lojas['online'], 2.69, 'boleto'],
+            [$produtos['racao-premium-caes-10kg'], $lojas['online'], 109.90, 'cartao'],
+            [$produtos['racao-premium-caes-10kg'], $lojas['bairro'], 104.90, 'pix'],
+            [$produtos['racao-premium-caes-10kg'], $lojas['express'], 112.50, 'cartao'],
+            [$produtos['biscoito-integral-140g'], $lojas['centro'], 6.20, 'pix'],
+            [$produtos['biscoito-integral-140g'], $lojas['express'], 6.49, 'cartao'],
+            [$produtos['biscoito-integral-140g'], $lojas['online'], 5.89, 'boleto'],
         ] as [$produto, $loja, $preco, $tipo]) {
             Preco::updateOrCreate(
                 [
@@ -368,12 +450,15 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    private function seedAvaliacoes(array $lojas, User $cliente): void
+    private function seedAvaliacoes(array $lojas, array $clientes): void
     {
         foreach ([
-            [$lojas['centro'], 5, 'Loja organizada e com bom atendimento.'],
-            [$lojas['express'], 4, 'Entrega rapida e preco competitivo em itens basicos.'],
-        ] as [$loja, $nota, $comentario]) {
+            [$lojas['centro'], $clientes[0], 5, 'Loja organizada e com bom atendimento.'],
+            [$lojas['express'], $clientes[0], 4, 'Entrega rapida e preco competitivo em itens basicos.'],
+            [$lojas['online'], $clientes[1], 5, 'Fluxo de compra simples e bons precos no digital.'],
+            [$lojas['bairro'], $clientes[2], 4, 'Boa variedade e precos honestos para compra rapida.'],
+            [$lojas['centro'], $clientes[1], 4, 'Encontrei promocoes fortes em itens de giro.'],
+        ] as [$loja, $cliente, $nota, $comentario]) {
             AvaliacaoLoja::updateOrCreate(
                 [
                     'loja_id' => $loja->id,

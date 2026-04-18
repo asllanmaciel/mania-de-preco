@@ -54,7 +54,7 @@
             .kicker { background:rgba(255,208,137,.34); color:#704713; }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
-            form.filter { display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
+            form.filter { display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
             label { display:grid; gap:8px; font-size:.92rem; font-weight:600; }
             input, select { width:100%; padding:14px 16px; border-radius:14px; border:1px solid rgba(76,42,22,.12); background:rgba(255,255,255,.94); font:inherit; color:var(--text); }
             .bars, .ranges, .offer-list { display:grid; gap:12px; }
@@ -197,6 +197,17 @@
                                     @endforeach
                                 </select>
                             </label>
+                            <label>Pagamento
+                                <select name="tipo_preco">
+                                    <option value="">Todos</option>
+                                    @foreach ($tiposPreco as $tipoOption)
+                                        <option value="{{ $tipoOption }}" @selected($tipoPreco === $tipoOption)>{{ ucfirst(str_replace('_', ' ', $tipoOption)) }}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                            <label>Preco maximo
+                                <input type="number" step="0.01" min="0" name="preco_ate" value="{{ $precoAte ?? '' }}" placeholder="Ex: 25.90">
+                            </label>
                             <label>Ordenar por
                                 <select name="ordenar">
                                     <option value="menor_preco" @selected($ordenar === 'menor_preco')>Menor preco</option>
@@ -207,7 +218,7 @@
                             </label>
                             <div class="hero-actions" style="margin:0;">
                                 <button class="button" type="submit">Aplicar</button>
-                                @if ($busca !== '' || $categoriaSlug !== '' || $cidade !== '' || $ordenar !== 'menor_preco')
+                                @if ($busca !== '' || $categoriaSlug !== '' || $cidade !== '' || $tipoPreco !== '' || $precoAte !== null || $ordenar !== 'menor_preco')
                                     <a class="button-secondary" href="{{ route('home') }}">Limpar</a>
                                 @endif
                             </div>

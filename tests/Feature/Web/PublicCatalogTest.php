@@ -37,6 +37,26 @@ class PublicCatalogTest extends TestCase
             ->assertDontSee('Loja Centro');
     }
 
+    public function test_public_catalog_can_filter_by_payment_type(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $this->get(route('home', ['tipo_preco' => 'cartao']))
+            ->assertOk()
+            ->assertSee('Mania Online')
+            ->assertDontSee('Loja Centro');
+    }
+
+    public function test_public_catalog_can_filter_by_max_price(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $this->get(route('home', ['preco_ate' => '18.00']))
+            ->assertOk()
+            ->assertSee('Mania Online')
+            ->assertDontSee('Loja Centro');
+    }
+
     public function test_public_store_page_renders_context_and_offers(): void
     {
         [$lojaCentro] = $this->seedCatalogoDemo();
