@@ -9,6 +9,24 @@
 
     <section class="card">
         <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <h2>Atalhos de bolso</h2>
+                    <p>Uma camada pensada para uso rapido no celular, mantendo criacao e acompanhamento sempre proximos.</p>
+                </div>
+            </div>
+
+            <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <a class="button" href="{{ route('admin.financeiro.lancamentos.create') }}">Novo lancamento</a>
+                <a class="button-secondary" href="{{ route('admin.financeiro.contas-pagar.index') }}">Contas a pagar</a>
+                <a class="button-secondary" href="{{ route('admin.financeiro.contas-receber.index') }}">Contas a receber</a>
+                <a class="button-secondary" href="{{ route('admin.financeiro.contas.index') }}">Contas financeiras</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
             <div class="toolbar">
                 <div>
                     <h2 style="margin: 0;">Janela de analise</h2>

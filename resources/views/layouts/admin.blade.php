@@ -55,6 +55,10 @@
 
             .sidebar {
                 position: relative;
+                position: sticky;
+                top: 0;
+                align-self: start;
+                min-height: 100vh;
                 padding: 28px 22px;
                 background:
                     linear-gradient(180deg, rgba(42, 22, 15, 0.98) 0%, rgba(26, 14, 10, 0.98) 100%);
@@ -165,6 +169,7 @@
 
             .main {
                 padding: 28px;
+                padding-bottom: 96px;
             }
 
             .topbar {
@@ -173,6 +178,78 @@
                 align-items: center;
                 gap: 18px;
                 margin-bottom: 24px;
+            }
+
+            .mobile-context,
+            .mobile-dock {
+                display: none;
+            }
+
+            .mobile-context {
+                padding: 16px 18px;
+                border-radius: 24px;
+                background: linear-gradient(135deg, rgba(42, 22, 15, 0.96), rgba(26, 14, 10, 0.96));
+                color: #fff6ef;
+                box-shadow: 0 18px 40px rgba(42, 22, 15, 0.24);
+                margin-bottom: 18px;
+            }
+
+            .mobile-context strong {
+                display: block;
+                font-size: 1.05rem;
+                margin-bottom: 6px;
+            }
+
+            .mobile-context small {
+                display: block;
+                color: rgba(255, 244, 236, 0.72);
+                line-height: 1.6;
+            }
+
+            .mobile-context-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .mobile-dock {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                z-index: 30;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 10px;
+                padding: 10px;
+                border-radius: 24px;
+                background: rgba(32, 18, 12, 0.94);
+                box-shadow: 0 24px 50px rgba(31, 19, 14, 0.28);
+                backdrop-filter: blur(18px);
+            }
+
+            .mobile-dock-link {
+                display: grid;
+                gap: 4px;
+                justify-items: center;
+                padding: 10px 6px;
+                border-radius: 18px;
+                color: rgba(255, 244, 236, 0.68);
+                font-size: 0.72rem;
+                text-align: center;
+                transition: 0.2s ease;
+            }
+
+            .mobile-dock-link strong {
+                font-size: 0.82rem;
+                font-weight: 700;
+                color: inherit;
+            }
+
+            .mobile-dock-link.is-active,
+            .mobile-dock-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff6ef;
             }
 
             .topbar h1 {
@@ -910,6 +987,8 @@
                 }
 
                 .sidebar {
+                    position: static;
+                    min-height: auto;
                     padding-bottom: 20px;
                 }
 
@@ -932,9 +1011,21 @@
                 }
             }
 
+            @media (max-width: 980px) {
+                .sidebar {
+                    display: none;
+                }
+
+                .mobile-context,
+                .mobile-dock {
+                    display: grid;
+                }
+            }
+
             @media (max-width: 720px) {
                 .main {
                     padding: 18px;
+                    padding-bottom: 110px;
                 }
 
                 .setup-banner,
@@ -958,6 +1049,22 @@
 
                 .checklist-item {
                     grid-template-columns: 1fr;
+                }
+
+                .ghost-link,
+                .logout-button,
+                .button,
+                .button-secondary,
+                .button-danger {
+                    width: 100%;
+                }
+
+                .mobile-dock {
+                    left: 10px;
+                    right: 10px;
+                    bottom: 10px;
+                    gap: 8px;
+                    padding: 8px;
                 }
             }
         </style>
@@ -1016,6 +1123,16 @@
             </aside>
 
             <main class="main">
+                <section class="mobile-context">
+                    <div class="mobile-context-row">
+                        <div>
+                            <strong>{{ $conta->nome_fantasia }}</strong>
+                            <small>@yield('heading')</small>
+                        </div>
+                        <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
+                    </div>
+                </section>
+
                 <header class="topbar">
                     <div>
                         <h1>@yield('heading')</h1>
@@ -1041,5 +1158,28 @@
                 </section>
             </main>
         </div>
+
+        <nav class="mobile-dock" aria-label="Navegacao principal do admin">
+            <a class="mobile-dock-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
+                <strong>Inicio</strong>
+                <span>painel</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
+                <strong>Financeiro</strong>
+                <span>caixa</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
+                <strong>Produtos</strong>
+                <span>catalogo</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
+                <strong>Lojas</strong>
+                <span>operacao</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
+                <strong>Setup</strong>
+                <span>onboarding</span>
+            </a>
+        </nav>
     </body>
 </html>

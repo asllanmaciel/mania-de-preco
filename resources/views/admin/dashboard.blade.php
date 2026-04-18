@@ -5,6 +5,24 @@
 @section('subheading', 'Uma leitura mais gerencial da conta logada, conectando operacao, catalogo, precificacao e saude financeira em uma unica visao.')
 
 @section('content')
+    <section class="card">
+        <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <h2>Centro de comando</h2>
+                    <p>No celular, esta faixa vira o ponto mais rapido para entrar nas operacoes que mais importam ao longo do dia.</p>
+                </div>
+            </div>
+
+            <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir financeiro</a>
+                <a class="button-secondary" href="{{ route('admin.lojas.index') }}">Operar lojas</a>
+                <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Gerir catalogo</a>
+                <a class="button-secondary" href="{{ route('admin.precos.index') }}">Revisar precos</a>
+            </div>
+        </div>
+    </section>
+
     @if ($onboarding['percentual'] < 100)
         <section class="card">
             <div class="card-body">

@@ -97,6 +97,7 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.financeiro.index'))
             ->assertOk()
             ->assertSee('Centro financeiro')
+            ->assertSee('Atalhos de bolso')
             ->assertSee('Venda do dia')
             ->assertSee('Vendas');
     }

@@ -51,6 +51,8 @@ class AdminAccessTest extends TestCase
         $this->get('/admin')
             ->assertOk()
             ->assertSee('Painel administrativo')
-            ->assertSee('Conta Web');
+            ->assertSee('Conta Web')
+            ->assertSee('Centro de comando')
+            ->assertSee('Inicio');
     }
 }
