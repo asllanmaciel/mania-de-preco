@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mania de Preco</title>
-        <meta name="description" content="Compare precos reais, descubra oportunidades e conecte o publico a um SaaS de varejo com visual forte e leitura inteligente.">
+        <meta name="description" content="Compare precos reais, descubra onde comprar melhor hoje e encontre ofertas publicadas por lojas ativas perto de voce.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -99,11 +99,11 @@
                 </a>
 
                 <nav class="top-links">
-                    <a class="chip" href="#descoberta">Descoberta</a>
-                    <a class="chip" href="#inteligencia">Inteligencia</a>
-                    <a class="chip" href="#ofertas">Ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="#descoberta">Buscar ofertas</a>
+                    <a class="chip" href="#inteligencia">Como economizar</a>
+                    <a class="chip" href="#ofertas">Mais procurados</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @else
@@ -116,12 +116,12 @@
                 <section class="hero">
                     <article class="hero-card">
                         <div class="eyebrow"><span class="dot"></span> ofertas reais publicadas por lojas ativas</div>
-                        <h1>Encontre o melhor preco com leitura de mercado.</h1>
-                        <p>O Mania de Preco une descoberta publica e operacao do varejo. Quem pesquisa encontra ofertas reais com contexto. Quem vende ganha uma vitrine conectada ao proprio painel.</p>
+                        <h1>Compare precos reais e descubra onde vale comprar hoje.</h1>
+                        <p>Busque produtos do dia a dia, veja ofertas publicadas por lojas ativas e escolha com mais seguranca sem perder tempo abrindo varias abas.</p>
 
                         <div class="hero-actions">
                             <a class="button" href="#ofertas">Explorar ofertas</a>
-                            <a class="button-secondary" href="{{ auth()->check() ? route('admin.dashboard') : route('login') }}">{{ auth()->check() ? 'Abrir painel' : 'Entrar no SaaS' }}</a>
+                            <a class="button-secondary" href="{{ auth()->check() ? route('admin.dashboard') : route('login') }}">{{ auth()->check() ? 'Abrir painel' : 'Quero anunciar minha loja' }}</a>
                         </div>
 
                         <div class="stats">
@@ -134,10 +134,10 @@
                     <aside class="card">
                         <div class="grid-head">
                             <div>
-                                <h3>Pulse de precos</h3>
-                                <p class="muted" style="margin:8px 0 0;">Um retrato simples da faixa de precos publicada agora, para destacar onde a competitividade esta mais intensa.</p>
+                                <h3>Radar de precos</h3>
+                                <p class="muted" style="margin:8px 0 0;">Uma leitura rapida da faixa publicada agora para mostrar onde esta a melhor chance de economizar.</p>
                             </div>
-                            <span class="badge">base publica</span>
+                            <span class="badge">ao vivo</span>
                         </div>
 
                         <div class="pulse-wrap">
@@ -176,9 +176,9 @@
                     <div class="section-head">
                         <div>
                             <span class="kicker">descoberta</span>
-                            <h2>Procure como consumidor, entenda como estrategista.</h2>
+                            <h2>Encontre mais rapido o que cabe no seu bolso.</h2>
                         </div>
-                        <p class="muted">Filtro claro, comparacao objetiva e leitura visual para transformar a busca em decisao.</p>
+                        <p class="muted">Filtros simples, comparacao direta e menos friccao para sair da busca e chegar na decisao.</p>
                     </div>
 
                     <article class="card">
@@ -235,9 +235,9 @@
                     <div class="section-head">
                         <div>
                             <span class="kicker">inteligencia</span>
-                            <h2>Graficos leves, leitura forte.</h2>
+                            <h2>Menos rolagem, mais decisao.</h2>
                         </div>
-                        <p class="muted">A interface usa graficos leves para mostrar concentracao de ofertas, relevancia por cidade e espaco real para economizar.</p>
+                        <p class="muted">Os graficos ajudam voce a enxergar concentracao de ofertas, cidades mais ativas e o espaco real para economizar.</p>
                     </div>
 
                     <div class="chart-grid">
@@ -300,9 +300,9 @@
                     <div class="section-head">
                         <div>
                             <span class="kicker">ofertas</span>
-                            <h2>Produtos prontos para comparacao.</h2>
+                            <h2>Ofertas que ja merecem seu clique.</h2>
                         </div>
-                        <p class="muted">Cards de produto com melhor preco, economia potencial e acesso rapido ao perfil publico de cada loja.</p>
+                        <p class="muted">Veja o melhor valor, a economia possivel e a loja que esta puxando o preco para baixo em cada item.</p>
                     </div>
 
                     @if ($produtos->isEmpty())
@@ -361,8 +361,7 @@
             </main>
 
             <footer class="footer">
-                <span>Descoberta publica, contexto comercial e operacao integrada no mesmo produto.</span>
-                <code>http://localhost:8000</code>
+                <span>Ofertas reais, comparacao clara e descoberta rapida para quem quer comprar melhor.</span>
             </footer>
         </div>
     </body>

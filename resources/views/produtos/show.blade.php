@@ -82,8 +82,8 @@
 
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <a class="chip" href="{{ route('home') }}">Voltar para ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
                     @endif
@@ -96,7 +96,7 @@
                         <span class="badge">{{ $produto->categoria?->nome ?? 'Sem categoria' }}</span>
                         <h1>{{ $produto->nome }}</h1>
                         <p>{{ $produto->marca?->nome ?? 'Marca nao informada' }}</p>
-                        <p style="margin-top:12px;">{{ $produto->descricao ?: 'Produto publicado na vitrine do Mania de Preco para comparacao entre lojas ativas.' }}</p>
+                        <p style="margin-top:12px;">{{ $produto->descricao ?: 'Compare este item entre lojas ativas e descubra rapido qual oferta faz mais sentido para voce.' }}</p>
 
                         <div class="hero-actions">
                             @if ($melhorOferta && $melhorOferta->loja)
@@ -137,8 +137,8 @@
 
                         <div class="section-head">
                             <div>
-                                <h3>Resumo de mercado do produto</h3>
-                                <p class="muted" style="margin:8px 0 0;">Uma leitura direta para entender disponibilidade, canais e onde vale clicar primeiro.</p>
+                                <h3>Resumo rapido para decidir</h3>
+                                <p class="muted" style="margin:8px 0 0;">Uma leitura direta para entender disponibilidade, tipos de pagamento e onde vale clicar primeiro.</p>
                             </div>
                         </div>
 
@@ -159,12 +159,12 @@
 
                         <div class="trust-list" style="margin-top:16px;">
                             <div class="trust-item">
-                                <strong>Leitura otimizada para mobile</strong>
-                                <span class="small">Galeria, preco e CTA ficam proximos para reduzir rolagem e acelerar decisao no celular.</span>
+                                <strong>Comparacao feita para decidir rapido</strong>
+                                <span class="small">Galeria, preco e chamada principal ficam proximos para reduzir rolagem e acelerar a escolha.</span>
                             </div>
                             <div class="trust-item">
-                                <strong>Comparacao objetiva</strong>
-                                <span class="small">O bloco principal resume melhor oferta, economia e variedade sem esconder o detalhe das lojas.</span>
+                                <strong>Oferta mais competitiva em destaque</strong>
+                                <span class="small">O bloco principal resume melhor valor, economia e variedade sem esconder o detalhe das lojas.</span>
                             </div>
                         </div>
                     </aside>
@@ -243,8 +243,7 @@
             </main>
 
             <footer class="footer">
-                <span>Pagina publica do produto pensada para conversao, comparacao e navegacao natural para a loja.</span>
-                <code>{{ route('produtos.public.show', $produto) }}</code>
+                <span>Comparacao de produto pensada para reduzir atrito, destacar a melhor oferta e levar voce mais rapido ate a loja certa.</span>
             </footer>
         </div>
 

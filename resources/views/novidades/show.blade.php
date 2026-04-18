@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ $entry['title'] }} | Mania de Preco</title>
-        <meta name="description" content="Detalhes da entrega {{ $entry['title'] }} dentro da linha publica de novidades do Mania de Preco.">
+        <meta name="description" content="Veja os detalhes do lancamento {{ $entry['title'] }} e entenda como essa melhoria fortalece a experiencia no Mania de Preco.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -61,8 +61,8 @@
 
                 <nav class="top-links">
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @endif
@@ -72,7 +72,7 @@
             <main>
                 <section class="hero">
                     <article class="hero-card">
-                        <span class="eyebrow">entrega registrada</span>
+                        <span class="eyebrow">lancamento recente</span>
                         <h1>{{ $entry['title'] }}</h1>
                         <div class="meta">
                             <span class="badge">{{ $entry['tipo'] ?: 'feature' }}</span>
@@ -84,29 +84,29 @@
                             @endif
                             <span class="chip">{{ $entry['data_label'] }}</span>
                         </div>
-                        <p>{{ $entry['resumo'] ?: 'Entrega documentada como parte da evolucao publica do produto.' }}</p>
+                        <p>{{ $entry['resumo'] ?: 'Melhoria publicada para reforcar a experiencia e ampliar o valor percebido por quem usa a plataforma.' }}</p>
 
                         <div class="buttons">
-                            <a class="button" href="{{ route('novidades.index') }}">Voltar para novidades</a>
-                            <a class="button-secondary" href="{{ route('home') }}">Ir para a vitrine</a>
+                            <a class="button" href="{{ route('novidades.index') }}">Ver todos os lancamentos</a>
+                            <a class="button-secondary" href="{{ route('home') }}">Ir para ofertas</a>
                         </div>
                     </article>
 
                     <aside class="card">
                         <div class="section-head">
                             <div>
-                                <h3>Por que isso importa</h3>
-                                <p class="muted" style="margin:8px 0 0;">Cada entrada aqui existe para traduzir construcao em valor percebido pelo mercado.</p>
+                                <h3>O ganho para a experiencia</h3>
+                                <p class="muted" style="margin:8px 0 0;">Cada melhoria desta pagina existe para traduzir evolucao tecnica em valor percebido por quem compra ou opera.</p>
                             </div>
                         </div>
 
                         <div class="side-list">
                             <div class="side-card">
-                                <strong>Resumo estrategico</strong>
+                                <strong>Resumo rapido</strong>
                                 <span class="small">{{ $entry['resultado'] ?: $entry['estrategia'] ?: 'A entrega fortalece a maturidade do produto e melhora a apresentacao publica.' }}</span>
                             </div>
                             <div class="side-card">
-                                <strong>Modulo impactado</strong>
+                                <strong>Area fortalecida</strong>
                                 <span class="small">{{ $entry['modulo'] ?: 'produto' }}</span>
                             </div>
                         </div>
@@ -119,7 +119,7 @@
                             <article class="block">
                                 <div class="section-head">
                                     <div>
-                                        <h2>Resumo executivo</h2>
+                                        <h2>Visao geral</h2>
                                     </div>
                                 </div>
                                 <p>{{ $entry['resumo'] ?: 'Sem resumo complementar registrado para esta entrega.' }}</p>
@@ -128,7 +128,7 @@
                             <article class="block">
                                 <div class="section-head">
                                     <div>
-                                        <h2>Entregas realizadas</h2>
+                                        <h2>O que entrou</h2>
                                     </div>
                                 </div>
                                 @if ($entry['entregas']->isEmpty())
@@ -145,7 +145,7 @@
                             <article class="block">
                                 <div class="section-head">
                                     <div>
-                                        <h2>Estrategia aplicada</h2>
+                                        <h2>Como isso melhora a experiencia</h2>
                                     </div>
                                 </div>
                                 <p>{{ $entry['estrategia'] ?: 'A estrategia desta entrega nao foi detalhada publicamente.' }}</p>
@@ -154,7 +154,7 @@
                             <article class="block">
                                 <div class="section-head">
                                     <div>
-                                        <h2>Resultado</h2>
+                                        <h2>Resultado percebido</h2>
                                     </div>
                                 </div>
                                 <p>{{ $entry['resultado'] ?: 'O resultado sera detalhado em uma atualizacao futura.' }}</p>
@@ -165,7 +165,7 @@
                             <article class="card">
                                 <div class="section-head">
                                     <div>
-                                        <h2>Mais novidades</h2>
+                                        <h2>Mais lancamentos</h2>
                                     </div>
                                 </div>
 
@@ -184,8 +184,7 @@
             </main>
 
             <footer class="footer">
-                <span>Entrega apresentada em linguagem de produto, como parte da linha publica de evolucao.</span>
-                <code>{{ route('novidades.show', $entry['slug']) }}</code>
+                <span>Detalhes do lancamento apresentados de forma clara para mostrar o valor entregue e o ritmo de evolucao da plataforma.</span>
             </footer>
         </div>
     </body>

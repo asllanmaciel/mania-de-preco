@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Projeto | Mania de Preco</title>
-        <meta name="description" content="Conheca a visao do Mania de Preco, os modulos do produto e a evolucao recente do projeto em uma apresentacao publica mais proxima do ambiente de producao.">
+        <title>Para Lojas | Mania de Preco</title>
+        <meta name="description" content="Descubra como sua loja pode ganhar mais visibilidade, publicar ofertas com agilidade e operar com mais clareza no Mania de Preco.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -65,8 +65,8 @@
 
                 <nav class="top-links">
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @else
@@ -78,44 +78,44 @@
             <main>
                 <section class="hero">
                     <article class="hero-card">
-                        <span class="eyebrow">plataforma em evolucao continua</span>
-                        <h1>Um SaaS de varejo com operacao, descoberta e inteligencia no mesmo produto.</h1>
-                        <p>O Mania de Preco foi desenhado para unir o que normalmente vive separado: comparacao publica de ofertas, operacao comercial da loja e gestao financeira no mesmo ecossistema. O resultado e um produto que serve tanto quem compra quanto quem vende.</p>
+                        <span class="eyebrow">para lojas que querem vender melhor</span>
+                        <h1>Sua loja aparece melhor quando preco, vitrine e operacao falam a mesma lingua.</h1>
+                        <p>O Mania de Preco ajuda sua loja a publicar ofertas, ganhar descoberta no digital e organizar a rotina comercial com muito menos atrito no dia a dia.</p>
 
                         <div class="buttons">
-                            <a class="button" href="{{ route('home') }}">Explorar vitrine publica</a>
-                            <a class="button-secondary" href="{{ route('novidades.index') }}">Ver novidades do projeto</a>
+                            <a class="button" href="{{ route('home') }}">Ver como as ofertas aparecem</a>
+                            <a class="button-secondary" href="{{ route('novidades.index') }}">Acompanhar lancamentos</a>
                         </div>
 
                         <div class="metrics" style="margin-top:28px;">
-                            <div class="metric"><strong>{{ number_format($metricas['lojas'], 0, ',', '.') }}</strong><span>lojas ativas no ecossistema</span></div>
-                            <div class="metric"><strong>{{ number_format($metricas['produtos'], 0, ',', '.') }}</strong><span>produtos publicados</span></div>
-                            <div class="metric"><strong>{{ number_format($metricas['ofertas'], 0, ',', '.') }}</strong><span>ofertas disponiveis para comparacao</span></div>
-                            <div class="metric"><strong>{{ number_format($metricas['movimentacoes'], 0, ',', '.') }}</strong><span>movimentacoes financeiras realizadas</span></div>
+                            <div class="metric"><strong>{{ number_format($metricas['lojas'], 0, ',', '.') }}</strong><span>lojas com vitrine ativa</span></div>
+                            <div class="metric"><strong>{{ number_format($metricas['produtos'], 0, ',', '.') }}</strong><span>itens em circulacao</span></div>
+                            <div class="metric"><strong>{{ number_format($metricas['ofertas'], 0, ',', '.') }}</strong><span>ofertas ja publicadas</span></div>
+                            <div class="metric"><strong>{{ number_format($metricas['movimentacoes'], 0, ',', '.') }}</strong><span>movimentacoes processadas</span></div>
                         </div>
                     </article>
 
                     <aside class="card">
                         <div class="section-head">
                             <div>
-                                <h3>Como o produto se apresenta em producao</h3>
-                                <p class="muted" style="margin:8px 0 0;">A proposta e parecer produto lancado: vitrine com leitura clara, painel com operacao real e historico publico de evolucao.</p>
+                                <h3>O que sua operacao ganha</h3>
+                                <p class="muted" style="margin:8px 0 0;">Mais presenca para vender, mais clareza para decidir e uma rotina mais fluida para sua equipe.</p>
                             </div>
-                            <span class="badge">visao geral</span>
+                            <span class="badge">para crescer</span>
                         </div>
 
                         <div class="grid" style="grid-template-columns:1fr;">
                             <div class="mini">
-                                <strong>Camada publica</strong>
-                                <span>Busca de ofertas, paginas de loja e produto, filtros reais e contexto para decisao.</span>
+                                <strong>Mais descoberta</strong>
+                                <span>Sua loja aparece em comparativos claros, com paginas de produto e de loja prontas para converter curiosidade em visita.</span>
                             </div>
                             <div class="mini">
-                                <strong>Camada operacional</strong>
-                                <span>Painel administrativo, cadastro comercial, financeiro, onboarding e leitura de performance.</span>
+                                <strong>Mais agilidade</strong>
+                                <span>Catalogo, precos e operacao ficam no mesmo fluxo para reduzir retrabalho e acelerar publicacao.</span>
                             </div>
                             <div class="mini">
-                                <strong>Camada de credibilidade</strong>
-                                <span>Seeds ricos para demonstracao, changelogs publicos e navegacao consistente entre modulos.</span>
+                                <strong>Mais clareza</strong>
+                                <span>Financeiro, catalogo e leitura de performance avancam juntos para dar visao mais segura do negocio.</span>
                             </div>
                         </div>
                     </aside>
@@ -124,23 +124,23 @@
                 <section class="section">
                     <div class="section-head">
                         <div>
-                            <h2>Pilares do produto</h2>
-                            <p class="muted">As frentes que sustentam a proposta comercial e ajudam o sistema a se diferenciar.</p>
+                            <h2>Por que as lojas entram</h2>
+                            <p class="muted">Os pontos que tornam a presenca na plataforma mais valiosa para quem vende e mais util para quem compra.</p>
                         </div>
                     </div>
 
                     <div class="pillars">
                         <article class="pillar">
-                            <strong>Descoberta de mercado</strong>
-                            <span class="small">Consumidores encontram o melhor preco com comparacao clara, filtros praticos e paginas publicas com contexto.</span>
+                            <strong>Apareca para quem ja esta comparando</strong>
+                            <span class="small">Sua oferta entra em um ambiente onde o cliente ja chega com intencao de compra e criterio de preco.</span>
                         </article>
                         <article class="pillar">
-                            <strong>Operacao da loja</strong>
-                            <span class="small">O lojista cadastra catalogo, controla precos e prepara a presenca publica sem depender de ferramentas separadas.</span>
+                            <strong>Atualize sem complicar sua rotina</strong>
+                            <span class="small">Catalogo, precos e exibicao da loja caminham juntos para reduzir etapas e acelerar a operacao.</span>
                         </article>
                         <article class="pillar">
-                            <strong>Financeiro integrado</strong>
-                            <span class="small">Contas, lancamentos, pagar, receber e indicadores ajudam o sistema a virar SaaS recorrente, nao apenas comparador.</span>
+                            <strong>Tenha leitura melhor do seu caixa</strong>
+                            <span class="small">Contas, lancamentos e indicadores ajudam a loja a crescer sem perder visao financeira.</span>
                         </article>
                     </div>
                 </section>
@@ -150,8 +150,8 @@
                         <article class="card">
                             <div class="section-head">
                                 <div>
-                                    <h2>Roadmap imediato</h2>
-                                    <p class="muted">O produto ja tem base navegavel e agora se aproxima de uma experiencia ainda mais premium.</p>
+                                    <h2>O que esta chegando</h2>
+                                    <p class="muted">As proximas entregas foram pensadas para aumentar conversao, profundidade de leitura e valor operacional.</p>
                                 </div>
                             </div>
 
@@ -159,22 +159,22 @@
                                 <div class="roadmap-card roadmap-item">
                                     <span class="roadmap-step">01</span>
                                     <div>
-                                        <strong>Camada publica mais profunda</strong>
-                                        <p class="small">Historico temporal de preco, reputacao mais rica da loja e paginas publicas mais densas para SEO e conversao.</p>
+                                        <strong>Mais contexto para decidir</strong>
+                                        <p class="small">Historico de preco, reputacao mais forte da loja e paginas publicas ainda mais completas para conversao.</p>
                                     </div>
                                 </div>
                                 <div class="roadmap-card roadmap-item">
                                     <span class="roadmap-step">02</span>
                                     <div>
-                                        <strong>Experiencia premium no admin</strong>
-                                        <p class="small">Dashboards executivos, alertas mais inteligentes, metas e automacoes financeiras mais refinadas.</p>
+                                        <strong>Operacao mais premium</strong>
+                                        <p class="small">Dashboards mais fortes, alertas mais inteligentes e automacoes que reduzem atrito no dia a dia.</p>
                                     </div>
                                 </div>
                                 <div class="roadmap-card roadmap-item">
                                     <span class="roadmap-step">03</span>
                                     <div>
-                                        <strong>Ativacao comercial escalavel</strong>
-                                        <p class="small">Onboarding guiado, conteudo institucional e apresentacao publica pronta para demonstracao comercial.</p>
+                                        <strong>Entrada mais rapida para novas lojas</strong>
+                                        <p class="small">Onboarding mais guiado, materiais mais claros e uma apresentacao publica pronta para demonstracao comercial.</p>
                                     </div>
                                 </div>
                             </div>
@@ -183,8 +183,8 @@
                         <article class="card">
                             <div class="section-head">
                                 <div>
-                                    <h2>Ultimas entregas</h2>
-                                    <p class="muted">Um recorte das evolucoes mais recentes para quem quer acompanhar o projeto sem entrar no painel.</p>
+                                    <h2>Recursos ja no ar</h2>
+                                    <p class="muted">Um recorte do que ja entrou para mostrar como a experiencia esta ficando mais forte a cada rodada.</p>
                                 </div>
                             </div>
 
@@ -204,8 +204,7 @@
             </main>
 
             <footer class="footer">
-                <span>Pagina institucional do produto com visao, contexto e ponte direta para a vitrine e para as novidades.</span>
-                <code>{{ route('projeto') }}</code>
+                <span>Uma apresentacao pensada para mostrar como a plataforma ajuda a loja a vender melhor e operar com mais clareza.</span>
             </footer>
         </div>
     </body>

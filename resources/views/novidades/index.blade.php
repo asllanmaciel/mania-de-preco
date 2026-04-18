@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Novidades | Mania de Preco</title>
-        <meta name="description" content="Acompanhe a evolucao do Mania de Preco com uma linha publica de novidades organizada a partir dos changelogs do projeto.">
+        <title>Lancamentos | Mania de Preco</title>
+        <meta name="description" content="Acompanhe os lancamentos mais recentes do Mania de Preco e veja o que esta deixando a experiencia melhor para comprar e vender.">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -60,8 +60,8 @@
 
                 <nav class="top-links">
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @endif
@@ -71,13 +71,13 @@
             <main>
                 <section class="hero">
                     <article class="hero-card">
-                        <span class="eyebrow">evolucao do produto</span>
-                        <h1>As novidades do Mania de Preco em linguagem de produto.</h1>
-                        <p>Esta area traduz a construcao do sistema em entregas com valor claro. Em vez de mostrar so alteracoes tecnicas, ela organiza o que foi lancado, por que isso importa e como o produto esta amadurecendo.</p>
+                        <span class="eyebrow">o que acabou de entrar no ar</span>
+                        <h1>Lancamentos que deixam a experiencia melhor para comprar e vender.</h1>
+                        <p>Esta pagina reune as melhorias mais recentes do Mania de Preco de um jeito facil de entender, com foco no que mudou e no valor que isso entrega para quem usa a plataforma.</p>
 
                         <div class="buttons">
-                            <a class="button" href="{{ route('home') }}">Voltar para a vitrine</a>
-                            <a class="button-secondary" href="{{ route('projeto') }}">Conhecer o projeto</a>
+                            <a class="button" href="{{ route('home') }}">Ver ofertas</a>
+                            <a class="button-secondary" href="{{ route('projeto') }}">Conhecer recursos para lojas</a>
                         </div>
                     </article>
 
@@ -92,11 +92,11 @@
                         <div class="summary-grid">
                             <div class="summary">
                                 <strong>{{ $entries->count() }}</strong>
-                                <span class="small">entregas publicadas</span>
+                                <span class="small">lancamentos publicados</span>
                             </div>
                             <div class="summary">
                                 <strong>{{ $entries->pluck('modulo')->filter()->unique()->count() }}</strong>
-                                <span class="small">frentes de produto tocadas</span>
+                                <span class="small">frentes evoluidas</span>
                             </div>
                             <div class="summary">
                                 <strong>{{ $latest['data_label'] ?? 'agora' }}</strong>
@@ -109,8 +109,8 @@
                 <section class="section">
                     <div class="section-head">
                         <div>
-                            <h2>Linha de lancamento</h2>
-                            <p class="muted">Cada entrada abaixo mostra um passo concreto na aproximacao do sistema com um produto de mercado.</p>
+                                    <h2>O que mudou recentemente</h2>
+                                    <p class="muted">Cada entrada abaixo mostra uma melhoria concreta que reforca a experiencia de compra, exposicao e operacao.</p>
                         </div>
                     </div>
 
@@ -123,7 +123,7 @@
                                         <span class="chip">{{ $entry['modulo'] }}</span>
                                     @endif
                                     @if ($entry['impacto'])
-                                        <span class="chip">impacto {{ $entry['impacto'] }}</span>
+                                        <span class="chip">ganho {{ $entry['impacto'] }}</span>
                                     @endif
                                 </div>
                                 <h3>{{ $entry['title'] }}</h3>
@@ -136,8 +136,7 @@
             </main>
 
             <footer class="footer">
-                <span>Historico publico de evolucao para apresentar o projeto com mais transparencia e maturidade.</span>
-                <code>{{ route('novidades.index') }}</code>
+                <span>Uma vitrine de lancamentos para mostrar que a plataforma segue evoluindo com ritmo, clareza e foco em valor real.</span>
             </footer>
         </div>
     </body>

@@ -22,7 +22,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Encontre o melhor preco com leitura de mercado.')
+            ->assertSee('Compare precos reais e descubra onde vale comprar hoje.')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Loja Centro');
     }
@@ -76,7 +76,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('lojas.public.show', $lojaCentro))
             ->assertOk()
-            ->assertSee('Resumo rapido da loja')
+            ->assertSee('O que esperar desta loja')
             ->assertSee('Loja Centro')
             ->assertSee('Excelente atendimento.');
     }
@@ -95,7 +95,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('lojas.public.show', $lojaSemOfertas))
             ->assertOk()
-            ->assertSee('Esta loja ja tem perfil publico ativo, mas ainda esta preparando o catalogo para comparacao.')
+            ->assertSee('Esta loja ja esta visivel por aqui, mas ainda esta montando as primeiras ofertas para comparacao.')
             ->assertSee('Loja Centro')
             ->assertDontSee('Excelente atendimento.');
     }
@@ -106,7 +106,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('produtos.public.show', $produto))
             ->assertOk()
-            ->assertSee('Resumo de mercado do produto')
+            ->assertSee('Resumo rapido para decidir')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Onde comprar agora')
             ->assertSee('/images/demo/produtos/shared/contexto-prateleira.svg');
@@ -118,9 +118,9 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('projeto'))
             ->assertOk()
-            ->assertSee('Um SaaS de varejo com operacao, descoberta e inteligencia no mesmo produto.')
-            ->assertSee('lojas ativas no ecossistema')
-            ->assertSee('Ultimas entregas');
+            ->assertSee('Sua loja aparece melhor quando preco, vitrine e operacao falam a mesma lingua.')
+            ->assertSee('lojas com vitrine ativa')
+            ->assertSee('Recursos ja no ar');
     }
 
     public function test_public_updates_page_renders_changelog_timeline(): void
@@ -129,7 +129,7 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('novidades.index'))
             ->assertOk()
-            ->assertSee('As novidades do Mania de Preco em linguagem de produto.')
+            ->assertSee('Lancamentos que deixam a experiencia melhor para comprar e vender.')
             ->assertSee('Seed demo ampliado e filtros publicos mais fortes');
     }
 

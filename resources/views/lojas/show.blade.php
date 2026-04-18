@@ -84,8 +84,8 @@
 
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <a class="chip" href="{{ route('home') }}">Voltar para ofertas</a>
-                    <a class="chip" href="{{ route('projeto') }}">Projeto</a>
-                    <a class="chip" href="{{ route('novidades.index') }}">Novidades</a>
+                    <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
+                    <a class="chip" href="{{ route('novidades.index') }}">Lancamentos</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
                     @endif
@@ -108,8 +108,8 @@
                         </p>
                         <p style="margin-top:12px;">
                             {{ $catalogoPublicado
-                                ? 'Veja os produtos com melhor preco desta loja, entenda suas categorias mais fortes e confira sinais de confianca para decidir com mais seguranca.'
-                                : 'Esta loja ja tem perfil publico ativo, mas ainda esta preparando o catalogo para comparacao. Enquanto isso, voce pode explorar outras lojas ja publicadas na vitrine.' }}
+                                ? 'Veja os produtos que mais chamam atencao nesta loja, entenda suas categorias fortes e compare com mais seguranca.'
+                                : 'Esta loja ja esta visivel por aqui, mas ainda esta montando as primeiras ofertas para comparacao. Enquanto isso, voce pode explorar outras lojas que ja estao com vitrine ativa.' }}
                         </p>
 
                         <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
@@ -130,8 +130,8 @@
                     <aside class="card">
                         <div class="section-head">
                             <div>
-                                <h3>Resumo rapido da loja</h3>
-                                <p class="muted" style="margin:8px 0 0;">Uma leitura objetiva do que mais aparece no catalogo e de como a loja se apresenta ao publico.</p>
+                                <h3>O que esperar desta loja</h3>
+                                <p class="muted" style="margin:8px 0 0;">Uma leitura objetiva do que ela publica, de como atende e de onde pode chamar mais a sua atencao.</p>
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@
                                 <span>{{ $loja->email ?: 'Nao informado' }}</span>
                             </div>
                             <div class="mini">
-                                <strong>Status publico</strong>
+                                <strong>Presenca na vitrine</strong>
                                 <span>{{ $loja->status }}</span>
                             </div>
                         </div>
@@ -214,7 +214,7 @@
                     @if ($produtosDestaque->isEmpty())
                         <div class="card">
                             <div class="muted" style="display:grid; gap:16px;">
-                                <span>Esta loja ainda nao publicou ofertas para comparacao. Para a experiencia continuar util, selecionamos outras lojas da vitrine que ja estao com catalogo ativo.</span>
+                                <span>Esta loja ainda nao publicou ofertas para comparacao. Para sua busca continuar util, selecionamos outras lojas com vitrine ativa para voce seguir explorando.</span>
 
                                 @if ($lojasRecomendadas->isNotEmpty())
                                     <div class="offer-list">
@@ -306,7 +306,7 @@
                                     </div>
 
                                     <div class="offer-actions">
-                                        <span class="small">Veja este item no comparativo completo para entender como esta loja se posiciona frente ao restante do mercado.</span>
+                                        <span class="small">Veja este item no comparativo completo para entender como esta loja se posiciona frente a outras opcoes do mercado.</span>
                                         @if ($item['produto'])
                                             <a class="button-secondary" href="{{ route('produtos.public.show', $item['produto']) }}">Abrir comparativo do produto</a>
                                         @endif
@@ -319,8 +319,7 @@
             </main>
 
             <footer class="footer">
-                <span>Perfil publico da loja desenhado para parecer produto final, com contexto comercial e leitura rapida.</span>
-                <code>{{ route('lojas.public.show', $loja) }}</code>
+                <span>Perfil de loja pensado para inspirar confianca, facilitar comparacao e manter a descoberta viva ate o clique final.</span>
             </footer>
         </div>
     </body>
