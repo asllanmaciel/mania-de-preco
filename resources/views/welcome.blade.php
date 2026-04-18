@@ -110,9 +110,9 @@
             <main>
                 <section class="hero">
                     <article class="hero-card">
-                        <div class="eyebrow"><span class="dot"></span> vitrine publica com dados reais</div>
+                        <div class="eyebrow"><span class="dot"></span> ofertas reais publicadas por lojas ativas</div>
                         <h1>Encontre o melhor preco com leitura de mercado.</h1>
-                        <p>O Mania de Preco conecta o painel do lojista a uma descoberta publica mais inteligente. O visitante compara ofertas reais e o lojista ganha uma vitrine viva, coerente com sua operacao.</p>
+                        <p>O Mania de Preco une descoberta publica e operacao do varejo. Quem pesquisa encontra ofertas reais com contexto. Quem vende ganha uma vitrine conectada ao proprio painel.</p>
 
                         <div class="hero-actions">
                             <a class="button" href="#ofertas">Explorar ofertas</a>
@@ -129,10 +129,10 @@
                     <aside class="card">
                         <div class="grid-head">
                             <div>
-                                <h3>Pulse do mercado</h3>
-                                <p class="muted" style="margin:8px 0 0;">Leitura rapida das ofertas ordenadas por preco para mostrar onde a disputa esta mais quente.</p>
+                                <h3>Pulse de precos</h3>
+                                <p class="muted" style="margin:8px 0 0;">Um retrato simples da faixa de precos publicada agora, para destacar onde a competitividade esta mais intensa.</p>
                             </div>
-                            <span class="badge">ao vivo na base</span>
+                            <span class="badge">base publica</span>
                         </div>
 
                         <div class="pulse-wrap">
@@ -173,7 +173,7 @@
                             <span class="kicker">descoberta</span>
                             <h2>Procure como consumidor, entenda como estrategista.</h2>
                         </div>
-                        <p class="muted">A home agora virou produto: filtro util, cards claros e leitura visual para decidir mais rapido.</p>
+                        <p class="muted">Filtro claro, comparacao objetiva e leitura visual para transformar a busca em decisao.</p>
                     </div>
 
                     <article class="card">
@@ -221,7 +221,7 @@
                             <span class="kicker">inteligencia</span>
                             <h2>Graficos leves, leitura forte.</h2>
                         </div>
-                        <p class="muted">Sem biblioteca pesada, a interface ja entrega concentracao de ofertas, disputa por cidade e amplitude de preco.</p>
+                        <p class="muted">A interface usa graficos leves para mostrar concentracao de ofertas, relevancia por cidade e espaco real para economizar.</p>
                     </div>
 
                     <div class="chart-grid">
@@ -286,7 +286,7 @@
                             <span class="kicker">ofertas</span>
                             <h2>Produtos prontos para comparacao.</h2>
                         </div>
-                        <p class="muted">Cards de produto com melhor preco, economia possivel e lojas em destaque para decidir rapido.</p>
+                        <p class="muted">Cards de produto com melhor preco, economia potencial e acesso rapido ao perfil publico de cada loja.</p>
                     </div>
 
                     @if ($produtos->isEmpty())
@@ -317,8 +317,11 @@
                                     <div class="offer-list">
                                         @foreach ($produto->melhores_ofertas as $oferta)
                                             <article>
-                                                <strong><span>{{ $oferta->loja?->nome ?? 'Loja nao informada' }}</span><span>R$ {{ number_format((float) $oferta->preco, 2, ',', '.') }}</span></strong>
-                                                <small>{{ $oferta->loja?->cidade ?? 'Sem cidade' }} @if ($oferta->loja?->uf) / {{ $oferta->loja->uf }} @endif · {{ ucfirst(str_replace('_', ' ', $oferta->tipo_preco)) }}</small>
+                                                <strong>
+                                                    <a href="{{ route('lojas.public.show', $oferta->loja) }}">{{ $oferta->loja?->nome ?? 'Loja nao informada' }}</a>
+                                                    <span>R$ {{ number_format((float) $oferta->preco, 2, ',', '.') }}</span>
+                                                </strong>
+                                                <small>{{ $oferta->loja?->cidade ?? 'Sem cidade' }} @if ($oferta->loja?->uf) / {{ $oferta->loja->uf }} @endif - {{ ucfirst(str_replace('_', ' ', $oferta->tipo_preco)) }}</small>
                                             </article>
                                         @endforeach
                                     </div>
@@ -336,7 +339,7 @@
             </main>
 
             <footer class="footer">
-                <span>Mania de Preco evoluindo para um SaaS visualmente forte no publico e poderoso no administrativo.</span>
+                <span>Descoberta publica, contexto comercial e operacao integrada no mesmo produto.</span>
                 <code>http://localhost:8000</code>
             </footer>
         </div>

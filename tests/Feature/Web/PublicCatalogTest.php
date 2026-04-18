@@ -3,10 +3,12 @@
 namespace Tests\Feature\Web;
 
 use App\Models\Categoria;
+use App\Models\AvaliacaoLoja;
 use App\Models\Loja;
 use App\Models\Marca;
 use App\Models\Preco;
 use App\Models\Produto;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -35,7 +37,31 @@ class PublicCatalogTest extends TestCase
             ->assertDontSee('Loja Centro');
     }
 
-    private function seedCatalogoDemo(): void
+    public function test_public_store_page_renders_context_and_offers(): void
+    {
+        [$lojaCentro] = $this->seedCatalogoDemo();
+
+        $cliente = User::create([
+            'name' => 'Cliente Teste',
+            'email' => 'cliente@teste.com',
+            'password' => 'password',
+        ]);
+
+        AvaliacaoLoja::create([
+            'loja_id' => $lojaCentro->id,
+            'user_id' => $cliente->id,
+            'nota' => 5,
+            'comentario' => 'Excelente atendimento.',
+        ]);
+
+        $this->get(route('lojas.public.show', $lojaCentro))
+            ->assertOk()
+            ->assertSee('Resumo rapido da loja')
+            ->assertSee('Loja Centro')
+            ->assertSee('Excelente atendimento.');
+    }
+
+    private function seedCatalogoDemo(): array
     {
         $categoria = Categoria::create([
             'nome' => 'Mercearia',
@@ -84,5 +110,7 @@ class PublicCatalogTest extends TestCase
             'preco' => 17.50,
             'tipo_preco' => 'cartao',
         ]);
+
+        return [$lojaCentro, $lojaOnline, $produto];
     }
 }
