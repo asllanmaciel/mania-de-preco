@@ -2,6 +2,9 @@
     <a class="subnav-link {{ request()->routeIs('admin.financeiro.index') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
         Visao geral
     </a>
+    <a class="subnav-link {{ request()->routeIs('admin.financeiro.categorias.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.categorias.index') }}">
+        Categorias
+    </a>
     <a class="subnav-link {{ request()->routeIs('admin.financeiro.contas.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.contas.index') }}">
         Contas financeiras
     </a>

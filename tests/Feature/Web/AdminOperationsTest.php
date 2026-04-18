@@ -100,6 +100,61 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Vendas');
     }
 
+    public function test_finance_page_applies_selected_period_to_recent_movements(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $categoria = CategoriaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Vendas',
+            'slug' => 'vendas',
+            'tipo' => 'receita',
+            'ativa' => true,
+        ]);
+
+        $contaFinanceira = ContaFinanceira::create([
+            'conta_id' => $conta->id,
+            'nome' => 'Banco principal',
+            'tipo' => 'banco',
+            'saldo_inicial' => 0,
+            'saldo_atual' => 0,
+            'ativa' => true,
+        ]);
+
+        MovimentacaoFinanceira::create([
+            'conta_id' => $conta->id,
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'user_id' => $user->id,
+            'tipo' => 'receita',
+            'origem' => 'manual',
+            'descricao' => 'Receita recente',
+            'valor' => 350,
+            'data_movimentacao' => now()->subMonth(),
+            'status' => 'realizada',
+        ]);
+
+        MovimentacaoFinanceira::create([
+            'conta_id' => $conta->id,
+            'conta_financeira_id' => $contaFinanceira->id,
+            'categoria_financeira_id' => $categoria->id,
+            'user_id' => $user->id,
+            'tipo' => 'receita',
+            'origem' => 'manual',
+            'descricao' => 'Receita historica',
+            'valor' => 900,
+            'data_movimentacao' => now()->subMonths(10),
+            'status' => 'realizada',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('admin.financeiro.index', ['periodo' => '3m']))
+            ->assertOk()
+            ->assertSee('ultimos 3 meses')
+            ->assertSee('Receita recente')
+            ->assertDontSee('Receita historica');
+    }
+
     public function test_authenticated_user_can_create_financial_account(): void
     {
         [$user, $conta] = $this->criarContaComUsuario();
@@ -128,6 +183,29 @@ class AdminOperationsTest extends TestCase
             'nome' => 'Banco principal',
             'tipo' => 'banco',
             'instituicao' => 'Banco Local',
+        ]);
+    }
+
+    public function test_authenticated_user_can_create_financial_category(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $response = $this->actingAs($user)->post(route('admin.financeiro.categorias.store'), [
+            'nome' => 'Marketing',
+            'tipo' => 'despesa',
+            'cor' => '#f97316',
+            'icone' => 'megaphone',
+            'descricao' => 'Investimentos em campanhas e divulgacao.',
+            'ativa' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.financeiro.categorias.index'));
+
+        $this->assertDatabaseHas('categorias_financeiras', [
+            'conta_id' => $conta->id,
+            'nome' => 'Marketing',
+            'tipo' => 'despesa',
+            'icone' => 'megaphone',
         ]);
     }
 

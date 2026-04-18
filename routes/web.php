@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\DashboardController;
+use App\Http\Controllers\Web\Admin\Financeiro\CategoriaFinanceiraController as AdminCategoriaFinanceiraController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaPagarController as AdminContaPagarController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaReceberController as AdminContaReceberController;
 use App\Http\Controllers\Web\Admin\FinanceiroController as AdminFinanceiroController;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::prefix('financeiro')->name('financeiro.')->group(function () {
             Route::get('/', AdminFinanceiroController::class)->name('index');
+            Route::resource('categorias', AdminCategoriaFinanceiraController::class)->except(['show']);
             Route::resource('contas', AdminContaFinanceiraController::class)->except(['show']);
             Route::resource('lancamentos', AdminMovimentacaoFinanceiraController::class)->except(['show']);
             Route::resource('contas-pagar', AdminContaPagarController::class)->except(['show']);

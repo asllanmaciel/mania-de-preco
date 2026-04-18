@@ -7,12 +7,34 @@
 @section('content')
     @include('admin.financeiro._nav')
 
+    <section class="card">
+        <div class="card-body stack">
+            <div class="toolbar">
+                <div>
+                    <h2 style="margin: 0;">Janela de analise</h2>
+                    <p class="helper-text" style="margin: 8px 0 0;">A leitura abaixo considera {{ $periodoLabel }} para receitas, despesas, composicao e historico recente.</p>
+                </div>
+
+                <form class="filter-row" method="GET" action="{{ route('admin.financeiro.index') }}">
+                    <select name="periodo" onchange="this.form.submit()">
+                        @foreach ($periodosDisponiveis as $slug => $periodo)
+                            <option value="{{ $slug }}" @selected($periodoAtual === $slug)>{{ ucfirst($periodo['label']) }}</option>
+                        @endforeach
+                    </select>
+                    <noscript>
+                        <button class="button-secondary" type="submit">Aplicar</button>
+                    </noscript>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <section class="grid-4">
         <article class="card metric-card">
             <span class="metric-label">Saldo projetado</span>
             <strong class="metric-value">R$ {{ number_format($saldoProjetado, 2, ',', '.') }}</strong>
             <span class="metric-trend {{ $saldoProjetado < 0 ? 'is-danger' : '' }}">
-                {{ $saldoProjetado < 0 ? 'mais saidas do que entradas' : 'resultado consolidado da conta' }}
+                {{ $saldoProjetado < 0 ? 'mais saidas do que entradas na janela' : 'resultado consolidado da janela selecionada' }}
             </span>
         </article>
 
@@ -20,7 +42,7 @@
             <span class="metric-label">Comprometimento</span>
             <strong class="metric-value">{{ number_format($comprometimento, 1, ',', '.') }}%</strong>
             <span class="metric-trend {{ $comprometimento > 100 ? 'is-danger' : '' }}">
-                despesas realizadas sobre receitas realizadas
+                despesas realizadas sobre receitas realizadas em {{ $periodoLabel }}
             </span>
         </article>
 
@@ -35,7 +57,7 @@
         <article class="card metric-card">
             <span class="metric-label">Baixas automaticas</span>
             <strong class="metric-value">{{ number_format($titulosComBaixa, 0, ',', '.') }}</strong>
-            <span class="metric-trend">titulos sincronizados com lancamentos</span>
+            <span class="metric-trend">titulos sincronizados com lancamentos na base atual</span>
         </article>
     </section>
 
@@ -74,7 +96,7 @@
                 <div class="section-header">
                     <div>
                         <h2>Ritmo financeiro mensal</h2>
-                        <p>Receitas e despesas realizadas distribuidas em seis janelas mensais.</p>
+                        <p>Receitas e despesas realizadas distribuidas em {{ $periodoLabel }}.</p>
                     </div>
                 </div>
 
@@ -130,7 +152,7 @@
                 <div class="section-header">
                     <div>
                         <h2>Composicao de receitas</h2>
-                        <p>Onde o caixa esta sendo puxado para cima.</p>
+                        <p>Onde o caixa esta sendo puxado para cima em {{ $periodoLabel }}.</p>
                     </div>
                 </div>
 
@@ -161,7 +183,7 @@
                 <div class="section-header">
                     <div>
                         <h2>Composicao de despesas</h2>
-                        <p>Onde a operacao esta consumindo mais recurso.</p>
+                        <p>Onde a operacao esta consumindo mais recurso em {{ $periodoLabel }}.</p>
                     </div>
                 </div>
 
@@ -255,13 +277,13 @@
                 <div class="section-header">
                     <div>
                         <h3>Movimentacoes recentes</h3>
-                        <p>Ultimos registros financeiros ligados a conta.</p>
+                        <p>Ultimos registros financeiros ligados a conta dentro de {{ $periodoLabel }}.</p>
                     </div>
                 </div>
 
                 @if ($movimentacoesRecentes->isEmpty())
                     <div class="empty-state">
-                        Nenhuma movimentacao financeira registrada ainda. Quando o fluxo operacional entrar, essa area vai refletir entradas, saidas e origem dos lancamentos.
+                        Nenhuma movimentacao financeira encontrada em {{ $periodoLabel }}. Quando o fluxo operacional entrar nessa janela, essa area vai refletir entradas, saidas e origem dos lancamentos.
                     </div>
                 @else
                     <div class="table-list">
