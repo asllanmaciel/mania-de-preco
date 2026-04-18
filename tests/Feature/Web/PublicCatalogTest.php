@@ -61,6 +61,17 @@ class PublicCatalogTest extends TestCase
             ->assertSee('Excelente atendimento.');
     }
 
+    public function test_public_product_page_renders_price_comparison(): void
+    {
+        [, , $produto] = $this->seedCatalogoDemo();
+
+        $this->get(route('produtos.public.show', $produto))
+            ->assertOk()
+            ->assertSee('Resumo de mercado do produto')
+            ->assertSee('Cafe Premium 500g')
+            ->assertSee('Onde comprar agora');
+    }
+
     private function seedCatalogoDemo(): array
     {
         $categoria = Categoria::create([

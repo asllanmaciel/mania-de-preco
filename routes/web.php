@@ -13,12 +13,14 @@ use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
 use App\Http\Controllers\Web\Auth\SessionController;
 use App\Http\Controllers\Web\PublicCatalogController;
+use App\Http\Controllers\Web\PublicProductController;
 use App\Http\Controllers\Web\PublicStoreController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
 Route::get('/ofertas', PublicCatalogController::class)->name('ofertas');
 Route::get('/lojas/{loja}', PublicStoreController::class)->name('lojas.public.show');
+Route::get('/produtos/{produto}', PublicProductController::class)->name('produtos.public.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SessionController::class, 'create'])->name('login');

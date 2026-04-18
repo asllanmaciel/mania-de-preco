@@ -303,7 +303,7 @@
                                     <div class="offer-head">
                                         <div class="offer-top">
                                             <span class="badge warm">{{ $produto->categoria?->nome ?? 'Sem categoria' }}</span>
-                                            <h3>{{ $produto->nome }}</h3>
+                                            <h3><a href="{{ route('produtos.public.show', $produto) }}">{{ $produto->nome }}</a></h3>
                                             <span class="small">{{ $produto->marca?->nome ?? 'Marca nao informada' }}</span>
                                         </div>
                                         <span class="badge">{{ $produto->precos_count }} ofertas</span>
@@ -329,6 +329,8 @@
                                     @if ($produto->precos_count > 1)
                                         <div class="track"><span class="fill gold" style="width: {{ min(100, ($economia / max(0.01, $maiorPreco)) * 100) }}%;"></span></div>
                                     @endif
+
+                                    <a class="button-secondary" href="{{ route('produtos.public.show', $produto) }}">Abrir comparativo completo</a>
                                 </article>
                             @endforeach
                         </div>
