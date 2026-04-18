@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Produto;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -50,14 +52,16 @@ class ProdutoController extends AdminController
             'marcas' => Marca::orderBy('nome')->get(),
             'produto' => new Produto(),
             'especificacoesTexto' => '',
+            'galeriaImagensTexto' => '',
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $dados = $this->validarProduto($request);
+        $imagemPrincipal = $this->resolverImagemPrincipal($request, $dados);
 
-        $produto = Produto::create($this->montarPayloadProduto($dados));
+        $produto = Produto::create($this->montarPayloadProduto($dados, null, $imagemPrincipal));
 
         return redirect()
             ->route('admin.produtos.edit', $produto)
@@ -71,14 +75,16 @@ class ProdutoController extends AdminController
             'marcas' => Marca::orderBy('nome')->get(),
             'produto' => $produto,
             'especificacoesTexto' => implode(PHP_EOL, $produto->especificacoes ?? []),
+            'galeriaImagensTexto' => implode(PHP_EOL, $produto->galeria_imagens ?? []),
         ]);
     }
 
     public function update(Request $request, Produto $produto): RedirectResponse
     {
         $dados = $this->validarProduto($request, $produto);
+        $imagemPrincipal = $this->resolverImagemPrincipal($request, $dados, $produto);
 
-        $produto->update($this->montarPayloadProduto($dados, $produto));
+        $produto->update($this->montarPayloadProduto($dados, $produto, $imagemPrincipal));
 
         return redirect()
             ->route('admin.produtos.edit', $produto)
@@ -105,11 +111,14 @@ class ProdutoController extends AdminController
             'descricao' => ['nullable', 'string'],
             'especificacoes_texto' => ['nullable', 'string'],
             'imagem_principal' => ['nullable', 'string', 'max:2048'],
+            'imagem_upload' => ['nullable', 'image', 'max:4096'],
+            'galeria_imagens_texto' => ['nullable', 'string'],
+            'remover_imagem' => ['nullable', 'boolean'],
             'status' => ['required', Rule::in(['ativo', 'inativo'])],
         ]);
     }
 
-    private function montarPayloadProduto(array $dados, ?Produto $produto = null): array
+    private function montarPayloadProduto(array $dados, ?Produto $produto = null, ?string $imagemPrincipal = null): array
     {
         $nomeCategoriaNova = trim((string) ($dados['nova_categoria_nome'] ?? ''));
         $nomeMarcaNova = trim((string) ($dados['nova_marca_nome'] ?? ''));
@@ -132,9 +141,69 @@ class ProdutoController extends AdminController
             'marca_id' => $marcaId,
             'descricao' => ($dados['descricao'] ?? null) ?: null,
             'especificacoes' => $this->normalizarEspecificacoes($dados['especificacoes_texto'] ?? null),
-            'imagem_principal' => trim((string) ($dados['imagem_principal'] ?? '')) ?: null,
+            'imagem_principal' => $imagemPrincipal,
+            'galeria_imagens' => $this->normalizarGaleriaImagens($dados['galeria_imagens_texto'] ?? null, $imagemPrincipal),
             'status' => $dados['status'],
         ];
+    }
+
+    private function resolverImagemPrincipal(Request $request, array $dados, ?Produto $produto = null): ?string
+    {
+        $imagemManual = trim((string) ($dados['imagem_principal'] ?? ''));
+        $removerImagem = (bool) ($dados['remover_imagem'] ?? false);
+
+        if ($request->hasFile('imagem_upload')) {
+            $novaImagem = $this->salvarUploadImagem($request->file('imagem_upload'), trim((string) ($dados['nome'] ?? 'produto')));
+            $this->removerImagemUploadAntiga($produto?->imagem_principal);
+
+            return $novaImagem;
+        }
+
+        if ($imagemManual !== '') {
+            if ($produto && $produto->imagem_principal !== $imagemManual) {
+                $this->removerImagemUploadAntiga($produto->imagem_principal);
+            }
+
+            return $imagemManual;
+        }
+
+        if ($removerImagem) {
+            $this->removerImagemUploadAntiga($produto?->imagem_principal);
+
+            return null;
+        }
+
+        return $produto?->imagem_principal;
+    }
+
+    private function salvarUploadImagem(UploadedFile $arquivo, string $nomeProduto): string
+    {
+        $diretorioRelativo = 'images/uploads/produtos';
+        $diretorioPublico = public_path($diretorioRelativo);
+        File::ensureDirectoryExists($diretorioPublico);
+
+        $slug = Str::slug($nomeProduto);
+        $base = $slug !== '' ? $slug : 'produto';
+        $nomeArquivo = sprintf('%s-%s-%s.%s', $base, now()->format('YmdHis'), Str::lower(Str::random(6)), $arquivo->getClientOriginalExtension());
+
+        $arquivo->move($diretorioPublico, $nomeArquivo);
+
+        return "/{$diretorioRelativo}/{$nomeArquivo}";
+    }
+
+    private function removerImagemUploadAntiga(?string $imagem): void
+    {
+        $imagem = trim((string) $imagem);
+
+        if (! Str::startsWith($imagem, '/images/uploads/produtos/')) {
+            return;
+        }
+
+        $caminho = public_path(ltrim($imagem, '/'));
+
+        if (File::exists($caminho)) {
+            File::delete($caminho);
+        }
     }
 
     private function normalizarEspecificacoes(?string $texto): ?array
@@ -142,6 +211,19 @@ class ProdutoController extends AdminController
         $linhas = collect(preg_split('/\r\n|\r|\n/', (string) $texto))
             ->map(fn ($linha) => trim((string) $linha))
             ->filter()
+            ->values()
+            ->all();
+
+        return $linhas === [] ? null : $linhas;
+    }
+
+    private function normalizarGaleriaImagens(?string $texto, ?string $imagemPrincipal): ?array
+    {
+        $linhas = collect(preg_split('/\r\n|\r|\n/', (string) $texto))
+            ->map(fn ($linha) => trim((string) $linha))
+            ->filter()
+            ->reject(fn ($linha) => $linha === trim((string) $imagemPrincipal))
+            ->unique()
             ->values()
             ->all();
 

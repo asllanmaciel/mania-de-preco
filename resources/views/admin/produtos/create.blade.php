@@ -12,7 +12,7 @@
                 <p class="helper-text" style="margin: 8px 0 0;">Voce pode conectar o produto a categorias e marcas existentes ou criar novas durante o cadastro.</p>
             </div>
 
-            <form class="stack" method="POST" action="{{ route('admin.produtos.store') }}">
+            <form class="stack" method="POST" action="{{ route('admin.produtos.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 @include('admin.produtos._form', ['submitLabel' => 'Cadastrar produto'])

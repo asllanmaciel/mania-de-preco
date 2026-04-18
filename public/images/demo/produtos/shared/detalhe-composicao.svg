@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#fff4e9"/>
+  <circle cx="122" cy="94" r="86" fill="#ff6b2c" fill-opacity=".12"/>
+  <circle cx="520" cy="378" r="98" fill="#0f9f8f" fill-opacity=".12"/>
+  <rect x="120" y="76" width="400" height="328" rx="30" fill="#fffdf9" stroke="#edd9c8"/>
+  <text x="170" y="134" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#2b1a12">Composicao e destaques</text>
+  <rect x="170" y="170" width="300" height="16" rx="8" fill="#ffcfb3"/>
+  <rect x="170" y="204" width="256" height="16" rx="8" fill="#ffd9c0"/>
+  <rect x="170" y="238" width="280" height="16" rx="8" fill="#ffe5d2"/>
+  <g transform="translate(170 300)">
+    <circle cx="0" cy="0" r="12" fill="#ff6b2c"/>
+    <text x="28" y="7" font-family="Arial, sans-serif" font-size="22" fill="#6d5247">Leitura rapida para o celular</text>
+  </g>
+  <g transform="translate(170 342)">
+    <circle cx="0" cy="0" r="12" fill="#0f9f8f"/>
+    <text x="28" y="7" font-family="Arial, sans-serif" font-size="22" fill="#6d5247">Informacao util sem poluicao</text>
+  </g>
+</svg>

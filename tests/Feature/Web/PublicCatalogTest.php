@@ -108,7 +108,8 @@ class PublicCatalogTest extends TestCase
             ->assertOk()
             ->assertSee('Resumo de mercado do produto')
             ->assertSee('Cafe Premium 500g')
-            ->assertSee('Onde comprar agora');
+            ->assertSee('Onde comprar agora')
+            ->assertSee('/images/demo/produtos/shared/contexto-prateleira.svg');
     }
 
     public function test_public_project_page_renders_live_product_overview(): void
@@ -161,6 +162,11 @@ class PublicCatalogTest extends TestCase
             'categoria_id' => $categoria->id,
             'marca_id' => $marca->id,
             'descricao' => 'Cafe especial para comparacao.',
+            'imagem_principal' => '/images/demo/produtos/cafe-premium-500g.svg',
+            'galeria_imagens' => [
+                '/images/demo/produtos/shared/contexto-prateleira.svg',
+                '/images/demo/produtos/shared/selo-catalogo.svg',
+            ],
             'status' => 'ativo',
         ]);
 

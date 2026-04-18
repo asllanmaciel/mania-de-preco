@@ -81,7 +81,7 @@
             .footer { display:flex; justify-content:space-between; gap:14px; align-items:center; padding:30px 0 48px; color:var(--muted); font-size:.92rem; }
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
             @media (max-width:1100px) { .hero, .chart-grid, .offer-grid, .metrics-grid, form.filter { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
-            @media (max-width:720px) { .topbar, .top-links, .hero-actions, .section-head, .grid-head, .pulse-meta { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .stats, .offer-price-grid { grid-template-columns:1fr; } }
+            @media (max-width:720px) { .topbar, .top-links, .hero-actions, .section-head, .grid-head, .pulse-meta, .footer { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .stats, .offer-price-grid { grid-template-columns:1fr; } .button, .button-secondary, .chip { width:100%; justify-content:center; } .offer-media img { height:190px; } }
         </style>
     </head>
     <body>

@@ -12,6 +12,7 @@ use App\Models\Loja;
 use App\Models\Preco;
 use App\Models\Produto;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -456,6 +457,7 @@ class AdminOperationsTest extends TestCase
             'nova_marca_nome' => 'Casa do Grao',
             'descricao' => 'Cafe especial para vitrine.',
             'especificacoes_texto' => "Torra media\n500g",
+            'imagem_upload' => UploadedFile::fake()->image('cafe.jpg', 600, 600),
             'status' => 'ativo',
         ]);
 
@@ -475,6 +477,9 @@ class AdminOperationsTest extends TestCase
             'nome' => 'Cafe Premium 500g',
             'status' => 'ativo',
         ]);
+
+        $this->assertNotNull($produto?->imagem_principal);
+        $this->assertStringStartsWith('/images/uploads/produtos/', $produto->imagem_principal);
     }
 
     public function test_authenticated_user_can_create_price_for_own_store(): void

@@ -12,28 +12,35 @@ class Produto extends Model
 
     protected $fillable = [
         'nome', 'slug', 'categoria_id', 'marca_id',
-        'descricao', 'especificacoes', 'imagem_principal', 'status'
+        'descricao', 'especificacoes', 'imagem_principal', 'galeria_imagens', 'status'
     ];
 
     protected $casts = [
         'especificacoes' => 'array',
+        'galeria_imagens' => 'array',
     ];
 
     public function getImagemUrlAttribute(): string
     {
-        $imagem = trim((string) ($this->imagem_principal ?? ''));
+        return $this->normalizarImagem($this->imagem_principal) ?? $this->placeholderSvgDataUri();
+    }
 
-        if ($imagem !== '') {
-            if (Str::startsWith($imagem, ['http://', 'https://', 'data:image'])) {
-                return $imagem;
-            }
+    public function getGaleriaUrlsAttribute(): array
+    {
+        $galeria = collect($this->galeria_imagens ?? [])
+            ->map(fn ($imagem) => $this->normalizarImagem($imagem))
+            ->filter()
+            ->values();
 
-            return Str::startsWith($imagem, ['/'])
-                ? $imagem
-                : asset($imagem);
+        if ($galeria->isEmpty()) {
+            return [$this->imagem_url];
         }
 
-        return $this->placeholderSvgDataUri();
+        if ($galeria->doesntContain($this->imagem_url)) {
+            $galeria->prepend($this->imagem_url);
+        }
+
+        return $galeria->unique()->values()->all();
     }
 
     public function categoria()
@@ -88,5 +95,22 @@ class Produto extends Model
 SVG;
 
         return 'data:image/svg+xml;utf8,' . rawurlencode($svg);
+    }
+
+    private function normalizarImagem(mixed $imagem): ?string
+    {
+        $imagem = trim((string) $imagem);
+
+        if ($imagem === '') {
+            return null;
+        }
+
+        if (Str::startsWith($imagem, ['http://', 'https://', 'data:image'])) {
+            return $imagem;
+        }
+
+        return Str::startsWith($imagem, ['/'])
+            ? $imagem
+            : asset($imagem);
     }
 }

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#fff7ed"/>
+  <circle cx="320" cy="220" r="144" fill="#fff" stroke="#f1d7bf" stroke-width="18"/>
+  <circle cx="320" cy="220" r="104" fill="#ff6b2c" fill-opacity=".12"/>
+  <path d="M320 120l26 54 60 8-44 42 10 60-52-28-52 28 10-60-44-42 60-8 26-54Z" fill="#ff6b2c"/>
+  <text x="320" y="360" font-family="Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle" fill="#2b1a12">Catalogo destacado</text>
+  <text x="320" y="394" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#6d5247">Pronto para vitrine e comparacao</text>
+</svg>

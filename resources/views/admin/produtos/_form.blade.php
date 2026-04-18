@@ -76,6 +76,21 @@
     </div>
 
     <div class="field-group-full">
+        <label for="imagem_upload">Upload de imagem</label>
+        <input id="imagem_upload" type="file" name="imagem_upload" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+        <small>Se voce enviar um arquivo, ele tem prioridade sobre a URL manual.</small>
+    </div>
+
+    @if ($produto->exists && $produto->imagem_principal)
+        <div class="field-group-full">
+            <label class="remember-toggle" for="remover_imagem">
+                <input id="remover_imagem" type="checkbox" name="remover_imagem" value="1" @checked(old('remover_imagem'))>
+                Remover imagem atual e voltar para o placeholder automatico
+            </label>
+        </div>
+    @endif
+
+    <div class="field-group-full">
         <label for="descricao">Descricao</label>
         <textarea id="descricao" name="descricao">{{ old('descricao', $produto->descricao) }}</textarea>
     </div>
@@ -84,6 +99,12 @@
         <label for="especificacoes_texto">Especificacoes</label>
         <textarea id="especificacoes_texto" name="especificacoes_texto">{{ old('especificacoes_texto', $especificacoesTexto) }}</textarea>
         <small>Use uma linha por especificacao. O sistema transforma isso em lista estruturada.</small>
+    </div>
+
+    <div class="field-group-full">
+        <label for="galeria_imagens_texto">Galeria complementar</label>
+        <textarea id="galeria_imagens_texto" name="galeria_imagens_texto" style="min-height: 120px;">{{ old('galeria_imagens_texto', $galeriaImagensTexto) }}</textarea>
+        <small>Use uma linha por imagem adicional. Essas imagens enriquecem a pagina publica do produto e ajudam na navegacao mobile.</small>
     </div>
 </div>
 
@@ -102,13 +123,31 @@
         }
 
         const fallback = preview.getAttribute('src');
+        const upload = document.getElementById('imagem_upload');
 
         const updatePreview = () => {
             const value = input.value.trim();
             preview.src = value !== '' ? value : fallback;
         };
 
+        const updateUploadPreview = () => {
+            const file = upload?.files?.[0];
+
+            if (!file) {
+                updatePreview();
+
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = event => {
+                preview.src = event.target?.result || fallback;
+            };
+            reader.readAsDataURL(file);
+        };
+
         input.addEventListener('input', updatePreview);
         input.addEventListener('change', updatePreview);
+        upload?.addEventListener('change', updateUploadPreview);
     })();
 </script>

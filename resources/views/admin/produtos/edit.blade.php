@@ -12,7 +12,7 @@
                 <p class="helper-text" style="margin: 8px 0 0;">Slug atual: <code>{{ $produto->slug }}</code></p>
             </div>
 
-            <form class="stack" method="POST" action="{{ route('admin.produtos.update', $produto) }}">
+            <form class="stack" method="POST" action="{{ route('admin.produtos.update', $produto) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 

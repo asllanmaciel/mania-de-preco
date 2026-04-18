@@ -14,15 +14,16 @@
             body { margin:0; min-height:100vh; font-family:"Space Grotesk",sans-serif; color:var(--text); background:radial-gradient(circle at top left, rgba(255,107,44,.18), transparent 28%), radial-gradient(circle at 85% 0%, rgba(15,159,143,.15), transparent 24%), linear-gradient(180deg,#fff7ec 0%, var(--bg) 44%, var(--bg2) 100%); }
             a { color:inherit; text-decoration:none; }
             .container { width:min(calc(100% - 32px), var(--container)); margin:0 auto; }
-            .topbar, .hero, .stats, .section-head, .bar-meta, .offer-head, .footer { display:flex; gap:14px; }
+            .topbar, .stats, .section-head, .bar-meta, .offer-head, .footer, .thumb-grid, .trust-list { display:flex; gap:14px; }
             .topbar, .section-head, .bar-meta, .offer-head, .footer { justify-content:space-between; align-items:flex-start; }
             .topbar { padding:22px 0; align-items:center; }
             .brand { display:inline-flex; align-items:center; gap:14px; font-weight:700; letter-spacing:-.03em; }
             .brand-badge { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#cf4e1b 100%); box-shadow:0 14px 30px rgba(207,78,27,.28); }
             .chip, .badge { display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:999px; }
             .chip { border:1px solid var(--line); background:rgba(255,255,255,.58); color:var(--muted); font-size:.92rem; }
-            .hero { display:grid; grid-template-columns:1.05fr .95fr; padding:14px 0 22px; }
-            .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+            .hero, .grid, .stats, .bars, .offers, .related, .hero-actions, .media-stack, .trust-list { display:grid; gap:16px; }
+            .hero { grid-template-columns:1fr; padding:14px 0 22px; }
+            .grid { grid-template-columns:1fr; }
             .card, .hero-card { background:var(--surface); border:1px solid rgba(255,255,255,.62); box-shadow:var(--shadow); backdrop-filter:blur(16px); }
             .hero-card { padding:38px; border-radius:var(--r1); }
             .card { padding:24px; border-radius:var(--r2); }
@@ -34,13 +35,20 @@
             .button, .button-secondary { display:inline-flex; align-items:center; justify-content:center; padding:14px 18px; border-radius:16px; font-weight:700; border:1px solid transparent; }
             .button { color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#d4511d 100%); box-shadow:0 18px 36px rgba(212,81,29,.28); }
             .button-secondary { background:rgba(255,255,255,.72); border-color:var(--line); }
-            .stats, .bars, .offers, .related { display:grid; gap:16px; }
-            .stats { grid-template-columns:repeat(4, minmax(0, 1fr)); margin-top:26px; }
+            .hero-actions { margin-top:24px; }
+            .stats { grid-template-columns:1fr; margin-top:26px; }
             .stat, .mini, .offer, .related-card { padding:16px; border-radius:18px; background:rgba(255,255,255,.74); border:1px solid rgba(255,255,255,.72); }
             .stat strong, .mini strong, .offer strong, .related-card strong { display:block; margin-bottom:6px; }
             .stat strong { font-size:1.5rem; }
-            .product-media { position:relative; overflow:hidden; border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,239,225,.94)); border:1px solid rgba(66,37,21,.08); min-height:260px; }
-            .product-media img { width:100%; height:100%; min-height:260px; object-fit:cover; display:block; }
+            .product-media { position:relative; overflow:hidden; border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,239,225,.94)); border:1px solid rgba(66,37,21,.08); min-height:300px; }
+            .product-media img { width:100%; height:100%; min-height:300px; object-fit:cover; display:block; }
+            .thumb-grid { flex-wrap:wrap; }
+            .thumb-button { width:84px; height:84px; padding:0; border:none; border-radius:18px; overflow:hidden; background:rgba(255,255,255,.84); box-shadow:0 10px 24px rgba(60,28,14,.08); cursor:pointer; }
+            .thumb-button img { width:100%; height:100%; object-fit:cover; display:block; }
+            .thumb-button.is-active { outline:3px solid rgba(255,107,44,.28); }
+            .trust-list { grid-template-columns:1fr; }
+            .trust-item { padding:16px; border-radius:18px; background:rgba(255,255,255,.76); border:1px solid rgba(66,37,21,.08); }
+            .trust-item strong { display:block; margin-bottom:6px; font-size:1.02rem; }
             .related-card img { width:100%; height:140px; object-fit:cover; border-radius:16px; margin-bottom:14px; background:#fff; border:1px solid rgba(66,37,21,.08); }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
@@ -51,15 +59,20 @@
             .offers { grid-template-columns:1fr; }
             .badge { background:rgba(15,159,143,.12); color:#0e6e64; font-size:.82rem; }
             .offer-head { align-items:center; }
-            .related { grid-template-columns:repeat(4, minmax(0, 1fr)); }
+            .related { grid-template-columns:1fr; }
             .footer { padding:30px 0 48px; color:var(--muted); font-size:.92rem; }
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
-            @media (max-width:1100px) { .hero, .grid, .stats, .related { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
-            @media (max-width:720px) { .topbar, .offer-head { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } }
+            @media (min-width:721px) { .stats { grid-template-columns:repeat(2, minmax(0, 1fr)); } .related { grid-template-columns:repeat(2, minmax(0, 1fr)); } .hero-actions { grid-template-columns:repeat(2, minmax(0, max-content)); } }
+            @media (min-width:1101px) { .hero { grid-template-columns:1.02fr .98fr; } .grid { grid-template-columns:1fr 1fr; } .stats { grid-template-columns:repeat(4, minmax(0, 1fr)); } .related { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+            @media (max-width:720px) { .topbar, .offer-head, .thumb-grid, .footer { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .thumb-button { width:100%; height:72px; } .button, .button-secondary { width:100%; } }
         </style>
     </head>
     <body>
-        @php $chartMax = max(1, (float) $chart->max('preco')); @endphp
+        @php
+            $chartMax = max(1, (float) $chart->max('preco'));
+            $galeria = $produto->galeria_urls;
+            $galeriaPrincipal = $galeria[0] ?? $produto->imagem_url;
+        @endphp
         <div class="container">
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
@@ -85,7 +98,7 @@
                         <p>{{ $produto->marca?->nome ?? 'Marca nao informada' }}</p>
                         <p style="margin-top:12px;">{{ $produto->descricao ?: 'Produto publicado na vitrine do Mania de Preco para comparacao entre lojas ativas.' }}</p>
 
-                        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
+                        <div class="hero-actions">
                             @if ($melhorOferta && $melhorOferta->loja)
                                 <a class="button" href="{{ route('lojas.public.show', $melhorOferta->loja) }}">Ver melhor loja agora</a>
                             @endif
@@ -101,8 +114,25 @@
                     </article>
 
                     <aside class="card">
-                        <div class="product-media" style="margin-bottom:18px;">
-                            <img src="{{ $produto->imagem_url }}" alt="{{ $produto->nome }}">
+                        <div class="media-stack">
+                            <div class="product-media">
+                                <img id="gallery-main" src="{{ $galeriaPrincipal }}" alt="{{ $produto->nome }}">
+                            </div>
+
+                            @if (count($galeria) > 1)
+                                <div class="thumb-grid" role="tablist" aria-label="Galeria do produto">
+                                    @foreach ($galeria as $imagem)
+                                        <button
+                                            class="thumb-button {{ $loop->first ? 'is-active' : '' }}"
+                                            type="button"
+                                            data-gallery-src="{{ $imagem }}"
+                                            aria-label="Ver imagem {{ $loop->iteration }} do produto"
+                                        >
+                                            <img src="{{ $imagem }}" alt="{{ $produto->nome }} imagem {{ $loop->iteration }}">
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
 
                         <div class="section-head">
@@ -124,6 +154,17 @@
                             <div class="mini">
                                 <strong>Cidades com oferta</strong>
                                 <span>{{ $cidades->implode(' - ') ?: 'Sem cidade informada' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="trust-list" style="margin-top:16px;">
+                            <div class="trust-item">
+                                <strong>Leitura otimizada para mobile</strong>
+                                <span class="small">Galeria, preco e CTA ficam proximos para reduzir rolagem e acelerar decisao no celular.</span>
+                            </div>
+                            <div class="trust-item">
+                                <strong>Comparacao objetiva</strong>
+                                <span class="small">O bloco principal resume melhor oferta, economia e variedade sem esconder o detalhe das lojas.</span>
                             </div>
                         </div>
                     </aside>
@@ -206,5 +247,25 @@
                 <code>{{ route('produtos.public.show', $produto) }}</code>
             </footer>
         </div>
+
+        <script>
+            (() => {
+                const main = document.getElementById('gallery-main');
+                const thumbs = Array.from(document.querySelectorAll('[data-gallery-src]'));
+
+                if (!main || thumbs.length === 0) {
+                    return;
+                }
+
+                thumbs.forEach((thumb) => {
+                    thumb.addEventListener('click', () => {
+                        main.src = thumb.dataset.gallerySrc;
+
+                        thumbs.forEach((button) => button.classList.remove('is-active'));
+                        thumb.classList.add('is-active');
+                    });
+                });
+            })();
+        </script>
     </body>
 </html>

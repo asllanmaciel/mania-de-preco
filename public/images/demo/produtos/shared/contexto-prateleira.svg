@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <rect width="640" height="480" rx="40" fill="#f5efe4"/>
+  <rect x="72" y="120" width="496" height="20" rx="10" fill="#d6b08d"/>
+  <rect x="72" y="282" width="496" height="20" rx="10" fill="#d6b08d"/>
+  <rect x="110" y="48" width="96" height="170" rx="22" fill="#ff6b2c"/>
+  <rect x="230" y="68" width="94" height="150" rx="22" fill="#0f9f8f"/>
+  <rect x="350" y="42" width="104" height="176" rx="22" fill="#d69a27"/>
+  <rect x="478" y="78" width="70" height="140" rx="22" fill="#6030c8"/>
+  <rect x="120" y="210" width="78" height="120" rx="22" fill="#ffd1b6"/>
+  <rect x="232" y="226" width="88" height="104" rx="22" fill="#bff0ea"/>
+  <rect x="356" y="214" width="92" height="116" rx="22" fill="#ffe4a7"/>
+  <rect x="484" y="238" width="58" height="92" rx="22" fill="#dac9ff"/>
+  <text x="320" y="412" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#5c463a">Contexto de vitrine pensado para mobile</text>
+</svg>
