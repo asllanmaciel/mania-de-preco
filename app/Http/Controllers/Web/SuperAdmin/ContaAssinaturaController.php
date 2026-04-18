@@ -6,12 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Assinatura;
 use App\Models\Conta;
 use App\Models\Plano;
+use App\Services\Auditoria\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ContaAssinaturaController extends Controller
 {
+    public function __construct(private readonly AuditLogger $audit)
+    {
+    }
+
     public function create(Request $request, Conta $conta): View
     {
         return view('super-admin.assinaturas.create', [
@@ -34,7 +39,7 @@ class ContaAssinaturaController extends Controller
 
         $this->encerrarAssinaturasAbertas($conta, null, $dados['status']);
 
-        Assinatura::create([
+        $assinatura = Assinatura::create([
             'conta_id' => $conta->id,
             'plano_id' => $plano->id,
             'status' => $dados['status'],
@@ -45,6 +50,12 @@ class ContaAssinaturaController extends Controller
             'cancelada_em' => $dados['cancelada_em'] ?? null,
             'observacoes' => $dados['observacoes'] ?? null,
             'billing_provider' => $dados['billing_provider'] ?? null,
+        ]);
+
+        $this->audit->registrar($request, $conta, 'assinaturas', 'assinatura_criada', "Assinatura {$plano->nome} criada para a conta.", $assinatura, [
+            'plano_id' => $plano->id,
+            'status' => $dados['status'],
+            'ciclo_cobranca' => $dados['ciclo_cobranca'],
         ]);
 
         return redirect()
@@ -73,6 +84,7 @@ class ContaAssinaturaController extends Controller
 
         $this->encerrarAssinaturasAbertas($conta, $assinatura->id, $dados['status']);
 
+        $antes = $assinatura->only(['plano_id', 'status', 'ciclo_cobranca', 'valor', 'expira_em']);
         $assinatura->update([
             'plano_id' => $plano->id,
             'status' => $dados['status'],
@@ -83,6 +95,11 @@ class ContaAssinaturaController extends Controller
             'cancelada_em' => $dados['cancelada_em'] ?? null,
             'observacoes' => $dados['observacoes'] ?? null,
             'billing_provider' => $dados['billing_provider'] ?? null,
+        ]);
+
+        $this->audit->registrar($request, $conta, 'assinaturas', 'assinatura_atualizada', "Assinatura da conta atualizada para {$plano->nome}.", $assinatura, [
+            'antes' => $antes,
+            'depois' => $assinatura->only(['plano_id', 'status', 'ciclo_cobranca', 'valor', 'expira_em']),
         ]);
 
         return redirect()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Produto;
+use App\Services\Auditoria\AuditLogger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,10 @@ use Illuminate\View\View;
 
 class ProdutoController extends AdminController
 {
+    public function __construct(private readonly AuditLogger $audit)
+    {
+    }
+
     public function index(Request $request): View
     {
         $conta = $this->contaAtual($request);
@@ -62,6 +67,9 @@ class ProdutoController extends AdminController
         $imagemPrincipal = $this->resolverImagemPrincipal($request, $dados);
 
         $produto = Produto::create($this->montarPayloadProduto($dados, null, $imagemPrincipal));
+        $conta = $this->contaAtual($request);
+
+        $this->audit->registrar($request, $conta, 'catalogo', 'produto_criado', "Produto {$produto->nome} cadastrado.", $produto);
 
         return redirect()
             ->route('admin.produtos.edit', $produto)
@@ -84,7 +92,14 @@ class ProdutoController extends AdminController
         $dados = $this->validarProduto($request, $produto);
         $imagemPrincipal = $this->resolverImagemPrincipal($request, $dados, $produto);
 
+        $conta = $this->contaAtual($request);
+        $antes = $produto->only(['nome', 'categoria_id', 'marca_id', 'status', 'imagem_principal']);
         $produto->update($this->montarPayloadProduto($dados, $produto, $imagemPrincipal));
+
+        $this->audit->registrar($request, $conta, 'catalogo', 'produto_atualizado', "Produto {$produto->nome} atualizado.", $produto, [
+            'antes' => $antes,
+            'depois' => $produto->only(['nome', 'categoria_id', 'marca_id', 'status', 'imagem_principal']),
+        ]);
 
         return redirect()
             ->route('admin.produtos.edit', $produto)
@@ -93,6 +108,9 @@ class ProdutoController extends AdminController
 
     public function destroy(Request $request, Produto $produto): RedirectResponse
     {
+        $conta = $this->contaAtual($request);
+        $nome = $produto->nome;
+        $this->audit->registrar($request, $conta, 'catalogo', 'produto_removido', "Produto {$nome} removido.", $produto);
         $produto->delete();
 
         return redirect()

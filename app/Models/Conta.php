@@ -76,4 +76,9 @@ class Conta extends Model
     {
         return $this->hasOne(Assinatura::class)->latestOfMany();
     }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
 }

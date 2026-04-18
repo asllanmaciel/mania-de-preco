@@ -40,6 +40,12 @@ class AdminOperationsTest extends TestCase
             'cidade' => 'Sao Paulo',
             'uf' => 'SP',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $user->id,
+            'area' => 'lojas',
+            'acao' => 'loja_criada',
+        ]);
     }
 
     public function test_authenticated_user_can_open_store_index_page(): void
@@ -143,6 +149,13 @@ class AdminOperationsTest extends TestCase
             'ativo' => true,
         ]);
 
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'equipe',
+            'acao' => 'membro_adicionado',
+        ]);
+
         $this->actingAs($user)
             ->put(route('admin.equipe.update', $membro), [
                 'name' => 'Financeiro Lider',
@@ -161,6 +174,13 @@ class AdminOperationsTest extends TestCase
             'conta_id' => $conta->id,
             'user_id' => $membro->id,
             'papel' => 'gestor',
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'equipe',
+            'acao' => 'membro_atualizado',
         ]);
     }
 
@@ -183,6 +203,31 @@ class AdminOperationsTest extends TestCase
         $this->actingAs($operador)
             ->get(route('admin.equipe.index'))
             ->assertForbidden();
+
+        $this->actingAs($operador)
+            ->get(route('admin.auditoria'))
+            ->assertForbidden();
+    }
+
+    public function test_owner_can_open_audit_center(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        \App\Models\AuditLog::create([
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'financeiro',
+            'acao' => 'lancamento_criado',
+            'descricao' => 'Lancamento de teste registrado.',
+            'ip' => '127.0.0.1',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('admin.auditoria'))
+            ->assertOk()
+            ->assertSee('Auditoria da conta')
+            ->assertSee('Lancamento de teste registrado.')
+            ->assertSee('financeiro');
     }
 
     public function test_financial_user_can_access_finance_but_not_catalog(): void
@@ -437,6 +482,13 @@ class AdminOperationsTest extends TestCase
             'descricao' => 'Compra de estoque',
             'tipo' => 'despesa',
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'financeiro',
+            'acao' => 'lancamento_criado',
+        ]);
     }
 
     public function test_authenticated_user_can_create_account_payable(): void
@@ -644,6 +696,12 @@ class AdminOperationsTest extends TestCase
 
         $this->assertNotNull($produto?->imagem_principal);
         $this->assertStringStartsWith('/images/uploads/produtos/', $produto->imagem_principal);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $user->id,
+            'area' => 'catalogo',
+            'acao' => 'produto_criado',
+        ]);
     }
 
     public function test_authenticated_user_can_create_price_for_own_store(): void
@@ -688,6 +746,13 @@ class AdminOperationsTest extends TestCase
             'loja_id' => $loja->id,
             'evento' => 'criado',
             'preco_atual' => 29.90,
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'precos',
+            'acao' => 'preco_criado',
         ]);
     }
 

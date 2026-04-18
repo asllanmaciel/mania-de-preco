@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Assinatura;
 use App\Models\AlertaPreco;
 use App\Models\AvaliacaoLoja;
+use App\Models\AuditLog;
 use App\Models\Categoria;
 use App\Models\CategoriaFinanceira;
 use App\Models\Conta;
@@ -208,8 +209,45 @@ class DatabaseSeeder extends Seeder
             $this->seedMovimentacoes($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas);
             $this->seedTitulos($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas, $synchronizer);
             $this->seedAlertas($owner, $catalogo['produtos'] ?? []);
+            $this->seedAuditoria($conta, $owner);
             $this->recalcularSaldos($conta);
         });
+    }
+
+    private function seedAuditoria(Conta $conta, User $owner): void
+    {
+        foreach ([
+            [
+                'area' => 'equipe',
+                'acao' => 'membro_adicionado',
+                'descricao' => 'Gestora Demo adicionada a equipe.',
+            ],
+            [
+                'area' => 'financeiro',
+                'acao' => 'lancamento_criado',
+                'descricao' => 'Lancamento demo registrado no financeiro.',
+            ],
+            [
+                'area' => 'precos',
+                'acao' => 'preco_atualizado',
+                'descricao' => 'Preco demo atualizado no comparador.',
+            ],
+        ] as $dados) {
+            AuditLog::updateOrCreate(
+                [
+                    'conta_id' => $conta->id,
+                    'area' => $dados['area'],
+                    'acao' => $dados['acao'],
+                    'descricao' => $dados['descricao'],
+                ],
+                [
+                    'user_id' => $owner->id,
+                    'metadados' => ['seed_demo' => true],
+                    'ip' => '127.0.0.1',
+                    'user_agent' => 'Seeder',
+                ]
+            );
+        }
     }
 
     private function seedCategoriasFinanceiras(Conta $conta): array

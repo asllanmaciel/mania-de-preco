@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Models\Loja;
 use App\Models\Preco;
 use App\Models\Produto;
+use App\Services\Auditoria\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,6 +13,10 @@ use Illuminate\View\View;
 
 class PrecoController extends AdminController
 {
+    public function __construct(private readonly AuditLogger $audit)
+    {
+    }
+
     public function index(Request $request): View
     {
         $conta = $this->contaAtual($request);
@@ -50,7 +55,14 @@ class PrecoController extends AdminController
         $conta = $this->contaAtual($request);
         $dados = $this->validarPreco($request, $conta);
 
-        Preco::create($dados);
+        $preco = Preco::create($dados);
+
+        $this->audit->registrar($request, $conta, 'precos', 'preco_criado', 'Preco registrado no comparador.', $preco, [
+            'produto_id' => $preco->produto_id,
+            'loja_id' => $preco->loja_id,
+            'preco' => $preco->preco,
+            'tipo_preco' => $preco->tipo_preco,
+        ]);
 
         return redirect()
             ->route('admin.precos.index')
@@ -75,7 +87,13 @@ class PrecoController extends AdminController
         $this->garantirPrecoDaConta($preco, $conta);
 
         $dados = $this->validarPreco($request, $conta);
+        $antes = $preco->only(['produto_id', 'loja_id', 'preco', 'tipo_preco']);
         $preco->update($dados);
+
+        $this->audit->registrar($request, $conta, 'precos', 'preco_atualizado', 'Preco atualizado no comparador.', $preco, [
+            'antes' => $antes,
+            'depois' => $preco->only(['produto_id', 'loja_id', 'preco', 'tipo_preco']),
+        ]);
 
         return redirect()
             ->route('admin.precos.edit', $preco)
@@ -87,6 +105,11 @@ class PrecoController extends AdminController
         $conta = $this->contaAtual($request);
         $this->garantirPrecoDaConta($preco, $conta);
 
+        $this->audit->registrar($request, $conta, 'precos', 'preco_removido', 'Preco removido do comparador.', $preco, [
+            'produto_id' => $preco->produto_id,
+            'loja_id' => $preco->loja_id,
+            'preco' => $preco->preco,
+        ]);
         $preco->delete();
 
         return redirect()

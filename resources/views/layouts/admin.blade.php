@@ -1131,6 +1131,10 @@
                                 <span>Equipe</span>
                                 <small>acessos e papeis</small>
                             </a>
+                            <a class="menu-link {{ request()->routeIs('admin.auditoria') ? 'is-active' : '' }}" href="{{ route('admin.auditoria') }}">
+                                <span>Auditoria</span>
+                                <small>historico de acoes</small>
+                            </a>
                         @endif
                     </div>
                 </nav>

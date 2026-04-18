@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin;
 
 use Illuminate\Contracts\View\View;
 use App\Models\User;
+use App\Services\Auditoria\AuditLogger;
 use App\Support\Access\ContaAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,10 @@ use Illuminate\Validation\Rule;
 
 class EquipeController extends AdminController
 {
+    public function __construct(private readonly AuditLogger $audit)
+    {
+    }
+
     public function index(Request $request)
     {
         $conta = $this->contaAtual($request);
@@ -79,6 +84,16 @@ class EquipeController extends AdminController
             ],
         ]);
 
+        $this->audit->registrar(
+            $request,
+            $conta,
+            'equipe',
+            'membro_adicionado',
+            "Membro {$usuario->email} adicionado a equipe.",
+            $usuario,
+            ['papel' => $dados['papel']]
+        );
+
         return redirect()
             ->route('admin.equipe.index')
             ->with('status', 'Membro adicionado a equipe com sucesso.');
@@ -119,6 +134,19 @@ class EquipeController extends AdminController
             'papel' => $dados['papel'],
             'ativo' => $request->boolean('ativo', true),
         ]);
+
+        $this->audit->registrar(
+            $request,
+            $conta,
+            'equipe',
+            'membro_atualizado',
+            "Membro {$membro->email} atualizado na equipe.",
+            $membro,
+            [
+                'papel' => $dados['papel'],
+                'ativo' => $request->boolean('ativo', true),
+            ]
+        );
 
         return redirect()
             ->route('admin.equipe.edit', $membro)

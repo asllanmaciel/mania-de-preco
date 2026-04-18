@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Financeiro;
 
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Models\MovimentacaoFinanceira;
+use App\Services\Auditoria\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -11,6 +12,10 @@ use Illuminate\View\View;
 
 class MovimentacaoFinanceiraController extends AdminController
 {
+    public function __construct(private readonly AuditLogger $audit)
+    {
+    }
+
     public function index(Request $request): View
     {
         $conta = $this->contaAtual($request);
@@ -46,9 +51,15 @@ class MovimentacaoFinanceiraController extends AdminController
         $conta = $this->contaAtual($request);
         $dados = $this->validarMovimentacao($request, $conta->id);
 
-        $conta->movimentacoesFinanceiras()->create([
+        $movimentacao = $conta->movimentacoesFinanceiras()->create([
             ...$dados,
             'user_id' => $request->user()->id,
+        ]);
+
+        $this->audit->registrar($request, $conta, 'financeiro', 'lancamento_criado', "Lancamento {$movimentacao->descricao} criado.", $movimentacao, [
+            'tipo' => $movimentacao->tipo,
+            'valor' => $movimentacao->valor,
+            'status' => $movimentacao->status,
         ]);
 
         return redirect()
@@ -75,7 +86,13 @@ class MovimentacaoFinanceiraController extends AdminController
         $this->garantirLancamentoDaConta($lancamento, $conta->id);
 
         $dados = $this->validarMovimentacao($request, $conta->id);
+        $antes = $lancamento->only(['descricao', 'tipo', 'valor', 'status', 'data_movimentacao']);
         $lancamento->update($dados);
+
+        $this->audit->registrar($request, $conta, 'financeiro', 'lancamento_atualizado', "Lancamento {$lancamento->descricao} atualizado.", $lancamento, [
+            'antes' => $antes,
+            'depois' => $lancamento->only(['descricao', 'tipo', 'valor', 'status', 'data_movimentacao']),
+        ]);
 
         return redirect()
             ->route('admin.financeiro.lancamentos.edit', $lancamento)
@@ -87,6 +104,8 @@ class MovimentacaoFinanceiraController extends AdminController
         $conta = $this->contaAtual($request);
         $this->garantirLancamentoDaConta($lancamento, $conta->id);
 
+        $descricao = $lancamento->descricao;
+        $this->audit->registrar($request, $conta, 'financeiro', 'lancamento_removido', "Lancamento {$descricao} removido.", $lancamento);
         $lancamento->delete();
 
         return redirect()
