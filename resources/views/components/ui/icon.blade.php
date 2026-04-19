@@ -11,6 +11,7 @@
         'building' => '<path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01"/><path d="M9 13h.01"/><path d="M9 17h.01"/>',
         'chart' => '<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-7"/><path d="M18 7h1v1"/>',
         'check' => '<path d="M20 6 9 17l-5-5"/>',
+        'chevron-down' => '<path d="m6 9 6 6 6-6"/>',
         'circle' => '<circle cx="12" cy="12" r="9"/>',
         'compass' => '<circle cx="12" cy="12" r="9"/><path d="m15 9-2 5-5 2 2-5 5-2Z"/>',
         'credit-card' => '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/><path d="M6 15h2"/><path d="M10 15h4"/>',

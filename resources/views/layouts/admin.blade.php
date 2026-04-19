@@ -213,30 +213,36 @@
                 gap: 12px;
                 min-width: 0;
             }
-            .topbar-context {
+            .topbar-search {
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
                 min-height: 44px;
-                padding: 6px 12px;
-                border-radius: 15px;
+                width: min(420px, 42vw);
+                padding: 8px 14px;
+                border-radius: 16px;
                 background: rgba(255, 255, 255, 0.72);
                 border: 1px solid var(--line);
                 box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
+                color: var(--muted);
             }
-            .topbar-context strong {
+            .topbar-search strong {
                 display: block;
-                max-width: 230px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                font-size: 0.9rem;
+                color: var(--text);
+                font-size: 0.88rem;
+                font-weight: 800;
             }
-            .topbar-context small {
-                display: block;
-                margin-top: 2px;
+            .topbar-search kbd {
+                margin-left: auto;
+                padding: 4px 7px;
+                border-radius: 8px;
+                border: 1px solid var(--line);
+                background: #fff;
                 color: var(--muted);
-                font-size: 0.75rem;
+                font: 800 0.72rem "IBM Plex Mono", monospace;
             }
             .topbar-compact-brand {
                 display: none;
@@ -298,7 +304,7 @@
             .topbar-tools {
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 8px;
                 flex-wrap: nowrap;
                 justify-content: flex-end;
             }
@@ -328,6 +334,22 @@
                 width: 44px;
                 font-size: 1.05rem;
             }
+            .icon-button.has-caret {
+                grid-template-columns: auto auto;
+                width: auto;
+                min-width: 50px;
+                gap: 4px;
+                padding: 0 11px;
+            }
+            .dropdown-caret {
+                width: 14px;
+                height: 14px;
+                color: var(--muted);
+                transition: 0.18s ease;
+            }
+            .topbar-menu[open] .dropdown-caret {
+                transform: rotate(180deg);
+            }
             .notification-dot {
                 position: absolute;
                 top: 8px;
@@ -347,7 +369,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                padding: 6px 14px 6px 6px;
+                padding: 6px 11px 6px 6px;
             }
             .profile-trigger strong {
                 display: block;
@@ -837,6 +859,7 @@
                 .admin-shell { grid-template-columns: 1fr; }
                 .sidebar { display: none; }
                 .topbar-compact-brand { display: inline-flex; }
+                .topbar-search { width: min(360px, 38vw); }
                 .main { width: min(100% - 28px, 1180px); padding-bottom: 108px; }
                 .mobile-context, .mobile-dock { display: grid; }
                 .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid, .visual-hero { grid-template-columns: 1fr; }
@@ -845,7 +868,7 @@
             @media (max-width: 720px) {
                 .main { width: min(100% - 20px, 1180px); padding-top: 12px; }
                 .topbar { margin: -12px -10px 0; padding: 12px 10px; align-items: center; }
-                .topbar-context { display: none; }
+                .topbar-search { display: none; }
                 .topbar-actions, .topbar-tools { justify-content: flex-end; }
                 .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
                 .page-heading { align-items: flex-start; flex-direction: column; padding-top: 18px; }
@@ -1008,26 +1031,19 @@
                                 <span>Mania de Preco</span>
                             </a>
 
-                            <div class="topbar-context">
-                                <span class="avatar">
-                                    @if ($avatarUsuarioTopbar)
-                                        <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
-                                    @else
-                                        {{ $iniciaisTopbar }}
-                                    @endif
-                                </span>
-                                <div>
-                                    <strong>{{ $conta->nome_fantasia }}</strong>
-                                    <small>{{ $assinaturaAtual?->status ?? 'sem assinatura' }}{{ ! empty($papelAtualConta) ? ' | ' . $papelAtualConta : '' }}</small>
-                                </div>
-                            </div>
+                            <button class="topbar-search" type="button" aria-label="Buscar ou abrir atalhos rapidos">
+                                <x-ui.icon name="search" />
+                                <strong>Buscar ou abrir atalhos</strong>
+                                <kbd>Ctrl K</kbd>
+                            </button>
                         </div>
 
                         <div class="topbar-actions">
                             <div class="topbar-tools">
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir notificacoes">
+                                    <summary class="icon-button has-caret" aria-label="Abrir notificacoes">
                                         <x-ui.icon name="bell" />
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                         <span class="notification-dot">{{ $notificacoesTopbarCount }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
@@ -1065,8 +1081,9 @@
                                 </details>
 
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">
+                                    <summary class="icon-button has-caret" aria-label="Abrir atalhos rapidos">
                                         <x-ui.icon name="grid" />
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Atalhos rapidos</h3>
@@ -1096,8 +1113,9 @@
                                         </span>
                                         <span>
                                             <strong>{{ $nomeUsuarioTopbar }}</strong>
-                                            <small>{{ $papelAtualConta ?: 'usuario' }}</small>
+                                            <small>{{ $conta->nome_fantasia }}</small>
                                         </span>
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Minha conta</h3>
