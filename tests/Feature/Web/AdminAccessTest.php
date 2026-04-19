@@ -7,7 +7,11 @@ use App\Models\Plano;
 use App\Models\Assinatura;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -61,6 +65,53 @@ class AdminAccessTest extends TestCase
             ->assertSee('Conta Web')
             ->assertSee('Centro de comando')
             ->assertSee('Inicio');
+    }
+
+    public function test_user_can_request_password_reset_link(): void
+    {
+        Notification::fake();
+
+        $user = User::create([
+            'name' => 'Conta Web',
+            'email' => 'reset@example.com',
+            'password' => 'password',
+            'is_super_admin' => false,
+        ]);
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('Esqueci minha senha');
+
+        $this->post(route('password.email'), [
+            'email' => $user->email,
+        ])->assertSessionHas('status');
+
+        Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    public function test_user_can_reset_password_with_valid_token(): void
+    {
+        $user = User::create([
+            'name' => 'Conta Web',
+            'email' => 'token-reset@example.com',
+            'password' => 'password',
+            'is_super_admin' => false,
+        ]);
+
+        $token = Password::createToken($user);
+
+        $this->get(route('password.reset', ['token' => $token, 'email' => $user->email]))
+            ->assertOk()
+            ->assertSee('Defina uma nova senha');
+
+        $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'novaSenha123',
+            'password_confirmation' => 'novaSenha123',
+        ])->assertRedirect(route('login'));
+
+        $this->assertTrue(Hash::check('novaSenha123', $user->fresh()->password));
     }
 
     public function test_super_admin_is_redirected_to_super_admin_dashboard_after_login(): void

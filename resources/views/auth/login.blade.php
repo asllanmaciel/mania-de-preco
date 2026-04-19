@@ -401,7 +401,7 @@
                                 <span>Manter sessao ativa</span>
                             </label>
 
-                            <span>Depois do login, o acesso segue para <code>/admin</code>.</span>
+                            <a href="{{ route('password.request') }}">Esqueci minha senha</a>
                         </div>
 
                         <button class="button" type="submit">Entrar no painel</button>

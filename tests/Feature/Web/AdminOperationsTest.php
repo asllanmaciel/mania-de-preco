@@ -17,6 +17,7 @@ use App\Models\Produto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AdminOperationsTest extends TestCase
@@ -230,6 +231,54 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Consumo do plano')
             ->assertSee('Abrir cobranca')
             ->assertSee('Historico comercial');
+    }
+
+    public function test_authenticated_user_can_manage_profile_and_password(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.perfil.edit'))
+            ->assertOk()
+            ->assertSee('Meu perfil')
+            ->assertSee('Trocar senha');
+
+        $this->actingAs($user)
+            ->put(route('admin.perfil.update'), [
+                'name' => 'Conta Web Atualizada',
+                'email' => 'web-atualizada@example.com',
+            ])
+            ->assertRedirect(route('admin.perfil.edit'));
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'Conta Web Atualizada',
+            'email' => 'web-atualizada@example.com',
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'seguranca',
+            'acao' => 'perfil_atualizado',
+        ]);
+
+        $this->actingAs($user->fresh())
+            ->put(route('admin.perfil.password'), [
+                'current_password' => 'password',
+                'password' => 'novaSenha123',
+                'password_confirmation' => 'novaSenha123',
+            ])
+            ->assertRedirect(route('admin.perfil.edit'));
+
+        $this->assertTrue(Hash::check('novaSenha123', $user->fresh()->password));
+
+        $this->assertDatabaseHas('audit_logs', [
+            'conta_id' => $conta->id,
+            'user_id' => $user->id,
+            'area' => 'seguranca',
+            'acao' => 'senha_atualizada',
+        ]);
     }
 
     public function test_owner_can_manage_team_members(): void

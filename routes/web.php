@@ -15,6 +15,9 @@ use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
 use App\Http\Controllers\Web\Admin\ConfiguracaoContaController as AdminConfiguracaoContaController;
+use App\Http\Controllers\Web\Admin\PerfilController as AdminPerfilController;
+use App\Http\Controllers\Web\Auth\NewPasswordController;
+use App\Http\Controllers\Web\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Web\Auth\SessionController;
 use App\Http\Controllers\Web\Cliente\DashboardController as ClienteDashboardController;
 use App\Http\Controllers\Web\PanelRedirectController;
@@ -41,6 +44,10 @@ Route::get('/produtos/{produto}', PublicProductController::class)->name('produto
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SessionController::class, 'create'])->name('login');
     Route::post('/login', [SessionController::class, 'store'])->name('login.store');
+    Route::get('/esqueci-minha-senha', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('/resetar-senha/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/resetar-senha', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -64,6 +71,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->name('admin.')->middleware('panel:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('/perfil', [AdminPerfilController::class, 'edit'])->name('perfil.edit');
+        Route::put('/perfil', [AdminPerfilController::class, 'update'])->name('perfil.update');
+        Route::put('/perfil/senha', [AdminPerfilController::class, 'updatePassword'])->name('perfil.password');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding')->middleware('conta.can:onboarding');
         Route::get('/auditoria', AdminAuditoriaController::class)->name('auditoria')->middleware('conta.can:equipe');
         Route::get('/assinatura', AdminAssinaturaController::class)

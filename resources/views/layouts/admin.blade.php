@@ -219,7 +219,7 @@
                 right: 12px;
                 bottom: 12px;
                 z-index: 30;
-                grid-template-columns: repeat(5, minmax(0, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
                 gap: 10px;
                 padding: 10px;
                 border-radius: 24px;
@@ -1174,6 +1174,7 @@
 
                     <div class="topbar-actions">
                         <a class="ghost-link" href="{{ url('/') }}">Ver home publica</a>
+                        <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -1196,6 +1197,10 @@
             <a class="mobile-dock-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
                 <strong>Inicio</strong>
                 <span>painel</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.perfil.*') ? 'is-active' : '' }}" href="{{ route('admin.perfil.edit') }}">
+                <strong>Perfil</strong>
+                <span>acesso</span>
             </a>
             @if (in_array('financeiro', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
