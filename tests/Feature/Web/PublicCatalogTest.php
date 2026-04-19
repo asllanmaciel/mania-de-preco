@@ -145,6 +145,24 @@ class PublicCatalogTest extends TestCase
             ->assertSee('O ambiente demo foi fortalecido para que as novas camadas do produto possam ser vistas no navegador sem cadastro manual.');
     }
 
+    public function test_public_trust_pages_render_launch_confidence_content(): void
+    {
+        $this->get(route('termos'))
+            ->assertOk()
+            ->assertSee('Termos de Uso')
+            ->assertSee('Regras claras');
+
+        $this->get(route('privacidade'))
+            ->assertOk()
+            ->assertSee('Privacidade')
+            ->assertSee('LGPD');
+
+        $this->get(route('suporte'))
+            ->assertOk()
+            ->assertSee('Suporte')
+            ->assertSee('Quando algo trava');
+    }
+
     private function seedCatalogoDemo(): array
     {
         $categoria = Categoria::create([

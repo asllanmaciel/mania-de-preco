@@ -62,9 +62,12 @@
                     <a class="chip" href="{{ route('home') }}">Ofertas</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
                     <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
+                    <a class="chip" href="{{ route('suporte') }}">Suporte</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
-                    @endif
+                    @else
+                        <a class="chip" href="{{ route('login') }}">Entrar</a>
+                    @endauth
                 </nav>
             </header>
 
@@ -137,6 +140,11 @@
 
             <footer class="footer">
                 <span>Uma vitrine de lancamentos para mostrar que a plataforma segue evoluindo com ritmo, clareza e foco em valor real.</span>
+                <span>
+                    <a href="{{ route('termos') }}">Termos</a>
+                    · <a href="{{ route('privacidade') }}">Privacidade</a>
+                    · <a href="{{ route('suporte') }}">Suporte</a>
+                </span>
             </footer>
         </div>
     </body>

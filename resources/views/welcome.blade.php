@@ -107,6 +107,7 @@
                     <a class="chip" href="#ofertas">Mais procurados</a>
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
                     <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
+                    <a class="chip" href="{{ route('suporte') }}">Suporte</a>
                     @auth
                         <a class="chip" href="{{ route('admin.dashboard') }}">Admin</a>
                     @else
@@ -412,6 +413,11 @@
 
             <footer class="footer">
                 <span>Ofertas reais, comparação clara e descoberta rápida para quem quer comprar melhor.</span>
+                <span>
+                    <a href="{{ route('termos') }}">Termos</a>
+                    · <a href="{{ route('privacidade') }}">Privacidade</a>
+                    · <a href="{{ route('suporte') }}">Suporte</a>
+                </span>
             </footer>
         </div>
     </body>
