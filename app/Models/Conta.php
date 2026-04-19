@@ -97,4 +97,9 @@ class Conta extends Model
     {
         return $this->hasMany(AuditLog::class);
     }
+
+    public function chamadosSuporte()
+    {
+        return $this->hasMany(ChamadoSuporte::class);
+    }
 }

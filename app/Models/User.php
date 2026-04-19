@@ -73,6 +73,11 @@ class User extends Authenticatable
         return $this->hasMany(MovimentacaoFinanceira::class);
     }
 
+    public function chamadosSuporte()
+    {
+        return $this->hasMany(ChamadoSuporte::class);
+    }
+
     public function contasAtivas()
     {
         return $this->contas()->wherePivot('ativo', true);

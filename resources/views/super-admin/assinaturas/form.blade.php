@@ -6,6 +6,7 @@
 @section('nav')
     <a class="chip" href="{{ route('super-admin.dashboard') }}">Visao geral</a>
     <a class="chip" href="{{ route('super-admin.contas.index') }}">Contas</a>
+    <a class="chip" href="{{ route('super-admin.suporte.index') }}">Suporte</a>
     <a class="chip" href="{{ route('super-admin.contas.show', $conta) }}">Conta</a>
 @endsection
 

@@ -47,9 +47,19 @@
             .article-card h2 { margin-top:0; }
             .article-card h3 { margin-top:24px; }
             .article-card ul { padding-left:20px; }
+            .field-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; }
+            .field-group, .field-group-full { display:grid; gap:8px; }
+            .field-group-full { grid-column:1 / -1; }
+            .field-group label, .field-group-full label { font-weight:700; }
+            input, select, textarea { width:100%; padding:14px 16px; border-radius:14px; border:1px solid rgba(76,42,22,.12); background:rgba(255,255,255,.92); color:var(--text); font:inherit; }
+            textarea { min-height:140px; resize:vertical; }
+            .form-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
+            .flash-box, .error-box { padding:16px 18px; border-radius:18px; line-height:1.7; }
+            .flash-box { background:rgba(15,159,143,.1); border:1px solid rgba(15,159,143,.14); color:#0a7167; }
+            .error-box { background:rgba(182,72,51,.08); border:1px solid rgba(182,72,51,.12); color:#8c3525; }
             .footer { padding:30px 0 48px; color:var(--muted); font-size:.92rem; }
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
-            @media (max-width:1100px) { .hero, .grid, .content-grid { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
+            @media (max-width:1100px) { .hero, .grid, .content-grid, .field-grid { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } }
             @media (max-width:720px) { .topbar, .top-links { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .button, .button-secondary, .chip { width:100%; justify-content:center; } }
         </style>
     </head>

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Web;
 
 use App\Models\Conta;
+use App\Models\ChamadoSuporte;
 use App\Models\Plano;
 use App\Models\Assinatura;
 use App\Models\User;
@@ -138,6 +139,49 @@ class AdminAccessTest extends TestCase
             ->assertOk()
             ->assertSee('Super admin da plataforma')
             ->assertSee('contas monitoradas');
+    }
+
+    public function test_super_admin_can_manage_support_ticket_queue(): void
+    {
+        $user = User::create([
+            'name' => 'Super Admin Suporte',
+            'email' => 'admin-suporte@example.com',
+            'password' => 'password',
+            'is_super_admin' => true,
+        ]);
+
+        $chamado = ChamadoSuporte::create([
+            'protocolo' => 'MP-20260419-ABC123',
+            'nome' => 'Cliente Suporte',
+            'email' => 'cliente-suporte@example.com',
+            'empresa' => 'Mercado Modelo',
+            'categoria' => 'cobranca',
+            'prioridade' => 'critica',
+            'status' => 'novo',
+            'assunto' => 'Cobranca bloqueada',
+            'mensagem' => 'Nao consigo regularizar a assinatura e preciso de ajuda para manter a loja ativa.',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('super-admin.suporte.index'))
+            ->assertOk()
+            ->assertSee('Central de suporte')
+            ->assertSee('MP-20260419-ABC123')
+            ->assertSee('Cobranca bloqueada');
+
+        $this->actingAs($user)
+            ->patch(route('super-admin.suporte.update', $chamado), [
+                'status' => 'resolvido',
+                'prioridade' => 'alta',
+                'observacao_interna' => 'Cliente orientado e cobranca regularizada.',
+            ])
+            ->assertRedirect(route('super-admin.suporte.index'));
+
+        $chamado->refresh();
+
+        $this->assertSame('resolvido', $chamado->status);
+        $this->assertSame('alta', $chamado->prioridade);
+        $this->assertNotNull($chamado->resolvido_em);
     }
 
     public function test_super_admin_can_open_accounts_index_and_account_detail(): void

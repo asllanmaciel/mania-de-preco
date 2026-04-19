@@ -29,6 +29,7 @@ use App\Http\Controllers\Web\PublicTrustController;
 use App\Http\Controllers\Web\PublicUpdatesController;
 use App\Http\Controllers\Web\SuperAdmin\ContaAssinaturaController as SuperAdminContaAssinaturaController;
 use App\Http\Controllers\Web\SuperAdmin\AssinaturaBillingController as SuperAdminAssinaturaBillingController;
+use App\Http\Controllers\Web\SuperAdmin\ChamadoSuporteController as SuperAdminChamadoSuporteController;
 use App\Http\Controllers\Web\SuperAdmin\ContaController as SuperAdminContaController;
 use App\Http\Controllers\Web\SuperAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\Web\SuperAdmin\PlanoController as SuperAdminPlanoController;
@@ -42,6 +43,7 @@ Route::get('/novidades/{slug}', [PublicUpdatesController::class, 'show'])->name(
 Route::get('/termos-de-uso', [PublicTrustController::class, 'termos'])->name('termos');
 Route::get('/privacidade', [PublicTrustController::class, 'privacidade'])->name('privacidade');
 Route::get('/suporte', [PublicTrustController::class, 'suporte'])->name('suporte');
+Route::post('/suporte', [PublicTrustController::class, 'abrirChamado'])->name('suporte.chamados.store');
 Route::get('/lojas/{loja}', PublicStoreController::class)->name('lojas.public.show');
 Route::get('/produtos/{produto}', PublicProductController::class)->name('produtos.public.show');
 
@@ -61,6 +63,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', SuperAdminDashboardController::class)->name('dashboard');
         Route::resource('contas', SuperAdminContaController::class)->only(['index', 'show']);
         Route::resource('planos', SuperAdminPlanoController::class)->except(['show', 'destroy']);
+        Route::get('suporte', [SuperAdminChamadoSuporteController::class, 'index'])->name('suporte.index');
+        Route::patch('suporte/{chamado}', [SuperAdminChamadoSuporteController::class, 'update'])->name('suporte.update');
         Route::get('contas/{conta}/assinaturas/nova', [SuperAdminContaAssinaturaController::class, 'create'])
             ->name('contas.assinaturas.create');
         Route::post('contas/{conta}/assinaturas', [SuperAdminContaAssinaturaController::class, 'store'])

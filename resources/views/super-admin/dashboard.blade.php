@@ -8,6 +8,7 @@
     <a class="chip" href="{{ route('super-admin.dashboard') }}">Visao geral</a>
     <a class="chip" href="{{ route('super-admin.contas.index') }}">Contas</a>
     <a class="chip" href="{{ route('super-admin.planos.index') }}">Planos</a>
+    <a class="chip" href="{{ route('super-admin.suporte.index') }}">Suporte</a>
     @if (auth()->user()->possuiAcessoAdmin())
         <a class="chip" href="{{ route('admin.dashboard') }}">Painel lojista</a>
     @endif
@@ -21,6 +22,7 @@
         <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
             <a class="button" href="{{ route('super-admin.contas.index') }}">Abrir gestao de contas</a>
             <a class="button-secondary" href="{{ route('super-admin.planos.index') }}">Abrir catalogo de planos</a>
+            <a class="button-secondary" href="{{ route('super-admin.suporte.index') }}">Ver chamados</a>
             <a class="button-secondary" href="{{ route('cliente.dashboard') }}">Ver area do cliente</a>
         </div>
     </section>
@@ -34,6 +36,7 @@
         <article class="metric"><strong>{{ number_format($metricas['historicos_precos'], 0, ',', '.') }}</strong><span>eventos de preco</span></article>
         <article class="metric"><strong>{{ number_format($metricas['planos_ativos'], 0, ',', '.') }}</strong><span>planos ativos no portfolio</span></article>
         <article class="metric"><strong>{{ number_format($metricas['assinaturas_ativas'], 0, ',', '.') }}</strong><span>assinaturas em operacao</span></article>
+        <article class="metric"><strong>{{ number_format($metricas['chamados_abertos'], 0, ',', '.') }}</strong><span>chamados aguardando suporte</span></article>
         <article class="metric"><strong>R$ {{ number_format($metricas['mrr'], 2, ',', '.') }}</strong><span>receita mensal recorrente estimada</span></article>
     </section>
 

@@ -4,6 +4,7 @@ namespace Tests\Feature\Web;
 
 use App\Models\Categoria;
 use App\Models\AvaliacaoLoja;
+use App\Models\ChamadoSuporte;
 use App\Models\Loja;
 use App\Models\Marca;
 use App\Models\Preco;
@@ -161,6 +162,29 @@ class PublicCatalogTest extends TestCase
             ->assertOk()
             ->assertSee('Suporte')
             ->assertSee('Quando algo trava');
+    }
+
+    public function test_public_support_page_can_open_ticket_with_protocol(): void
+    {
+        $this->post(route('suporte.chamados.store'), [
+            'nome' => 'Cliente em Lancamento',
+            'email' => 'cliente-suporte@example.com',
+            'telefone' => '(11) 99999-0000',
+            'empresa' => 'Mercado Modelo',
+            'categoria' => 'catalogo',
+            'prioridade' => 'alta',
+            'assunto' => 'Preco divergente na vitrine',
+            'mensagem' => 'Estou vendo um preco diferente no card publico e preciso de ajuda para corrigir rapidamente.',
+            'origem_url' => route('suporte'),
+        ])->assertRedirect(route('suporte'))
+            ->assertSessionHas('status');
+
+        $chamado = ChamadoSuporte::firstOrFail();
+
+        $this->assertStringStartsWith('MP-', $chamado->protocolo);
+        $this->assertSame('novo', $chamado->status);
+        $this->assertSame('catalogo', $chamado->categoria);
+        $this->assertSame('alta', $chamado->prioridade);
     }
 
     private function seedCatalogoDemo(): array

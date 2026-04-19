@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\AlertaPreco;
 use App\Models\Assinatura;
+use App\Models\ChamadoSuporte;
 use App\Models\Conta;
 use App\Models\HistoricoPreco;
 use App\Models\Loja;
@@ -29,6 +30,7 @@ class DashboardController extends Controller
                 'historicos_precos' => HistoricoPreco::count(),
                 'planos_ativos' => Plano::where('status', 'ativo')->count(),
                 'assinaturas_ativas' => Assinatura::whereIn('status', ['trial', 'ativa', 'inadimplente'])->count(),
+                'chamados_abertos' => ChamadoSuporte::whereNotIn('status', ['resolvido', 'fechado'])->count(),
                 'mrr' => (float) Assinatura::query()
                     ->whereIn('status', ['ativa', 'inadimplente'])
                     ->get()
