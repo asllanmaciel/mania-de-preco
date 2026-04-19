@@ -154,6 +154,94 @@
                 flex-wrap:wrap;
             }
             .topbar-actions { align-items:center; justify-content:flex-end; }
+            .topbar-tools {
+                display:flex;
+                align-items:center;
+                gap:10px;
+                flex-wrap:wrap;
+                justify-content:flex-end;
+            }
+            .topbar-menu { position:relative; }
+            .topbar-menu summary { list-style:none; }
+            .topbar-menu summary::-webkit-details-marker { display:none; }
+            .avatar, .icon-button {
+                display:grid;
+                place-items:center;
+                flex:0 0 auto;
+            }
+            .avatar {
+                width:44px;
+                height:44px;
+                border-radius:50%;
+                background:#fff;
+                border:1px solid var(--line);
+                color:var(--primary);
+                font-weight:900;
+                box-shadow:0 8px 18px rgba(31,42,68,.07);
+            }
+            .icon-button, .profile-trigger {
+                min-height:44px;
+                border-radius:14px;
+                border:1px solid var(--line);
+                background:#fff;
+                color:var(--text);
+                cursor:pointer;
+                transition:.18s ease;
+            }
+            .icon-button {
+                position:relative;
+                width:44px;
+                font:900 .72rem "IBM Plex Mono", monospace;
+            }
+            .notification-dot {
+                position:absolute;
+                top:8px;
+                right:8px;
+                display:grid;
+                place-items:center;
+                min-width:17px;
+                height:17px;
+                padding:0 5px;
+                border-radius:999px;
+                background:var(--danger);
+                color:#fff;
+                font-size:.68rem;
+                line-height:1;
+            }
+            .profile-trigger {
+                display:flex;
+                align-items:center;
+                gap:10px;
+                padding:6px 12px 6px 6px;
+            }
+            .profile-trigger strong { display:block; font-size:.9rem; line-height:1.1; }
+            .profile-trigger small { display:block; margin-top:2px; color:var(--muted); font-size:.76rem; }
+            .dropdown-panel {
+                position:absolute;
+                top:calc(100% + 12px);
+                right:0;
+                width:min(360px, calc(100vw - 28px));
+                padding:14px;
+                border-radius:20px;
+                background:#fff;
+                border:1px solid var(--line);
+                box-shadow:var(--shadow);
+                z-index:50;
+            }
+            .dropdown-panel h3 { margin:0 0 10px; font-size:1rem; letter-spacing:-.02em; }
+            .dropdown-list, .profile-actions { display:grid; gap:10px; }
+            .notification-item, .quick-link, .profile-row {
+                display:grid;
+                gap:4px;
+                padding:12px;
+                border-radius:14px;
+                background:var(--surface-soft);
+                border:1px solid var(--line);
+            }
+            .notification-item strong, .quick-link strong { display:block; font-size:.9rem; }
+            .notification-item span, .quick-link span, .profile-row span { color:var(--muted); font-size:.82rem; line-height:1.5; }
+            .profile-row { grid-template-columns:44px minmax(0,1fr); align-items:center; margin-bottom:10px; }
+            .profile-actions form { margin:0; }
             .card {
                 background:var(--surface);
                 border:1px solid var(--line);
@@ -270,7 +358,9 @@
             }
             @media (max-width:720px) {
                 .shell { width:min(100% - 20px, 1180px); padding-top:12px; }
-                .topbar, .section-head, .toolbar, .topbar-actions { flex-direction:column; align-items:stretch; }
+                .topbar, .section-head, .toolbar, .topbar-actions, .topbar-tools { flex-direction:column; align-items:stretch; }
+                .topbar-menu, .icon-button, .profile-trigger { width:100%; }
+                .dropdown-panel { position:static; width:100%; margin-top:10px; }
                 .button, .button-secondary, .chip, .logout-button { width:100%; }
                 .sidebar { padding:16px 12px; }
             }
@@ -298,6 +388,41 @@
 
             <div class="page-wrapper">
                 <div class="shell">
+                    @php
+                        $usuarioBackoffice = auth()->user();
+                        $nomeUsuarioBackoffice = $usuarioBackoffice?->name ?? 'Usuario';
+                        $iniciaisBackoffice = collect(preg_split('/\s+/', trim($nomeUsuarioBackoffice)))
+                            ->filter()
+                            ->take(2)
+                            ->map(fn ($parte) => mb_strtoupper(mb_substr($parte, 0, 1)))
+                            ->implode('') ?: 'U';
+                        $perfilBackoffice = $usuarioBackoffice?->perfilPainel() ?? 'usuario';
+
+                        $notificacoesBackoffice = [
+                            [
+                                'titulo' => 'Sessao protegida',
+                                'descricao' => 'Voce esta operando em uma area autenticada do Mania de Preco.',
+                                'rota' => route('painel.redirect'),
+                            ],
+                        ];
+
+                        if ($usuarioBackoffice?->ehSuperAdmin()) {
+                            $notificacoesBackoffice[] = [
+                                'titulo' => 'Central de suporte ativa',
+                                'descricao' => 'Acompanhe chamados, prioridades e sinais de atrito da plataforma.',
+                                'rota' => route('super-admin.suporte.index'),
+                            ];
+                        }
+
+                        $atalhosBackoffice = collect([
+                            ['titulo' => 'Super admin', 'descricao' => 'Governanca da plataforma.', 'rota' => route('super-admin.dashboard'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                            ['titulo' => 'Contas', 'descricao' => 'Clientes e operacoes ativas.', 'rota' => route('super-admin.contas.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                            ['titulo' => 'Suporte', 'descricao' => 'Fila de chamados e prioridades.', 'rota' => route('super-admin.suporte.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                            ['titulo' => 'Painel lojista', 'descricao' => 'Operacao da conta vinculada.', 'rota' => route('admin.dashboard'), 'ativo' => $usuarioBackoffice?->possuiAcessoAdmin()],
+                            ['titulo' => 'Area do cliente', 'descricao' => 'Visao do usuario final.', 'rota' => route('cliente.dashboard'), 'ativo' => true],
+                        ])->filter(fn ($atalho) => $atalho['ativo'])->take(4);
+                    @endphp
+
                     <header class="topbar">
                         <div>
                             <h1>@yield('title', 'Painel')</h1>
@@ -305,11 +430,74 @@
                         </div>
 
                         <div class="topbar-actions">
-                            <a class="button-secondary" href="{{ route('painel.redirect') }}">Meu painel</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="logout-button" type="submit">Sair</button>
-                            </form>
+                            <div class="topbar-tools">
+                                <details class="topbar-menu">
+                                    <summary class="icon-button" aria-label="Abrir notificacoes">
+                                        NT
+                                        <span class="notification-dot">{{ count($notificacoesBackoffice) }}</span>
+                                    </summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Notificacoes</h3>
+                                        <div class="dropdown-list">
+                                            @foreach ($notificacoesBackoffice as $notificacao)
+                                                <a class="notification-item" href="{{ $notificacao['rota'] }}">
+                                                    <strong>{{ $notificacao['titulo'] }}</strong>
+                                                    <span>{{ $notificacao['descricao'] }}</span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="topbar-menu">
+                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">AT</summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Atalhos rapidos</h3>
+                                        <div class="dropdown-list">
+                                            @foreach ($atalhosBackoffice as $atalho)
+                                                <a class="quick-link" href="{{ $atalho['rota'] }}">
+                                                    <strong>{{ $atalho['titulo'] }}</strong>
+                                                    <span>{{ $atalho['descricao'] }}</span>
+                                                </a>
+                                            @endforeach
+                                            <a class="quick-link" href="{{ url('/') }}">
+                                                <strong>Home publica</strong>
+                                                <span>Voltar para a experiencia publica.</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="topbar-menu">
+                                    <summary class="profile-trigger" aria-label="Abrir menu do usuario">
+                                        <span class="avatar">{{ $iniciaisBackoffice }}</span>
+                                        <span>
+                                            <strong>{{ $nomeUsuarioBackoffice }}</strong>
+                                            <small>{{ $perfilBackoffice }}</small>
+                                        </span>
+                                    </summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Minha conta</h3>
+                                        <div class="profile-row">
+                                            <span class="avatar">{{ $iniciaisBackoffice }}</span>
+                                            <span>
+                                                <strong>{{ $nomeUsuarioBackoffice }}</strong>
+                                                <span>{{ $usuarioBackoffice?->email }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="profile-actions">
+                                            <a class="button-secondary" href="{{ route('painel.redirect') }}">Meu painel</a>
+                                            @if ($usuarioBackoffice?->possuiAcessoAdmin())
+                                                <a class="button-secondary" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
+                                            @endif
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button class="logout-button" type="submit">Sair</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
                         </div>
                     </header>
 

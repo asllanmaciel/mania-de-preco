@@ -1,75 +1,51 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Nova senha | Mania de Preco</title>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
-        <style>
-            body { margin:0; min-height:100vh; font-family:"Space Grotesk", sans-serif; color:#21140f; background:linear-gradient(180deg,#fff6e8 0%,#f5efe3 100%); }
-            .shell { max-width:860px; margin:0 auto; padding:28px; }
-            .brand { display:inline-flex; align-items:center; gap:12px; font-weight:700; text-decoration:none; color:inherit; margin-bottom:28px; }
-            .brand-badge { display:inline-grid; place-items:center; width:42px; height:42px; border-radius:14px; background:linear-gradient(135deg,#ff6b2c,#ff9f52); font-family:"IBM Plex Mono", monospace; }
-            .card { padding:34px; border-radius:30px; background:rgba(255,251,245,.9); border:1px solid rgba(70,39,22,.1); box-shadow:0 24px 70px rgba(65,27,10,.12); }
-            h1 { margin:0; font-size:clamp(2rem,4vw,3.4rem); line-height:1; }
-            p, .helper { color:#70534b; line-height:1.75; }
-            form { display:grid; gap:18px; margin-top:24px; }
-            label { display:grid; gap:8px; font-weight:600; }
-            input { width:100%; padding:15px 16px; border-radius:14px; border:1px solid rgba(76,42,22,.12); background:#fff; font:inherit; }
-            .button, .link { display:inline-flex; justify-content:center; padding:15px 18px; border-radius:16px; border:0; font:inherit; font-weight:700; text-decoration:none; cursor:pointer; }
-            .button { background:linear-gradient(135deg,#ff6b2c,#ff9f52); color:#2d150d; }
-            .link { color:#21140f; background:rgba(255,255,255,.75); border:1px solid rgba(76,42,22,.12); }
-            .actions { display:flex; gap:12px; flex-wrap:wrap; }
-            .errors { padding:14px 16px; border-radius:16px; margin-top:18px; line-height:1.6; background:rgba(182,72,51,.08); color:#8c3525; }
-            @media (max-width:720px) { .shell { padding:18px; } .card { padding:24px; } .actions { flex-direction:column; } }
-        </style>
-    </head>
-    <body>
-        <main class="shell">
-            <a class="brand" href="{{ url('/') }}">
-                <span class="brand-badge">MP</span>
-                <span>Mania de Preco</span>
-            </a>
+@extends('layouts.auth')
 
-            <section class="card">
-                <h1>Defina uma nova senha.</h1>
-                <p>Escolha uma senha forte para recuperar seu acesso ao painel.</p>
+@section('title', 'Nova senha')
+@section('eyebrow', 'senha nova')
+@section('heading', 'Defina uma nova senha.')
+@section('description', 'Escolha uma senha forte para recuperar seu acesso e manter a operacao da conta protegida.')
+@section('form_title', 'Atualizar credencial')
+@section('form_description', 'Confirme o e-mail, defina a nova senha e volte ao painel com seguranca.')
 
-                @if ($errors->any())
-                    <div class="errors">
-                        @foreach ($errors->all() as $error)
-                            <div>{{ $error }}</div>
-                        @endforeach
-                    </div>
-                @endif
+@section('features')
+    <article class="feature-card">
+        <strong>Conta protegida</strong>
+        <span>Depois da troca, use apenas a nova senha para acessar o painel.</span>
+    </article>
+    <article class="feature-card">
+        <strong>Senha mais forte</strong>
+        <span>Prefira uma combinacao longa, unica e dificil de adivinhar.</span>
+    </article>
+    <article class="feature-card">
+        <strong>Operacao sem pausa</strong>
+        <span>Ao concluir, voce pode voltar ao fluxo normal de lojas, precos e financeiro.</span>
+    </article>
+@endsection
 
-                <form method="POST" action="{{ route('password.update') }}">
-                    @csrf
-                    <input type="hidden" name="token" value="{{ $token }}">
+@section('form')
+    <form method="POST" action="{{ route('password.update') }}">
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}">
 
-                    <label for="email">
-                        <span>E-mail</span>
-                        <input id="email" type="email" name="email" value="{{ old('email', $email) }}" required>
-                    </label>
+        <label for="email">
+            <span>E-mail</span>
+            <input id="email" type="email" name="email" value="{{ old('email', $email) }}" required>
+        </label>
 
-                    <label for="password">
-                        <span>Nova senha</span>
-                        <input id="password" type="password" name="password" autocomplete="new-password" required>
-                        <span class="helper">Use pelo menos 8 caracteres, com letras e numeros.</span>
-                    </label>
+        <label for="password">
+            <span>Nova senha</span>
+            <input id="password" type="password" name="password" autocomplete="new-password" required>
+            <span class="field-help">Use pelo menos 8 caracteres, misturando letras e numeros.</span>
+        </label>
 
-                    <label for="password_confirmation">
-                        <span>Confirmar nova senha</span>
-                        <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required>
-                    </label>
+        <label for="password_confirmation">
+            <span>Confirmar nova senha</span>
+            <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required>
+        </label>
 
-                    <div class="actions">
-                        <button class="button" type="submit">Redefinir senha</button>
-                        <a class="link" href="{{ route('login') }}">Voltar ao login</a>
-                    </div>
-                </form>
-            </section>
-        </main>
-    </body>
-</html>
+        <div class="actions">
+            <button class="button" type="submit">Redefinir senha</button>
+            <a class="button-secondary" href="{{ route('login') }}">Voltar ao login</a>
+        </div>
+    </form>
+@endsection

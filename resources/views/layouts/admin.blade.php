@@ -248,6 +248,121 @@
                 font-weight: 900;
                 box-shadow: var(--shadow-soft);
             }
+            .topbar-tools {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .topbar-menu {
+                position: relative;
+            }
+            .topbar-menu summary {
+                list-style: none;
+            }
+            .topbar-menu summary::-webkit-details-marker {
+                display: none;
+            }
+            .icon-button, .profile-trigger {
+                min-height: 44px;
+                border-radius: 14px;
+                border: 1px solid var(--line);
+                background: #fff;
+                color: var(--text);
+                cursor: pointer;
+                box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
+                transition: 0.18s ease;
+            }
+            .icon-button {
+                position: relative;
+                display: inline-grid;
+                place-items: center;
+                width: 44px;
+                font: 900 0.72rem "IBM Plex Mono", monospace;
+            }
+            .notification-dot {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                display: grid;
+                place-items: center;
+                min-width: 17px;
+                height: 17px;
+                padding: 0 5px;
+                border-radius: 999px;
+                background: var(--danger);
+                color: #fff;
+                font-size: 0.68rem;
+                line-height: 1;
+            }
+            .profile-trigger {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 6px 12px 6px 6px;
+            }
+            .profile-trigger strong {
+                display: block;
+                font-size: 0.9rem;
+                line-height: 1.1;
+            }
+            .profile-trigger small {
+                display: block;
+                margin-top: 2px;
+                color: var(--muted);
+                font-size: 0.76rem;
+            }
+            .dropdown-panel {
+                position: absolute;
+                top: calc(100% + 12px);
+                right: 0;
+                width: min(360px, calc(100vw - 28px));
+                padding: 14px;
+                border-radius: 20px;
+                background: #fff;
+                border: 1px solid var(--line);
+                box-shadow: var(--shadow);
+                z-index: 50;
+            }
+            .dropdown-panel h3 {
+                margin: 0 0 10px;
+                font-size: 1rem;
+                letter-spacing: -0.02em;
+            }
+            .dropdown-list {
+                display: grid;
+                gap: 10px;
+            }
+            .notification-item, .profile-row, .quick-link {
+                display: grid;
+                gap: 4px;
+                padding: 12px;
+                border-radius: 14px;
+                background: var(--surface-soft);
+                border: 1px solid var(--line);
+            }
+            .notification-item strong, .quick-link strong {
+                display: block;
+                font-size: 0.9rem;
+            }
+            .notification-item span, .quick-link span, .profile-row span {
+                color: var(--muted);
+                font-size: 0.82rem;
+                line-height: 1.5;
+            }
+            .profile-row {
+                grid-template-columns: 44px minmax(0, 1fr);
+                align-items: center;
+            }
+            .profile-actions {
+                display: grid;
+                gap: 8px;
+                margin-top: 10px;
+            }
+            .profile-actions form {
+                margin: 0;
+            }
             .ghost-link, .logout-button, .button, .button-secondary, .button-danger {
                 display: inline-flex;
                 align-items: center;
@@ -523,9 +638,12 @@
             @media (max-width: 720px) {
                 .main { width: min(100% - 20px, 1180px); padding-top: 12px; }
                 .topbar { margin: 0 -10px 0; padding: 14px 10px; flex-direction: column; align-items: stretch; }
-                .topbar-actions, .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
+                .topbar-actions, .topbar-tools, .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
                 .topbar-title { align-items: flex-start; }
                 .avatar { display: none; }
+                .profile-trigger .avatar { display: inline-grid; }
+                .topbar-menu, .icon-button, .profile-trigger { width: 100%; }
+                .dropdown-panel { position: static; width: 100%; margin-top: 10px; }
                 .checklist-item, .table-row { grid-template-columns: 1fr; }
                 .ghost-link, .logout-button, .button, .button-secondary, .button-danger { width: 100%; }
             }
@@ -655,6 +773,61 @@
                         </div>
                     </section>
 
+                    @php
+                        $usuarioTopbar = auth()->user();
+                        $nomeUsuarioTopbar = $usuarioTopbar?->name ?? 'Usuario';
+                        $iniciaisTopbar = collect(preg_split('/\s+/', trim($nomeUsuarioTopbar)))
+                            ->filter()
+                            ->take(2)
+                            ->map(fn ($parte) => mb_strtoupper(mb_substr($parte, 0, 1)))
+                            ->implode('') ?: 'U';
+
+                        $notificacoesTopbar = [];
+
+                        if (! $assinaturaAtual) {
+                            $notificacoesTopbar[] = [
+                                'titulo' => 'Assinatura pendente',
+                                'descricao' => 'Defina um plano para manter limites, cobranca e crescimento sob controle.',
+                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
+                            ];
+                        } elseif (in_array($assinaturaAtual->status, ['inadimplente', 'cancelada'], true)) {
+                            $notificacoesTopbar[] = [
+                                'titulo' => 'Atencao na assinatura',
+                                'descricao' => 'O status atual pode afetar operacao, limites ou cobranca da conta.',
+                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
+                            ];
+                        } elseif ($assinaturaAtual->expira_em && $assinaturaAtual->expira_em->isBefore(now()->addDays(7))) {
+                            $notificacoesTopbar[] = [
+                                'titulo' => 'Vigencia perto do fim',
+                                'descricao' => 'Revise a assinatura para evitar interrupcoes comerciais.',
+                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
+                            ];
+                        }
+
+                        if ($conta->trial_ends_at && $conta->trial_ends_at->isFuture() && $conta->trial_ends_at->isBefore(now()->addDays(5))) {
+                            $notificacoesTopbar[] = [
+                                'titulo' => 'Trial quase terminando',
+                                'descricao' => 'A conta esta perto do fim do periodo de teste.',
+                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
+                            ];
+                        }
+
+                        if ($notificacoesTopbar === []) {
+                            $notificacoesTopbar[] = [
+                                'titulo' => 'Operacao sem alertas criticos',
+                                'descricao' => 'Continue acompanhando catalogo, financeiro e precos pela rotina do painel.',
+                                'rota' => route('admin.dashboard'),
+                            ];
+                        }
+
+                        $atalhosTopbar = collect([
+                            ['titulo' => 'Financeiro', 'descricao' => 'Caixa, titulos e movimentacoes.', 'rota' => route('admin.financeiro.index'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Produtos', 'descricao' => 'Catalogo e vitrine publica.', 'rota' => route('admin.produtos.index'), 'capacidade' => 'catalogo'],
+                            ['titulo' => 'Precos', 'descricao' => 'Comparador e ofertas.', 'rota' => route('admin.precos.index'), 'capacidade' => 'precos'],
+                            ['titulo' => 'Lojas', 'descricao' => 'Operacao e presenca local.', 'rota' => route('admin.lojas.index'), 'capacidade' => 'lojas'],
+                        ])->filter(fn ($atalho) => in_array($atalho['capacidade'], $capacidadesConta, true))->take(3);
+                    @endphp
+
                     <header class="topbar">
                         <div class="topbar-title">
                             <span class="avatar">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
@@ -666,12 +839,81 @@
                         </div>
 
                         <div class="topbar-actions">
-                            <a class="ghost-link" href="{{ url('/') }}">Home publica</a>
-                            <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="logout-button" type="submit">Sair</button>
-                            </form>
+                            <div class="topbar-tools">
+                                <details class="topbar-menu">
+                                    <summary class="icon-button" aria-label="Abrir notificacoes">
+                                        NT
+                                        <span class="notification-dot">{{ count($notificacoesTopbar) }}</span>
+                                    </summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Notificacoes</h3>
+                                        <div class="dropdown-list">
+                                            @foreach ($notificacoesTopbar as $notificacao)
+                                                @if ($notificacao['rota'])
+                                                    <a class="notification-item" href="{{ $notificacao['rota'] }}">
+                                                        <strong>{{ $notificacao['titulo'] }}</strong>
+                                                        <span>{{ $notificacao['descricao'] }}</span>
+                                                    </a>
+                                                @else
+                                                    <div class="notification-item">
+                                                        <strong>{{ $notificacao['titulo'] }}</strong>
+                                                        <span>{{ $notificacao['descricao'] }}</span>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="topbar-menu">
+                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">AT</summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Atalhos rapidos</h3>
+                                        <div class="dropdown-list">
+                                            @foreach ($atalhosTopbar as $atalho)
+                                                <a class="quick-link" href="{{ $atalho['rota'] }}">
+                                                    <strong>{{ $atalho['titulo'] }}</strong>
+                                                    <span>{{ $atalho['descricao'] }}</span>
+                                                </a>
+                                            @endforeach
+                                            <a class="quick-link" href="{{ url('/') }}">
+                                                <strong>Home publica</strong>
+                                                <span>Veja a experiencia que o cliente acessa.</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="topbar-menu">
+                                    <summary class="profile-trigger" aria-label="Abrir menu do usuario">
+                                        <span class="avatar">{{ $iniciaisTopbar }}</span>
+                                        <span>
+                                            <strong>{{ $nomeUsuarioTopbar }}</strong>
+                                            <small>{{ $papelAtualConta ?: 'usuario' }} | {{ $assinaturaAtual?->status ?? 'sem assinatura' }}</small>
+                                        </span>
+                                    </summary>
+                                    <div class="dropdown-panel">
+                                        <h3>Minha conta</h3>
+                                        <div class="profile-row">
+                                            <span class="avatar">{{ $iniciaisTopbar }}</span>
+                                            <span>
+                                                <strong>{{ $nomeUsuarioTopbar }}</strong>
+                                                <span>{{ $usuarioTopbar?->email }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="profile-actions">
+                                            <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
+                                            @if (in_array('gestao', $capacidadesConta, true))
+                                                <a class="ghost-link" href="{{ route('admin.configuracoes.edit') }}">Configuracoes da conta</a>
+                                            @endif
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button class="logout-button" type="submit">Sair</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
                         </div>
                     </header>
 
