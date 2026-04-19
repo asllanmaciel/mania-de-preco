@@ -112,27 +112,6 @@
             .brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
             .brand-text strong { display: block; font-size: 1.02rem; letter-spacing: -0.02em; }
             .brand-text span { display: block; margin-top: 2px; color: var(--muted); font-size: 0.82rem; }
-            .account-panel {
-                padding: 16px;
-                border-radius: 20px;
-                background: linear-gradient(135deg, #22304b, #2f4f9f);
-                color: #fff;
-                box-shadow: var(--shadow-soft);
-                overflow: hidden;
-                position: relative;
-            }
-            .account-panel::after {
-                content: "";
-                position: absolute;
-                right: -48px;
-                bottom: -64px;
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.12);
-            }
-            .account-panel h2 { position: relative; margin: 8px 0 8px; font-size: 1.18rem; letter-spacing: -0.04em; }
-            .account-panel p { position: relative; margin: 0; color: rgba(255, 255, 255, 0.72); line-height: 1.6; font-size: 0.88rem; }
             .menu-title {
                 display: block;
                 margin: 16px 4px 8px;
@@ -361,6 +340,48 @@
             .profile-row {
                 grid-template-columns: 44px minmax(0, 1fr);
                 align-items: center;
+            }
+            .profile-account-card {
+                position: relative;
+                display: grid;
+                gap: 8px;
+                margin-top: 10px;
+                padding: 14px;
+                border-radius: 16px;
+                color: #fff;
+                background: linear-gradient(135deg, #22304b, #2f4f9f);
+                box-shadow: var(--shadow-soft);
+                overflow: hidden;
+            }
+            .profile-account-card::after {
+                content: "";
+                position: absolute;
+                right: -42px;
+                bottom: -58px;
+                width: 132px;
+                height: 132px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.12);
+            }
+            .profile-account-card > * {
+                position: relative;
+            }
+            .profile-account-card small {
+                color: rgba(255, 255, 255, 0.62);
+                font-size: 0.72rem;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+            .profile-account-card strong {
+                font-size: 1rem;
+                letter-spacing: -0.03em;
+            }
+            .profile-account-card p {
+                margin: 0;
+                color: rgba(255, 255, 255, 0.72);
+                line-height: 1.55;
+                font-size: 0.84rem;
             }
             .profile-actions {
                 display: grid;
@@ -683,16 +704,6 @@
                         </span>
                     </a>
 
-                    <section class="account-panel">
-                        <span class="menu-title" style="margin:0; color:rgba(255,255,255,.62);">Conta ativa</span>
-                        <h2>{{ $conta->nome_fantasia }}</h2>
-                        <p>Operacao, catalogo, financeiro e precos em uma unica cabine de comando.</p>
-                        <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
-                        @if (! empty($papelAtualConta))
-                            <span class="account-chip">{{ $papelAtualConta }}</span>
-                        @endif
-                    </section>
-
                     <nav class="menu-card" aria-label="Navegacao administrativa">
                         <span class="menu-title">Geral</span>
                         <div class="menu-links">
@@ -909,7 +920,7 @@
                                         </span>
                                         <span>
                                             <strong>{{ $nomeUsuarioTopbar }}</strong>
-                                            <small>{{ $papelAtualConta ?: 'usuario' }} | {{ $assinaturaAtual?->status ?? 'sem assinatura' }}</small>
+                                            <small>{{ $papelAtualConta ?: 'usuario' }}</small>
                                         </span>
                                     </summary>
                                     <div class="dropdown-panel">
@@ -926,6 +937,17 @@
                                                 <strong>{{ $nomeUsuarioTopbar }}</strong>
                                                 <span>{{ $usuarioTopbar?->email }}</span>
                                             </span>
+                                        </div>
+                                        <div class="profile-account-card">
+                                            <small>Conta ativa</small>
+                                            <strong>{{ $conta->nome_fantasia }}</strong>
+                                            <p>Operacao, catalogo, financeiro e precos em uma unica cabine de comando.</p>
+                                            <div>
+                                                <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
+                                                @if (! empty($papelAtualConta))
+                                                    <span class="account-chip">{{ $papelAtualConta }}</span>
+                                                @endif
+                                            </div>
                                         </div>
                                         <div class="profile-actions">
                                             <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
