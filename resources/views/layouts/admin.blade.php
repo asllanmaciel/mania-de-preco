@@ -190,7 +190,7 @@
                 gap: 22px;
                 width: min(100% - 36px, 1420px);
                 margin: 0 auto;
-                padding: 22px 0 52px;
+                padding: 0 0 52px;
             }
             .topbar {
                 position: sticky;
@@ -199,15 +199,62 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 18px;
-                margin: 0 -18px 4px;
-                padding: 18px;
+                gap: 16px;
+                min-height: 74px;
+                margin: 0 -18px;
+                padding: 14px 18px;
                 background: rgba(246, 248, 251, 0.84);
                 backdrop-filter: blur(18px);
                 border-bottom: 1px solid rgba(232, 237, 245, 0.82);
             }
-            .topbar-title { display: flex; gap: 14px; align-items: center; min-width: 0; }
-            .topbar-kicker {
+            .topbar-left {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+            .topbar-context {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-height: 44px;
+                padding: 6px 12px;
+                border-radius: 15px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid var(--line);
+                box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
+            }
+            .topbar-context strong {
+                display: block;
+                max-width: 230px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 0.9rem;
+            }
+            .topbar-context small {
+                display: block;
+                margin-top: 2px;
+                color: var(--muted);
+                font-size: 0.75rem;
+            }
+            .topbar-compact-brand {
+                display: none;
+                align-items: center;
+                gap: 10px;
+                font-weight: 900;
+            }
+            .page-heading {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                gap: 18px;
+                padding: 24px 0 0;
+            }
+            .page-heading-copy {
+                min-width: 0;
+            }
+            .page-heading-kicker {
                 display: block;
                 margin-bottom: 6px;
                 color: var(--primary);
@@ -216,8 +263,15 @@
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
             }
-            .topbar h1 { margin: 0; font-size: clamp(1.72rem, 3vw, 2.45rem); line-height: 1.05; letter-spacing: -0.06em; }
-            .topbar p { margin: 7px 0 0; color: var(--muted); max-width: 780px; line-height: 1.6; }
+            .page-heading h1 { margin: 0; font-size: clamp(1.85rem, 3.2vw, 2.95rem); line-height: 1.02; letter-spacing: -0.07em; }
+            .page-heading p { margin: 10px 0 0; color: var(--muted); max-width: 780px; line-height: 1.7; }
+            .page-heading-actions {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
             .topbar-actions, .toolbar-actions, .filter-row, .subnav, .list-actions, .checklist-actions {
                 display: flex;
                 align-items: center;
@@ -245,7 +299,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 justify-content: flex-end;
             }
             .topbar-menu {
@@ -293,7 +347,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                padding: 6px 12px 6px 6px;
+                padding: 6px 14px 6px 6px;
             }
             .profile-trigger strong {
                 display: block;
@@ -782,6 +836,7 @@
             @media (max-width: 1180px) {
                 .admin-shell { grid-template-columns: 1fr; }
                 .sidebar { display: none; }
+                .topbar-compact-brand { display: inline-flex; }
                 .main { width: min(100% - 28px, 1180px); padding-bottom: 108px; }
                 .mobile-context, .mobile-dock { display: grid; }
                 .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid, .visual-hero { grid-template-columns: 1fr; }
@@ -789,12 +844,16 @@
             }
             @media (max-width: 720px) {
                 .main { width: min(100% - 20px, 1180px); padding-top: 12px; }
-                .topbar { margin: 0 -10px 0; padding: 14px 10px; flex-direction: column; align-items: stretch; }
-                .topbar-actions, .topbar-tools, .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
-                .topbar-title { align-items: flex-start; }
+                .topbar { margin: -12px -10px 0; padding: 12px 10px; align-items: center; }
+                .topbar-context { display: none; }
+                .topbar-actions, .topbar-tools { justify-content: flex-end; }
+                .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
+                .page-heading { align-items: flex-start; flex-direction: column; padding-top: 18px; }
+                .page-heading-actions { justify-content: flex-start; }
                 .avatar { display: none; }
                 .profile-trigger .avatar { display: inline-grid; }
-                .topbar-menu, .icon-button, .profile-trigger { width: 100%; }
+                .profile-trigger > span:last-child { display: none; }
+                .topbar-menu, .icon-button, .profile-trigger { width: auto; }
                 .dropdown-panel { position: static; width: 100%; margin-top: 10px; }
                 .checklist-item, .table-row { grid-template-columns: 1fr; }
                 .ghost-link, .logout-button, .button, .button-secondary, .button-danger { width: 100%; }
@@ -921,16 +980,6 @@
 
             <div class="page-wrapper">
                 <main class="main">
-                    <section class="mobile-context">
-                        <div class="mobile-context-row">
-                            <div>
-                                <strong>{{ $conta->nome_fantasia }}</strong>
-                                <small>@yield('heading')</small>
-                            </div>
-                            <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
-                        </div>
-                    </section>
-
                     @php
                         $usuarioTopbar = auth()->user();
                         $nomeUsuarioTopbar = $usuarioTopbar?->name ?? 'Usuario';
@@ -953,18 +1002,24 @@
                     @endphp
 
                     <header class="topbar">
-                        <div class="topbar-title">
-                            <span class="avatar">
-                                @if ($avatarUsuarioTopbar)
-                                    <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
-                                @else
-                                    {{ $iniciaisTopbar }}
-                                @endif
-                            </span>
-                            <div>
-                                <span class="topbar-kicker">Painel lojista</span>
-                                <h1>@yield('heading')</h1>
-                                <p>@yield('subheading')</p>
+                        <div class="topbar-left">
+                            <a class="topbar-compact-brand" href="{{ route('admin.dashboard') }}">
+                                <span class="brand-mark">MP</span>
+                                <span>Mania de Preco</span>
+                            </a>
+
+                            <div class="topbar-context">
+                                <span class="avatar">
+                                    @if ($avatarUsuarioTopbar)
+                                        <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
+                                    @else
+                                        {{ $iniciaisTopbar }}
+                                    @endif
+                                </span>
+                                <div>
+                                    <strong>{{ $conta->nome_fantasia }}</strong>
+                                    <small>{{ $assinaturaAtual?->status ?? 'sem assinatura' }}{{ ! empty($papelAtualConta) ? ' | ' . $papelAtualConta : '' }}</small>
+                                </div>
                             </div>
                         </div>
 
@@ -1085,6 +1140,23 @@
                             </div>
                         </div>
                     </header>
+
+                    <section class="page-heading">
+                        <div class="page-heading-copy">
+                            <span class="page-heading-kicker">Painel lojista</span>
+                            <h1>@yield('heading')</h1>
+                            @hasSection('subheading')
+                                <p>@yield('subheading')</p>
+                            @endif
+                        </div>
+
+                        <div class="page-heading-actions">
+                            <span class="pill">{{ $conta->nome_fantasia }}</span>
+                            <span class="badge {{ in_array($assinaturaAtual?->status, ['ativa', 'trial'], true) ? '' : 'is-warning' }}">
+                                {{ $assinaturaAtual?->status ?? 'sem assinatura' }}
+                            </span>
+                        </div>
+                    </section>
 
                     <section class="content">
                         @if (session('status'))
