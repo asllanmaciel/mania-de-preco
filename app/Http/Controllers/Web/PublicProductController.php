@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\AlertaPreco;
 use App\Models\Produto;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PublicProductController extends Controller
 {
-    public function __invoke(Produto $produto): View
+    public function __invoke(Request $request, Produto $produto): View
     {
         abort_unless($produto->status === 'ativo', 404);
 
@@ -26,6 +27,13 @@ class PublicProductController extends Controller
         $economia = max(0, $maiorPreco - $menorPreco);
         $cidades = $ofertas->pluck('loja.cidade')->filter()->unique()->values();
         $tiposPreco = $ofertas->pluck('tipo_preco')->unique()->values();
+        $alertaDoUsuario = $request->user()
+            ? AlertaPreco::query()
+                ->where('user_id', $request->user()->id)
+                ->where('produto_id', $produto->id)
+                ->first()
+            : null;
+        $precoSugeridoAlerta = $menorPreco > 0 ? max(0.01, round($menorPreco * 0.95, 2)) : null;
 
         $chart = $ofertas->map(function ($oferta) {
             return [
@@ -56,6 +64,8 @@ class PublicProductController extends Controller
             'tiposPreco' => $tiposPreco,
             'chart' => $chart,
             'categoriaRelacionados' => $categoriaRelacionados,
+            'alertaDoUsuario' => $alertaDoUsuario,
+            'precoSugeridoAlerta' => $precoSugeridoAlerta,
         ]);
     }
 }

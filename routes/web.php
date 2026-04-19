@@ -18,7 +18,9 @@ use App\Http\Controllers\Web\Admin\ConfiguracaoContaController as AdminConfigura
 use App\Http\Controllers\Web\Admin\PerfilController as AdminPerfilController;
 use App\Http\Controllers\Web\Auth\NewPasswordController;
 use App\Http\Controllers\Web\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Web\Auth\RegisteredUserController;
 use App\Http\Controllers\Web\Auth\SessionController;
+use App\Http\Controllers\Web\Cliente\AlertaPrecoController as ClienteAlertaPrecoController;
 use App\Http\Controllers\Web\Cliente\DashboardController as ClienteDashboardController;
 use App\Http\Controllers\Web\PanelRedirectController;
 use App\Http\Controllers\Web\PublicCatalogController;
@@ -50,6 +52,8 @@ Route::get('/produtos/{produto}', PublicProductController::class)->name('produto
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SessionController::class, 'create'])->name('login');
     Route::post('/login', [SessionController::class, 'store'])->name('login.store');
+    Route::get('/cadastro', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/cadastro', [RegisteredUserController::class, 'store'])->name('register.store');
     Route::get('/esqueci-minha-senha', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])->name('password.email');
     Route::get('/resetar-senha/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
@@ -111,6 +115,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('cliente')->name('cliente.')->middleware('panel:cliente')->group(function () {
         Route::get('/', ClienteDashboardController::class)->name('dashboard');
+        Route::post('/alertas', [ClienteAlertaPrecoController::class, 'store'])->name('alertas.store');
+        Route::patch('/alertas/{alerta}', [ClienteAlertaPrecoController::class, 'update'])->name('alertas.update');
+        Route::delete('/alertas/{alerta}', [ClienteAlertaPrecoController::class, 'destroy'])->name('alertas.destroy');
     });
 
     Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');

@@ -56,4 +56,9 @@
             <code>test@example.com / password</code>
         </div>
     @endif
+
+    <div class="demo-box">
+        <p>Ainda nao tem conta de consumidor?</p>
+        <a class="button-secondary" href="{{ route('register') }}">Criar conta gratuita</a>
+    </div>
 @endsection

@@ -49,6 +49,10 @@
             .trust-list { grid-template-columns:1fr; }
             .trust-item { padding:16px; border-radius:18px; background:rgba(255,255,255,.76); border:1px solid rgba(66,37,21,.08); }
             .trust-item strong { display:block; margin-bottom:6px; font-size:1.02rem; }
+            .alert-card { display:grid; gap:12px; margin-top:16px; padding:18px; border-radius:20px; background:linear-gradient(135deg,rgba(15,159,143,.13),rgba(255,255,255,.82)); border:1px solid rgba(15,159,143,.16); }
+            .alert-card form { display:grid; gap:10px; }
+            .alert-card label { display:grid; gap:7px; font-weight:700; }
+            .alert-card input { width:100%; min-height:46px; padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff; color:var(--text); outline:none; }
             .related-card img { width:100%; height:140px; object-fit:cover; border-radius:16px; margin-bottom:14px; background:#fff; border:1px solid rgba(66,37,21,.08); }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
@@ -85,8 +89,10 @@
                     <a class="chip" href="{{ route('projeto') }}">Para lojas</a>
                     <a class="chip" href="{{ route('novidades.index') }}">Lançamentos</a>
                     @auth
-                        <a class="chip" href="{{ route('admin.dashboard') }}">Abrir painel</a>
-                    @endif
+                        <a class="chip" href="{{ route('painel.redirect') }}">Abrir painel</a>
+                    @else
+                        <a class="chip" href="{{ route('register') }}">Criar alerta</a>
+                    @endauth
                 </div>
             </header>
 
