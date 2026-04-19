@@ -247,6 +247,13 @@
                 color: var(--primary);
                 font-weight: 900;
                 box-shadow: var(--shadow-soft);
+                overflow: hidden;
+            }
+            .avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
             }
             .topbar-tools {
                 display: flex;
@@ -776,6 +783,7 @@
                     @php
                         $usuarioTopbar = auth()->user();
                         $nomeUsuarioTopbar = $usuarioTopbar?->name ?? 'Usuario';
+                        $avatarUsuarioTopbar = $usuarioTopbar?->avatar_url;
                         $iniciaisTopbar = collect(preg_split('/\s+/', trim($nomeUsuarioTopbar)))
                             ->filter()
                             ->take(2)
@@ -830,7 +838,13 @@
 
                     <header class="topbar">
                         <div class="topbar-title">
-                            <span class="avatar">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                            <span class="avatar">
+                                @if ($avatarUsuarioTopbar)
+                                    <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
+                                @else
+                                    {{ $iniciaisTopbar }}
+                                @endif
+                            </span>
                             <div>
                                 <span class="topbar-kicker">Painel lojista</span>
                                 <h1>@yield('heading')</h1>
@@ -886,7 +900,13 @@
 
                                 <details class="topbar-menu">
                                     <summary class="profile-trigger" aria-label="Abrir menu do usuario">
-                                        <span class="avatar">{{ $iniciaisTopbar }}</span>
+                                        <span class="avatar">
+                                            @if ($avatarUsuarioTopbar)
+                                                <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
+                                            @else
+                                                {{ $iniciaisTopbar }}
+                                            @endif
+                                        </span>
                                         <span>
                                             <strong>{{ $nomeUsuarioTopbar }}</strong>
                                             <small>{{ $papelAtualConta ?: 'usuario' }} | {{ $assinaturaAtual?->status ?? 'sem assinatura' }}</small>
@@ -895,7 +915,13 @@
                                     <div class="dropdown-panel">
                                         <h3>Minha conta</h3>
                                         <div class="profile-row">
-                                            <span class="avatar">{{ $iniciaisTopbar }}</span>
+                                            <span class="avatar">
+                                                @if ($avatarUsuarioTopbar)
+                                                    <img src="{{ $avatarUsuarioTopbar }}" alt="Foto de {{ $nomeUsuarioTopbar }}">
+                                                @else
+                                                    {{ $iniciaisTopbar }}
+                                                @endif
+                                            </span>
                                             <span>
                                                 <strong>{{ $nomeUsuarioTopbar }}</strong>
                                                 <span>{{ $usuarioTopbar?->email }}</span>

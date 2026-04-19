@@ -24,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar_path',
         'is_super_admin',
     ];
 
@@ -71,6 +72,15 @@ class User extends Authenticatable
     public function movimentacoesFinanceiras()
     {
         return $this->hasMany(MovimentacaoFinanceira::class);
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (! $this->avatar_path) {
+            return null;
+        }
+
+        return asset($this->avatar_path);
     }
 
     public function chamadosSuporte()

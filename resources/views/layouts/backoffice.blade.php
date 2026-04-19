@@ -178,6 +178,13 @@
                 color:var(--primary);
                 font-weight:900;
                 box-shadow:0 8px 18px rgba(31,42,68,.07);
+                overflow:hidden;
+            }
+            .avatar img {
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                display:block;
             }
             .icon-button, .profile-trigger {
                 min-height:44px;
@@ -391,6 +398,7 @@
                     @php
                         $usuarioBackoffice = auth()->user();
                         $nomeUsuarioBackoffice = $usuarioBackoffice?->name ?? 'Usuario';
+                        $avatarUsuarioBackoffice = $usuarioBackoffice?->avatar_url;
                         $iniciaisBackoffice = collect(preg_split('/\s+/', trim($nomeUsuarioBackoffice)))
                             ->filter()
                             ->take(2)
@@ -470,7 +478,13 @@
 
                                 <details class="topbar-menu">
                                     <summary class="profile-trigger" aria-label="Abrir menu do usuario">
-                                        <span class="avatar">{{ $iniciaisBackoffice }}</span>
+                                        <span class="avatar">
+                                            @if ($avatarUsuarioBackoffice)
+                                                <img src="{{ $avatarUsuarioBackoffice }}" alt="Foto de {{ $nomeUsuarioBackoffice }}">
+                                            @else
+                                                {{ $iniciaisBackoffice }}
+                                            @endif
+                                        </span>
                                         <span>
                                             <strong>{{ $nomeUsuarioBackoffice }}</strong>
                                             <small>{{ $perfilBackoffice }}</small>
@@ -479,7 +493,13 @@
                                     <div class="dropdown-panel">
                                         <h3>Minha conta</h3>
                                         <div class="profile-row">
-                                            <span class="avatar">{{ $iniciaisBackoffice }}</span>
+                                            <span class="avatar">
+                                                @if ($avatarUsuarioBackoffice)
+                                                    <img src="{{ $avatarUsuarioBackoffice }}" alt="Foto de {{ $nomeUsuarioBackoffice }}">
+                                                @else
+                                                    {{ $iniciaisBackoffice }}
+                                                @endif
+                                            </span>
                                             <span>
                                                 <strong>{{ $nomeUsuarioBackoffice }}</strong>
                                                 <span>{{ $usuarioBackoffice?->email }}</span>

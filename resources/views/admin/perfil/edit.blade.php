@@ -45,9 +45,23 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('admin.perfil.update') }}" class="stack">
+                <form method="POST" action="{{ route('admin.perfil.update') }}" class="stack" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
+
+                    <div class="mini-card" style="display:grid; grid-template-columns:auto minmax(0, 1fr); gap:16px; align-items:center;">
+                        <span class="avatar" style="width:72px; height:72px; font-size:1.1rem;">
+                            @if ($user->avatar_url)
+                                <img src="{{ $user->avatar_url }}" alt="Foto de {{ $user->name }}">
+                            @else
+                                {{ strtoupper(mb_substr($user->name, 0, 1)) }}
+                            @endif
+                        </span>
+                        <div>
+                            <strong>Sua foto no painel</strong>
+                            <span>Ela aparece na topbar, no menu de perfil e ajuda a humanizar a operacao.</span>
+                        </div>
+                    </div>
 
                     <div class="form-grid">
                         <div class="field-group">
@@ -59,6 +73,12 @@
                             <label for="email">E-mail</label>
                             <input id="email" type="email" name="email" value="{{ old('email', $user->email) }}" required>
                             <small>Se o e-mail for alterado, a verificacao futura precisara ser refeita.</small>
+                        </div>
+
+                        <div class="field-group-full">
+                            <label for="avatar">Foto do perfil</label>
+                            <input id="avatar" type="file" name="avatar" accept="image/png,image/jpeg,image/webp">
+                            <small>Formatos aceitos: JPG, PNG ou WebP ate 2 MB.</small>
                         </div>
                     </div>
 

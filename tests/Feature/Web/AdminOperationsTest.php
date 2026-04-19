@@ -247,14 +247,19 @@ class AdminOperationsTest extends TestCase
             ->put(route('admin.perfil.update'), [
                 'name' => 'Conta Web Atualizada',
                 'email' => 'web-atualizada@example.com',
+                'avatar' => UploadedFile::fake()->image('avatar.png', 240, 240),
             ])
             ->assertRedirect(route('admin.perfil.edit'));
+
+        $user->refresh();
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Conta Web Atualizada',
             'email' => 'web-atualizada@example.com',
         ]);
+        $this->assertNotNull($user->avatar_path);
+        $this->assertFileExists(public_path($user->avatar_path));
 
         $this->assertDatabaseHas('audit_logs', [
             'conta_id' => $conta->id,
@@ -263,7 +268,7 @@ class AdminOperationsTest extends TestCase
             'acao' => 'perfil_atualizado',
         ]);
 
-        $this->actingAs($user->fresh())
+        $this->actingAs($user)
             ->put(route('admin.perfil.password'), [
                 'current_password' => 'password',
                 'password' => 'novaSenha123',
