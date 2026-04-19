@@ -22,9 +22,30 @@
     </section>
 
     <section class="grid-3">
-        <article class="metric"><strong>{{ number_format($totalAlertas, 0, ',', '.') }}</strong><span>alertas criados</span></article>
-        <article class="metric"><strong>{{ number_format($alertasAtivos, 0, ',', '.') }}</strong><span>monitorando agora</span></article>
-        <article class="metric"><strong>{{ number_format($alertasAtendidos, 0, ',', '.') }}</strong><span>precos que ja bateram a meta</span></article>
+        <article class="metric">
+            <div class="metric-head">
+                <span>alertas criados</span>
+                <span class="metric-icon"><x-ui.icon name="bell" /></span>
+            </div>
+            <strong>{{ number_format($totalAlertas, 0, ',', '.') }}</strong>
+            <span>produtos no seu radar pessoal</span>
+        </article>
+        <article class="metric">
+            <div class="metric-head">
+                <span>monitorando agora</span>
+                <span class="metric-icon is-teal"><x-ui.icon name="search" /></span>
+            </div>
+            <strong>{{ number_format($alertasAtivos, 0, ',', '.') }}</strong>
+            <span>alertas buscando oportunidade</span>
+        </article>
+        <article class="metric">
+            <div class="metric-head">
+                <span>metas atingidas</span>
+                <span class="metric-icon is-warning"><x-ui.icon name="check" /></span>
+            </div>
+            <strong>{{ number_format($alertasAtendidos, 0, ',', '.') }}</strong>
+            <span>precos que ja bateram a meta</span>
+        </article>
     </section>
 
     <section class="grid-2">
@@ -60,7 +81,7 @@
                         <input type="number" name="preco_desejado" value="{{ old('preco_desejado') }}" min="0.01" step="0.01" placeholder="Ex: 18,50" required>
                     </label>
 
-                    <button class="button" type="submit">Ativar alerta</button>
+                    <button class="button" type="submit"><x-ui.icon name="bell" /> Ativar alerta</button>
                 </form>
             </div>
         </article>

@@ -47,6 +47,14 @@
             }
             a { color: inherit; text-decoration: none; }
             button, input, select, textarea { font: inherit; }
+            .ui-icon {
+                display: inline-block;
+                flex: 0 0 auto;
+                width: 1.15em;
+                height: 1.15em;
+                stroke-width: 2.1;
+                vertical-align: -0.18em;
+            }
 
             .admin-shell { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-height: 100vh; }
             .sidebar {
@@ -92,7 +100,6 @@
                 color: #7a869a;
                 background: transparent;
                 border: 1px solid transparent;
-                font: 700 0.72rem "IBM Plex Mono", monospace;
                 transition: 0.18s ease;
             }
             .rail-link:hover, .rail-link.is-active {
@@ -148,7 +155,7 @@
                 background: #fff;
                 border: 1px solid var(--line);
                 color: currentColor;
-                font: 800 0.72rem "IBM Plex Mono", monospace;
+                font-size: 1.05rem;
             }
             .account-chip, .pill, .badge {
                 display: inline-flex;
@@ -265,7 +272,7 @@
                 display: inline-grid;
                 place-items: center;
                 width: 44px;
-                font: 900 0.72rem "IBM Plex Mono", monospace;
+                font-size: 1.05rem;
             }
             .notification-dot {
                 position: absolute;
@@ -395,6 +402,7 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
+                gap: 8px;
                 min-height: 42px;
                 padding: 11px 15px;
                 border-radius: 12px;
@@ -600,6 +608,122 @@
             .month-bar > span { display: block; height: 100%; border-radius: inherit; }
             .month-bar.is-receita > span { background: linear-gradient(90deg, var(--success), #44d7ff); }
             .month-bar.is-despesa > span { background: linear-gradient(90deg, var(--danger), var(--warning)); }
+            .metric-head {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            .metric-icon, .visual-icon {
+                display: inline-grid;
+                place-items: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 15px;
+                color: var(--primary);
+                background: var(--primary-soft);
+                border: 1px solid #dce7ff;
+            }
+            .metric-icon.is-teal, .visual-icon.is-teal {
+                color: #0f8f78;
+                background: var(--success-soft);
+                border-color: #c8f7ed;
+            }
+            .metric-icon.is-warning, .visual-icon.is-warning {
+                color: #b76d00;
+                background: var(--warning-soft);
+                border-color: #ffe5b8;
+            }
+            .metric-icon.is-danger, .visual-icon.is-danger {
+                color: #be4f39;
+                background: var(--danger-soft);
+                border-color: #ffd9cf;
+            }
+            .visual-hero {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(260px, 0.36fr);
+                gap: 18px;
+                align-items: stretch;
+                overflow: hidden;
+                background:
+                    radial-gradient(circle at 12% 0%, rgba(93, 135, 255, 0.16), transparent 28%),
+                    linear-gradient(135deg, #ffffff, #f8fbff);
+            }
+            .visual-hero-copy {
+                display: grid;
+                align-content: center;
+                gap: 16px;
+            }
+            .visual-action-grid {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .score-ring {
+                --score: 0;
+                display: grid;
+                place-items: center;
+                min-height: 220px;
+                border-radius: 22px;
+                background: conic-gradient(var(--success) calc(var(--score) * 1%), #e9eef7 0);
+                padding: 16px;
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+            }
+            .score-ring-inner {
+                display: grid;
+                place-items: center;
+                width: 100%;
+                height: 100%;
+                min-height: 188px;
+                border-radius: 18px;
+                background: #fff;
+                text-align: center;
+                padding: 18px;
+            }
+            .score-ring-inner strong {
+                display: block;
+                font-size: clamp(2.4rem, 5vw, 4rem);
+                line-height: 0.95;
+                letter-spacing: -0.08em;
+            }
+            .score-ring-inner span { color: var(--muted); font-weight: 800; }
+            .chart-card {
+                position: relative;
+                overflow: hidden;
+            }
+            .chart-card::after {
+                content: "";
+                position: absolute;
+                inset: auto -70px -90px auto;
+                width: 210px;
+                height: 210px;
+                border-radius: 50%;
+                background: rgba(93, 135, 255, 0.08);
+            }
+            .chart-legend {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                color: var(--muted);
+                font-size: 0.84rem;
+                font-weight: 800;
+            }
+            .legend-dot {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .legend-dot::before {
+                content: "";
+                width: 10px;
+                height: 10px;
+                border-radius: 999px;
+                background: var(--success);
+            }
+            .legend-dot.is-danger::before { background: var(--danger); }
+            .legend-dot.is-warning::before { background: var(--warning); }
             .pagination-wrap nav { display: flex; justify-content: center; }
             .pagination-wrap svg { width: 18px; height: 18px; }
             .subnav-link {
@@ -660,7 +784,7 @@
                 .sidebar { display: none; }
                 .main { width: min(100% - 28px, 1180px); padding-bottom: 108px; }
                 .mobile-context, .mobile-dock { display: grid; }
-                .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid { grid-template-columns: 1fr; }
+                .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid, .visual-hero { grid-template-columns: 1fr; }
                 .table-head, .list-row { grid-template-columns: 1fr; }
             }
             @media (max-width: 720px) {
@@ -683,15 +807,23 @@
                 <div class="sidebar-rail">
                     <a class="brand-mark" href="{{ route('admin.dashboard') }}">MP</a>
                     <nav class="rail-stack" aria-label="Atalhos do painel">
-                        <a class="rail-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">IN</a>
+                        <a class="rail-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}" aria-label="Dashboard">
+                            <x-ui.icon name="home" />
+                        </a>
                         @if (in_array('financeiro', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">FI</a>
+                            <a class="rail-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}" aria-label="Financeiro">
+                                <x-ui.icon name="wallet" />
+                            </a>
                         @endif
                         @if (in_array('catalogo', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">PR</a>
+                            <a class="rail-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}" aria-label="Produtos">
+                                <x-ui.icon name="package" />
+                            </a>
                         @endif
                         @if (in_array('lojas', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">LJ</a>
+                            <a class="rail-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}" aria-label="Lojas">
+                                <x-ui.icon name="store" />
+                            </a>
                         @endif
                     </nav>
                 </div>
@@ -708,11 +840,11 @@
                         <span class="menu-title">Geral</span>
                         <div class="menu-links">
                             <a class="menu-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <span class="menu-icon">IN</span>
+                                <span class="menu-icon"><x-ui.icon name="home" /></span>
                                 <span>Dashboard<small>visao geral</small></span>
                             </a>
                             <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
-                                <span class="menu-icon">ON</span>
+                                <span class="menu-icon"><x-ui.icon name="compass" /></span>
                                 <span>Onboarding<small>implantacao</small></span>
                             </a>
                         </div>
@@ -721,25 +853,25 @@
                         <div class="menu-links">
                             @if (in_array('lojas', $capacidadesConta, true))
                                 <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
-                                    <span class="menu-icon">LJ</span>
+                                    <span class="menu-icon"><x-ui.icon name="store" /></span>
                                     <span>Lojas<small>operacao</small></span>
                                 </a>
                             @endif
                             @if (in_array('catalogo', $capacidadesConta, true))
                                 <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
-                                    <span class="menu-icon">PR</span>
+                                    <span class="menu-icon"><x-ui.icon name="package" /></span>
                                     <span>Produtos<small>catalogo</small></span>
                                 </a>
                             @endif
                             @if (in_array('precos', $capacidadesConta, true))
                                 <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
-                                    <span class="menu-icon">PC</span>
+                                    <span class="menu-icon"><x-ui.icon name="tag" /></span>
                                     <span>Precos<small>comparador</small></span>
                                 </a>
                             @endif
                             @if (in_array('financeiro', $capacidadesConta, true))
                                 <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
-                                    <span class="menu-icon">FI</span>
+                                    <span class="menu-icon"><x-ui.icon name="wallet" /></span>
                                     <span>Financeiro<small>caixa e titulos</small></span>
                                 </a>
                             @endif
@@ -750,21 +882,21 @@
                             <div class="menu-links">
                                 @if (in_array('gestao', $capacidadesConta, true))
                                     <a class="menu-link {{ request()->routeIs('admin.assinatura') ? 'is-active' : '' }}" href="{{ route('admin.assinatura') }}">
-                                        <span class="menu-icon">AS</span>
+                                        <span class="menu-icon"><x-ui.icon name="credit-card" /></span>
                                         <span>Assinatura<small>plano e cobranca</small></span>
                                     </a>
                                     <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
-                                        <span class="menu-icon">CO</span>
+                                        <span class="menu-icon"><x-ui.icon name="settings" /></span>
                                         <span>Configuracoes<small>minha empresa</small></span>
                                     </a>
                                 @endif
                                 @if (in_array('equipe', $capacidadesConta, true))
                                     <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
-                                        <span class="menu-icon">EQ</span>
+                                        <span class="menu-icon"><x-ui.icon name="users" /></span>
                                         <span>Equipe<small>acessos e papeis</small></span>
                                     </a>
                                     <a class="menu-link {{ request()->routeIs('admin.auditoria') ? 'is-active' : '' }}" href="{{ route('admin.auditoria') }}">
-                                        <span class="menu-icon">AU</span>
+                                        <span class="menu-icon"><x-ui.icon name="shield" /></span>
                                         <span>Auditoria<small>historico de acoes</small></span>
                                     </a>
                                 @endif
@@ -867,7 +999,7 @@
                             <div class="topbar-tools">
                                 <details class="topbar-menu">
                                     <summary class="icon-button" aria-label="Abrir notificacoes">
-                                        NT
+                                        <x-ui.icon name="bell" />
                                         <span class="notification-dot">{{ count($notificacoesTopbar) }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
@@ -891,7 +1023,9 @@
                                 </details>
 
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">AT</summary>
+                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">
+                                        <x-ui.icon name="grid" />
+                                    </summary>
                                     <div class="dropdown-panel">
                                         <h3>Atalhos rapidos</h3>
                                         <div class="dropdown-list">
@@ -978,43 +1112,51 @@
 
         <nav class="mobile-dock" aria-label="Navegacao principal do admin">
             <a class="mobile-dock-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
+                <x-ui.icon name="home" />
                 <strong>Inicio</strong>
                 <span>painel</span>
             </a>
             <a class="mobile-dock-link {{ request()->routeIs('admin.perfil.*') ? 'is-active' : '' }}" href="{{ route('admin.perfil.edit') }}">
+                <x-ui.icon name="user" />
                 <strong>Perfil</strong>
                 <span>acesso</span>
             </a>
             @if (in_array('financeiro', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
+                    <x-ui.icon name="wallet" />
                     <strong>Financeiro</strong>
                     <span>caixa</span>
                 </a>
             @endif
             @if (in_array('catalogo', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
+                    <x-ui.icon name="package" />
                     <strong>Produtos</strong>
                     <span>catalogo</span>
                 </a>
             @endif
             @if (in_array('lojas', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
+                    <x-ui.icon name="store" />
                     <strong>Lojas</strong>
                     <span>operacao</span>
                 </a>
             @endif
             @if (in_array('equipe', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
+                    <x-ui.icon name="users" />
                     <strong>Equipe</strong>
                     <span>acessos</span>
                 </a>
             @elseif (in_array('gestao', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
+                    <x-ui.icon name="settings" />
                     <strong>Conta</strong>
                     <span>empresa</span>
                 </a>
             @elseif (in_array('onboarding', $capacidadesConta, true))
                 <a class="mobile-dock-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
+                    <x-ui.icon name="compass" />
                     <strong>Setup</strong>
                     <span>onboarding</span>
                 </a>

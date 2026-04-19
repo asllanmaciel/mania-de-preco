@@ -227,7 +227,7 @@ class DatabaseSeeder extends Seeder
             $this->seedAvaliacoes($lojas, [$cliente, $clienteDois, $clienteTres]);
             $this->seedMovimentacoes($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas);
             $this->seedTitulos($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas, $synchronizer);
-            $this->seedAlertas($owner, $catalogo['produtos'] ?? []);
+            $this->seedAlertas($owner, $cliente, $catalogo['produtos'] ?? []);
             $this->seedAuditoria($conta, $owner);
             $this->recalcularSaldos($conta);
         });
@@ -613,19 +613,33 @@ class DatabaseSeeder extends Seeder
         return $produtos;
     }
 
-    private function seedAlertas(User $owner, array $produtos): void
+    private function seedAlertas(User $owner, User $cliente, array $produtos): void
     {
         $evaluator = app(AlertaPrecoEvaluator::class);
 
         foreach ([
             [
+                'user' => $owner,
                 'produto_slug' => 'cafe-premium-500g',
                 'preco_desejado' => 18.50,
                 'status' => 'ativo',
             ],
             [
+                'user' => $owner,
                 'produto_slug' => 'racao-premium-caes-10kg',
                 'preco_desejado' => 105.00,
+                'status' => 'ativo',
+            ],
+            [
+                'user' => $cliente,
+                'produto_slug' => 'arroz-tipo-1-5kg',
+                'preco_desejado' => 27.50,
+                'status' => 'ativo',
+            ],
+            [
+                'user' => $cliente,
+                'produto_slug' => 'biscoito-integral-140g',
+                'preco_desejado' => 5.90,
                 'status' => 'ativo',
             ],
         ] as $dados) {
@@ -637,7 +651,7 @@ class DatabaseSeeder extends Seeder
 
             $alerta = AlertaPreco::updateOrCreate(
                 [
-                    'user_id' => $owner->id,
+                    'user_id' => $dados['user']->id,
                     'produto_id' => $produto->id,
                 ],
                 [

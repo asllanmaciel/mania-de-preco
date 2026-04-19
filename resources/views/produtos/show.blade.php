@@ -173,6 +173,40 @@
                                 <span class="small">O bloco principal resume melhor valor, economia e variedade sem esconder o detalhe das lojas.</span>
                             </div>
                         </div>
+                        <div class="alert-card">
+                            <div>
+                                <h3>Quer ser avisado quando baixar?</h3>
+                                <p class="muted" style="margin:8px 0 0;">Defina uma meta de preco e acompanhe este produto pela sua area de cliente.</p>
+                            </div>
+
+                            @auth
+                                @if ($alertaDoUsuario)
+                                    <div class="trust-item">
+                                        <strong>Voce ja monitora este produto</strong>
+                                        <span class="small">
+                                            meta R$ {{ number_format((float) $alertaDoUsuario->preco_desejado, 2, ',', '.') }}
+                                            | status {{ $alertaDoUsuario->status }}
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <form method="POST" action="{{ route('cliente.alertas.store') }}">
+                                    @csrf
+                                    <input type="hidden" name="produto_id" value="{{ $produto->id }}">
+
+                                    <label>
+                                        <span>Preco desejado</span>
+                                        <input type="number" name="preco_desejado" min="0.01" step="0.01" value="{{ old('preco_desejado', $alertaDoUsuario?->preco_desejado ?? $precoSugeridoAlerta) }}" required>
+                                    </label>
+
+                                    <button class="button" type="submit">{{ $alertaDoUsuario ? 'Atualizar alerta' : 'Criar alerta de preco' }}</button>
+                                    <a class="button-secondary" href="{{ route('cliente.dashboard') }}">Ver meus alertas</a>
+                                </form>
+                            @else
+                                <a class="button" href="{{ route('register') }}">Criar conta e ativar alerta</a>
+                                <a class="button-secondary" href="{{ route('login') }}">Ja tenho conta</a>
+                            @endauth
+                        </div>
                     </aside>
                 </section>
 

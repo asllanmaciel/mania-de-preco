@@ -41,6 +41,14 @@
             }
             a { color:inherit; text-decoration:none; }
             button, input, select, textarea { font:inherit; }
+            .ui-icon {
+                display:inline-block;
+                flex:0 0 auto;
+                width:1.15em;
+                height:1.15em;
+                stroke-width:2.1;
+                vertical-align:-.18em;
+            }
 
             .backoffice-shell { display:grid; grid-template-columns:300px minmax(0, 1fr); min-height:100vh; }
             .sidebar {
@@ -198,7 +206,7 @@
             .icon-button {
                 position:relative;
                 width:44px;
-                font:900 .72rem "IBM Plex Mono", monospace;
+                font-size:1.05rem;
             }
             .notification-dot {
                 position:absolute;
@@ -301,6 +309,35 @@
                 color:var(--muted);
                 line-height:1.6;
             }
+            .metric-head {
+                position:relative;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:12px;
+                margin-bottom:10px;
+            }
+            .metric-icon {
+                position:relative;
+                display:inline-grid;
+                place-items:center;
+                width:42px;
+                height:42px;
+                border-radius:15px;
+                color:var(--primary);
+                background:var(--primary-soft);
+                border:1px solid #dce7ff;
+            }
+            .metric-icon.is-teal {
+                color:#0f8f78;
+                background:var(--success-soft);
+                border-color:#c8f7ed;
+            }
+            .metric-icon.is-warning {
+                color:#b76d00;
+                background:var(--warning-soft);
+                border-color:#ffe5b8;
+            }
             .list-row {
                 display:grid;
                 grid-template-columns:minmax(0,1fr) auto;
@@ -320,6 +357,7 @@
                 display:inline-flex;
                 align-items:center;
                 justify-content:center;
+                gap:8px;
                 min-height:42px;
                 padding:11px 15px;
                 border-radius:12px;
@@ -441,7 +479,7 @@
                             <div class="topbar-tools">
                                 <details class="topbar-menu">
                                     <summary class="icon-button" aria-label="Abrir notificacoes">
-                                        NT
+                                        <x-ui.icon name="bell" />
                                         <span class="notification-dot">{{ count($notificacoesBackoffice) }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
@@ -458,7 +496,9 @@
                                 </details>
 
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">AT</summary>
+                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">
+                                        <x-ui.icon name="grid" />
+                                    </summary>
                                     <div class="dropdown-panel">
                                         <h3>Atalhos rapidos</h3>
                                         <div class="dropdown-list">

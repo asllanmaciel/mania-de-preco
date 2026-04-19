@@ -5,28 +5,38 @@
 @section('subheading', 'Uma leitura mais gerencial da conta logada, conectando operacao, catalogo, precificacao e saude financeira em uma unica visao.')
 
 @section('content')
-    <section class="card">
-        <div class="card-body stack">
+    <section class="card visual-hero">
+        <div class="card-body visual-hero-copy">
             <div class="section-header">
                 <div>
                     <h2>Centro de comando</h2>
-                    <p>No celular, esta faixa vira o ponto mais rapido para entrar nas operacoes que mais importam ao longo do dia.</p>
+                    <p>O painel agora combina icones, sinais visuais e graficos leves para transformar a rotina da conta em decisoes mais rapidas.</p>
                 </div>
             </div>
 
-            <div class="mini-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <div class="visual-action-grid">
                 @if (in_array('financeiro', $capacidadesConta, true))
-                    <a class="button" href="{{ route('admin.financeiro.index') }}">Abrir financeiro</a>
+                    <a class="button" href="{{ route('admin.financeiro.index') }}"><x-ui.icon name="wallet" /> Abrir financeiro</a>
                 @endif
                 @if (in_array('lojas', $capacidadesConta, true))
-                    <a class="button-secondary" href="{{ route('admin.lojas.index') }}">Operar lojas</a>
+                    <a class="button-secondary" href="{{ route('admin.lojas.index') }}"><x-ui.icon name="store" /> Operar lojas</a>
                 @endif
                 @if (in_array('catalogo', $capacidadesConta, true))
-                    <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Gerir catalogo</a>
+                    <a class="button-secondary" href="{{ route('admin.produtos.index') }}"><x-ui.icon name="package" /> Gerir catalogo</a>
                 @endif
                 @if (in_array('precos', $capacidadesConta, true))
-                    <a class="button-secondary" href="{{ route('admin.precos.index') }}">Revisar precos</a>
+                    <a class="button-secondary" href="{{ route('admin.precos.index') }}"><x-ui.icon name="tag" /> Revisar precos</a>
                 @endif
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="score-ring" style="--score: {{ $saudeConta['score'] }};">
+                <div class="score-ring-inner">
+                    <x-ui.icon name="shield" size="30" />
+                    <strong>{{ $saudeConta['score'] }}</strong>
+                    <span>{{ $saudeConta['nivel']['nome'] }}</span>
+                </div>
             </div>
         </div>
     </section>
@@ -161,7 +171,10 @@
 
     <section class="grid-4">
         <article class="card metric-card">
-            <span class="metric-label">Saldo projetado</span>
+            <div class="metric-head">
+                <span class="metric-label">Saldo projetado</span>
+                <span class="metric-icon {{ $saldoProjetado < 0 ? 'is-danger' : 'is-teal' }}"><x-ui.icon name="wallet" /></span>
+            </div>
             <strong class="metric-value">R$ {{ number_format($saldoProjetado, 2, ',', '.') }}</strong>
             <span class="metric-trend {{ $saldoProjetado < 0 ? 'is-danger' : '' }}">
                 {{ $saldoProjetado < 0 ? 'pressao sobre o caixa' : 'resultado consolidado da operacao' }}
@@ -169,7 +182,10 @@
         </article>
 
         <article class="card metric-card">
-            <span class="metric-label">Margem operacional</span>
+            <div class="metric-head">
+                <span class="metric-label">Margem operacional</span>
+                <span class="metric-icon {{ $margemOperacional < 0 ? 'is-danger' : 'is-teal' }}"><x-ui.icon name="trend" /></span>
+            </div>
             <strong class="metric-value">{{ number_format($margemOperacional, 1, ',', '.') }}%</strong>
             <span class="metric-trend {{ $margemOperacional < 0 ? 'is-danger' : '' }}">
                 relacao entre receitas e despesas realizadas
@@ -177,7 +193,10 @@
         </article>
 
         <article class="card metric-card">
-            <span class="metric-label">Cobertura de caixa</span>
+            <div class="metric-head">
+                <span class="metric-label">Cobertura de caixa</span>
+                <span class="metric-icon {{ $coberturaCaixa < 100 ? 'is-warning' : 'is-teal' }}"><x-ui.icon name="shield" /></span>
+            </div>
             <strong class="metric-value">{{ number_format($coberturaCaixa, 1, ',', '.') }}%</strong>
             <span class="metric-trend {{ $coberturaCaixa < 100 ? 'is-danger' : '' }}">
                 saldo das contas financeiras versus despesas
@@ -185,7 +204,10 @@
         </article>
 
         <article class="card metric-card">
-            <span class="metric-label">Precos monitorados</span>
+            <div class="metric-head">
+                <span class="metric-label">Precos monitorados</span>
+                <span class="metric-icon"><x-ui.icon name="tag" /></span>
+            </div>
             <strong class="metric-value">{{ number_format($totalPrecosMonitorados, 0, ',', '.') }}</strong>
             <span class="metric-trend">catalogo e comparador conectados</span>
         </article>
@@ -221,13 +243,19 @@
     </section>
 
     <section class="panel-grid">
-        <article class="card">
+        <article class="card chart-card">
             <div class="card-body stack">
                 <div class="section-header">
                     <div>
                         <h2>Ritmo dos ultimos meses</h2>
                         <p>Receitas e despesas organizadas em uma linha do tempo simples para leitura executiva.</p>
                     </div>
+                </div>
+
+                <div class="chart-legend">
+                    <span class="legend-dot">Receitas</span>
+                    <span class="legend-dot is-danger">Despesas</span>
+                    <span class="legend-dot is-warning">Saldo mensal</span>
                 </div>
 
                 <div class="month-grid">
