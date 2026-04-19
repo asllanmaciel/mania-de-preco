@@ -847,6 +847,10 @@
                                 <span class="menu-icon"><x-ui.icon name="compass" /></span>
                                 <span>Onboarding<small>implantacao</small></span>
                             </a>
+                            <a class="menu-link {{ request()->routeIs('admin.notificacoes') ? 'is-active' : '' }}" href="{{ route('admin.notificacoes') }}">
+                                <span class="menu-icon"><x-ui.icon name="bell" /></span>
+                                <span>Notificacoes<small>central de acoes</small></span>
+                            </a>
                         </div>
 
                         <span class="menu-title">Operacao</span>
@@ -933,43 +937,8 @@
                             ->map(fn ($parte) => mb_strtoupper(mb_substr($parte, 0, 1)))
                             ->implode('') ?: 'U';
 
-                        $notificacoesTopbar = [];
-
-                        if (! $assinaturaAtual) {
-                            $notificacoesTopbar[] = [
-                                'titulo' => 'Assinatura pendente',
-                                'descricao' => 'Defina um plano para manter limites, cobranca e crescimento sob controle.',
-                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
-                            ];
-                        } elseif (in_array($assinaturaAtual->status, ['inadimplente', 'cancelada'], true)) {
-                            $notificacoesTopbar[] = [
-                                'titulo' => 'Atencao na assinatura',
-                                'descricao' => 'O status atual pode afetar operacao, limites ou cobranca da conta.',
-                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
-                            ];
-                        } elseif ($assinaturaAtual->expira_em && $assinaturaAtual->expira_em->isBefore(now()->addDays(7))) {
-                            $notificacoesTopbar[] = [
-                                'titulo' => 'Vigencia perto do fim',
-                                'descricao' => 'Revise a assinatura para evitar interrupcoes comerciais.',
-                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
-                            ];
-                        }
-
-                        if ($conta->trial_ends_at && $conta->trial_ends_at->isFuture() && $conta->trial_ends_at->isBefore(now()->addDays(5))) {
-                            $notificacoesTopbar[] = [
-                                'titulo' => 'Trial quase terminando',
-                                'descricao' => 'A conta esta perto do fim do periodo de teste.',
-                                'rota' => in_array('gestao', $capacidadesConta, true) ? route('admin.assinatura') : null,
-                            ];
-                        }
-
-                        if ($notificacoesTopbar === []) {
-                            $notificacoesTopbar[] = [
-                                'titulo' => 'Operacao sem alertas criticos',
-                                'descricao' => 'Continue acompanhando catalogo, financeiro e precos pela rotina do painel.',
-                                'rota' => route('admin.dashboard'),
-                            ];
-                        }
+                        $notificacoesTopbar = collect($notificacoesTopbar ?? []);
+                        $notificacoesTopbarCount = $notificacoesTopbarCount ?? $notificacoesTopbar->count();
 
                         $atalhosTopbar = collect([
                             ['titulo' => 'Financeiro', 'descricao' => 'Caixa, titulos e movimentacoes.', 'rota' => route('admin.financeiro.index'), 'capacidade' => 'financeiro'],
@@ -1000,7 +969,7 @@
                                 <details class="topbar-menu">
                                     <summary class="icon-button" aria-label="Abrir notificacoes">
                                         <x-ui.icon name="bell" />
-                                        <span class="notification-dot">{{ count($notificacoesTopbar) }}</span>
+                                        <span class="notification-dot">{{ $notificacoesTopbarCount }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Notificacoes</h3>
@@ -1008,16 +977,30 @@
                                             @foreach ($notificacoesTopbar as $notificacao)
                                                 @if ($notificacao['rota'])
                                                     <a class="notification-item" href="{{ $notificacao['rota'] }}">
-                                                        <strong>{{ $notificacao['titulo'] }}</strong>
-                                                        <span>{{ $notificacao['descricao'] }}</span>
+                                                        <span class="metric-icon {{ $notificacao['tipo'] === 'risco' ? 'is-danger' : ($notificacao['tipo'] === 'alerta' ? 'is-warning' : ($notificacao['tipo'] === 'sucesso' ? 'is-teal' : '')) }}" style="width:34px;height:34px;border-radius:12px;">
+                                                            <x-ui.icon :name="$notificacao['icone']" />
+                                                        </span>
+                                                        <span>
+                                                            <strong>{{ $notificacao['titulo'] }}</strong>
+                                                            <span>{{ $notificacao['descricao'] }}</span>
+                                                        </span>
                                                     </a>
                                                 @else
                                                     <div class="notification-item">
-                                                        <strong>{{ $notificacao['titulo'] }}</strong>
-                                                        <span>{{ $notificacao['descricao'] }}</span>
+                                                        <span class="metric-icon {{ $notificacao['tipo'] === 'risco' ? 'is-danger' : ($notificacao['tipo'] === 'alerta' ? 'is-warning' : ($notificacao['tipo'] === 'sucesso' ? 'is-teal' : '')) }}" style="width:34px;height:34px;border-radius:12px;">
+                                                            <x-ui.icon :name="$notificacao['icone']" />
+                                                        </span>
+                                                        <span>
+                                                            <strong>{{ $notificacao['titulo'] }}</strong>
+                                                            <span>{{ $notificacao['descricao'] }}</span>
+                                                        </span>
                                                     </div>
                                                 @endif
                                             @endforeach
+                                            <a class="quick-link" href="{{ route('admin.notificacoes') }}">
+                                                <strong>Ver central de acoes</strong>
+                                                <span>Abra a lista completa com prioridades e proximos passos.</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </details>

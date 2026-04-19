@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\Admin\Financeiro\ContaFinanceiraController as Admin
 use App\Http\Controllers\Web\Admin\Financeiro\MovimentacaoFinanceiraController as AdminMovimentacaoFinanceiraController;
 use App\Http\Controllers\Web\Admin\EquipeController as AdminEquipeController;
 use App\Http\Controllers\Web\Admin\LojaController as AdminLojaController;
+use App\Http\Controllers\Web\Admin\NotificacaoController as AdminNotificacaoController;
 use App\Http\Controllers\Web\Admin\OnboardingController;
 use App\Http\Controllers\Web\Admin\PrecoController as AdminPrecoController;
 use App\Http\Controllers\Web\Admin\ProdutoController as AdminProdutoController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Web\Auth\RegisteredUserController;
 use App\Http\Controllers\Web\Auth\SessionController;
 use App\Http\Controllers\Web\Cliente\AlertaPrecoController as ClienteAlertaPrecoController;
 use App\Http\Controllers\Web\Cliente\DashboardController as ClienteDashboardController;
+use App\Http\Controllers\Web\Cliente\NotificacaoController as ClienteNotificacaoController;
 use App\Http\Controllers\Web\PanelRedirectController;
 use App\Http\Controllers\Web\PublicCatalogController;
 use App\Http\Controllers\Web\PublicProjectController;
@@ -86,6 +88,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/perfil', [AdminPerfilController::class, 'edit'])->name('perfil.edit');
         Route::put('/perfil', [AdminPerfilController::class, 'update'])->name('perfil.update');
         Route::put('/perfil/senha', [AdminPerfilController::class, 'updatePassword'])->name('perfil.password');
+        Route::get('/notificacoes', AdminNotificacaoController::class)->name('notificacoes');
+        Route::patch('/notificacoes/interacao', [AdminNotificacaoController::class, 'interagir'])->name('notificacoes.interagir');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding')->middleware('conta.can:onboarding');
         Route::get('/auditoria', AdminAuditoriaController::class)->name('auditoria')->middleware('conta.can:equipe');
         Route::get('/assinatura', AdminAssinaturaController::class)
@@ -115,6 +119,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('cliente')->name('cliente.')->middleware('panel:cliente')->group(function () {
         Route::get('/', ClienteDashboardController::class)->name('dashboard');
+        Route::get('/notificacoes', ClienteNotificacaoController::class)->name('notificacoes');
+        Route::patch('/notificacoes/interacao', [ClienteNotificacaoController::class, 'interagir'])->name('notificacoes.interagir');
         Route::post('/alertas', [ClienteAlertaPrecoController::class, 'store'])->name('alertas.store');
         Route::patch('/alertas/{alerta}', [ClienteAlertaPrecoController::class, 'update'])->name('alertas.update');
         Route::delete('/alertas/{alerta}', [ClienteAlertaPrecoController::class, 'destroy'])->name('alertas.destroy');

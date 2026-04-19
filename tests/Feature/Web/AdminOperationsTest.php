@@ -153,6 +153,32 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Publicar o primeiro preco');
     }
 
+    public function test_authenticated_user_can_open_notifications_center(): void
+    {
+        [$user] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.notificacoes'))
+            ->assertOk()
+            ->assertSee('Central de acoes')
+            ->assertSee('Fila inteligente')
+            ->assertSee('Proxima etapa do setup')
+            ->assertSee('Marcar vista');
+
+        $this->actingAs($user)
+            ->patch(route('admin.notificacoes.interagir'), [
+                'chave' => 'admin.onboarding.configuracao',
+                'acao' => 'ler',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('notificacao_interacoes', [
+            'user_id' => $user->id,
+            'contexto' => 'admin',
+            'chave' => 'admin.onboarding.configuracao',
+        ]);
+    }
+
     public function test_owner_can_manage_account_settings(): void
     {
         [$user, $conta] = $this->criarContaComUsuario();

@@ -338,6 +338,11 @@
                 background:var(--warning-soft);
                 border-color:#ffe5b8;
             }
+            .metric-icon.is-danger {
+                color:#be4f39;
+                background:var(--danger-soft);
+                border-color:#ffd9cf;
+            }
             .list-row {
                 display:grid;
                 grid-template-columns:minmax(0,1fr) auto;
@@ -444,21 +449,19 @@
                             ->implode('') ?: 'U';
                         $perfilBackoffice = $usuarioBackoffice?->perfilPainel() ?? 'usuario';
 
-                        $notificacoesBackoffice = [
-                            [
-                                'titulo' => 'Sessao protegida',
-                                'descricao' => 'Voce esta operando em uma area autenticada do Mania de Preco.',
-                                'rota' => route('painel.redirect'),
-                            ],
-                        ];
-
-                        if ($usuarioBackoffice?->ehSuperAdmin()) {
-                            $notificacoesBackoffice[] = [
-                                'titulo' => 'Central de suporte ativa',
-                                'descricao' => 'Acompanhe chamados, prioridades e sinais de atrito da plataforma.',
-                                'rota' => route('super-admin.suporte.index'),
-                            ];
-                        }
+                        $centralNotificacoesBackoffice = app(\App\Support\Notificacoes\CentralNotificacoes::class);
+                        $notificacoesBackoffice = request()->routeIs('super-admin.*') && $usuarioBackoffice?->ehSuperAdmin()
+                            ? $centralNotificacoesBackoffice->superAdmin($usuarioBackoffice)
+                            : $centralNotificacoesBackoffice->cliente($usuarioBackoffice);
+                        $notificacoesPendentesBackoffice = $notificacoesBackoffice
+                            ->reject(fn ($notificacao) => $notificacao['lida'] || $notificacao['dispensada'] || $notificacao['tipo'] === 'sucesso')
+                            ->values();
+                        $notificacoesTopbarBackoffice = $notificacoesPendentesBackoffice->isNotEmpty()
+                            ? $notificacoesPendentesBackoffice
+                            : $notificacoesBackoffice;
+                        $rotaCentralNotificacoesBackoffice = request()->routeIs('super-admin.*') && $usuarioBackoffice?->ehSuperAdmin()
+                            ? route('super-admin.suporte.index')
+                            : route('cliente.notificacoes');
 
                         $atalhosBackoffice = collect([
                             ['titulo' => 'Super admin', 'descricao' => 'Governanca da plataforma.', 'rota' => route('super-admin.dashboard'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
@@ -480,17 +483,26 @@
                                 <details class="topbar-menu">
                                     <summary class="icon-button" aria-label="Abrir notificacoes">
                                         <x-ui.icon name="bell" />
-                                        <span class="notification-dot">{{ count($notificacoesBackoffice) }}</span>
+                                        <span class="notification-dot">{{ $notificacoesPendentesBackoffice->count() }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Notificacoes</h3>
                                         <div class="dropdown-list">
-                                            @foreach ($notificacoesBackoffice as $notificacao)
+                                            @foreach ($notificacoesTopbarBackoffice->take(5) as $notificacao)
                                                 <a class="notification-item" href="{{ $notificacao['rota'] }}">
-                                                    <strong>{{ $notificacao['titulo'] }}</strong>
-                                                    <span>{{ $notificacao['descricao'] }}</span>
+                                                    <span class="metric-icon {{ $notificacao['tipo'] === 'risco' ? 'is-danger' : ($notificacao['tipo'] === 'alerta' ? 'is-warning' : ($notificacao['tipo'] === 'sucesso' ? 'is-teal' : '')) }}" style="width:34px;height:34px;border-radius:12px;">
+                                                        <x-ui.icon :name="$notificacao['icone']" />
+                                                    </span>
+                                                    <span>
+                                                        <strong>{{ $notificacao['titulo'] }}</strong>
+                                                        <span>{{ $notificacao['descricao'] }}</span>
+                                                    </span>
                                                 </a>
                                             @endforeach
+                                            <a class="quick-link" href="{{ $rotaCentralNotificacoesBackoffice }}">
+                                                <strong>Ver central</strong>
+                                                <span>Acompanhe a fila completa de sinais e proximos passos.</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </details>

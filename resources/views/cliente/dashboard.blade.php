@@ -6,6 +6,7 @@
 
 @section('nav')
     <a class="chip" href="{{ route('cliente.dashboard') }}">Minha area</a>
+    <a class="chip" href="{{ route('cliente.notificacoes') }}">Notificacoes</a>
     <a class="chip" href="{{ route('home') }}">Ver ofertas</a>
     @if (auth()->user()->possuiAcessoAdmin())
         <a class="chip" href="{{ route('admin.dashboard') }}">Painel lojista</a>

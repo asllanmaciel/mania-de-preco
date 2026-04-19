@@ -79,6 +79,40 @@ class ClienteExperienceTest extends TestCase
         ]);
     }
 
+    public function test_customer_can_open_notifications_center_with_price_alerts(): void
+    {
+        [$user, $produto] = $this->seedProdutoComOferta(17.90);
+
+        AlertaPreco::create([
+            'user_id' => $user->id,
+            'produto_id' => $produto->id,
+            'preco_desejado' => 18.00,
+            'status' => 'ativo',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('cliente.notificacoes'))
+            ->assertOk()
+            ->assertSee('Alertas que merecem sua atencao')
+            ->assertSee('Preco bateu sua meta')
+            ->assertSee('Marcar vista');
+
+        $alerta = AlertaPreco::where('user_id', $user->id)->firstOrFail();
+
+        $this->actingAs($user)
+            ->patch(route('cliente.notificacoes.interagir'), [
+                'chave' => 'cliente.alerta_atendido.' . $alerta->id,
+                'acao' => 'ler',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('notificacao_interacoes', [
+            'user_id' => $user->id,
+            'contexto' => 'cliente',
+            'chave' => 'cliente.alerta_atendido.' . $alerta->id,
+        ]);
+    }
+
     public function test_public_product_page_connects_to_customer_alert_flow(): void
     {
         [$user, $produto] = $this->seedProdutoComOferta(24.90);
