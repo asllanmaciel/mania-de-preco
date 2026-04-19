@@ -149,7 +149,7 @@
                 gap:12px;
                 margin-top:28px;
             }
-            .feature-card, .demo-box, .status-box, .error-list {
+            .feature-card, .demo-box, .demo-account, .status-box, .error-list {
                 padding:15px 16px;
                 border-radius:var(--radius-lg);
                 border:1px solid var(--line);
@@ -237,6 +237,24 @@
             .demo-box {
                 margin-top:18px;
                 background:#fff;
+            }
+            .demo-grid {
+                display:grid;
+                gap:10px;
+                margin-top:12px;
+            }
+            .demo-account {
+                background:var(--surface-soft);
+            }
+            .demo-account strong {
+                display:flex;
+                justify-content:space-between;
+                gap:12px;
+                font-size:.94rem;
+            }
+            .demo-account span {
+                color:var(--muted);
+                font-weight:700;
             }
             .demo-box code {
                 display:block;

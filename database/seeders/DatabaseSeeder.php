@@ -6,8 +6,10 @@ use App\Models\Assinatura;
 use App\Models\AlertaPreco;
 use App\Models\AvaliacaoLoja;
 use App\Models\AuditLog;
+use App\Models\BillingWebhookEvent;
 use App\Models\Categoria;
 use App\Models\CategoriaFinanceira;
+use App\Models\ChamadoSuporte;
 use App\Models\Conta;
 use App\Models\ContaFinanceira;
 use App\Models\ContaPagar;
@@ -166,7 +168,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            Plano::updateOrCreate(
+            $planoGrowth = Plano::updateOrCreate(
                 ['slug' => 'growth'],
                 [
                     'nome' => 'Growth',
@@ -186,7 +188,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            Plano::updateOrCreate(
+            $planoScale = Plano::updateOrCreate(
                 ['slug' => 'scale'],
                 [
                     'nome' => 'Scale',
@@ -229,8 +231,313 @@ class DatabaseSeeder extends Seeder
             $this->seedTitulos($conta, $owner, $categoriasFinanceiras, $contasFinanceiras, $lojas, $synchronizer);
             $this->seedAlertas($owner, $cliente, $catalogo['produtos'] ?? []);
             $this->seedAuditoria($conta, $owner);
+            $contasPlataforma = $this->seedContasPlataforma($planoGrowth, $planoScale);
+            $this->seedChamadosSuporte($conta, $owner, $contasPlataforma);
+            $this->seedBillingEventos();
             $this->recalcularSaldos($conta);
         });
+    }
+
+    private function seedContasPlataforma(Plano $planoGrowth, Plano $planoScale): array
+    {
+        $ownerGrowth = User::updateOrCreate(
+            ['email' => 'owner.rede.demo@maniadepreco.com.br'],
+            [
+                'name' => 'Owner Rede Demo',
+                'password' => Hash::make('password'),
+                'is_super_admin' => false,
+            ]
+        );
+
+        $ownerScale = User::updateOrCreate(
+            ['email' => 'owner.atacarejo.demo@maniadepreco.com.br'],
+            [
+                'name' => 'Owner Atacarejo Demo',
+                'password' => Hash::make('password'),
+                'is_super_admin' => false,
+            ]
+        );
+
+        $contaGrowth = Conta::updateOrCreate(
+            ['slug' => 'rede-economia-inteligente'],
+            [
+                'nome_fantasia' => 'Rede Economia Inteligente',
+                'razao_social' => 'Rede Economia Inteligente Ltda',
+                'email' => $ownerGrowth->email,
+                'telefone' => '(31) 3000-4100',
+                'documento' => '21.345.678/0001-10',
+                'site' => 'https://rede.demo.maniadepreco.com.br',
+                'instagram' => '@redeeconomia.demo',
+                'segmento' => 'supermercado',
+                'porte' => 'media',
+                'cidade' => 'Belo Horizonte',
+                'uf' => 'MG',
+                'cor_marca' => '#13deb9',
+                'descricao_publica' => 'Rede regional usando o Mania de Preco para acompanhar margem, loja e competitividade.',
+                'timezone' => 'America/Sao_Paulo',
+                'preferencias' => [
+                    'canal_suporte' => 'email',
+                    'frequencia_relatorio' => 'diaria',
+                    'receber_alertas_operacionais' => true,
+                ],
+                'status' => 'ativo',
+                'trial_ends_at' => null,
+                'billing_provider' => 'asaas',
+                'billing_customer_id' => 'cus_demo_growth_001',
+                'billing_synced_at' => now()->subDays(3),
+                'billing_metadata' => ['seed_demo' => true, 'health' => 'saudavel'],
+            ]
+        );
+
+        $contaScale = Conta::updateOrCreate(
+            ['slug' => 'atacarejo-norte-demo'],
+            [
+                'nome_fantasia' => 'Atacarejo Norte Demo',
+                'razao_social' => 'Atacarejo Norte Operacoes Ltda',
+                'email' => $ownerScale->email,
+                'telefone' => '(85) 3000-5200',
+                'documento' => '31.345.678/0001-20',
+                'site' => 'https://atacarejo.demo.maniadepreco.com.br',
+                'instagram' => '@atacarejonorte.demo',
+                'segmento' => 'atacarejo',
+                'porte' => 'grande',
+                'cidade' => 'Fortaleza',
+                'uf' => 'CE',
+                'cor_marca' => '#fa896b',
+                'descricao_publica' => 'Conta enterprise em acompanhamento comercial, com billing e suporte em destaque.',
+                'timezone' => 'America/Sao_Paulo',
+                'preferencias' => [
+                    'canal_suporte' => 'whatsapp',
+                    'frequencia_relatorio' => 'semanal',
+                    'receber_alertas_operacionais' => true,
+                ],
+                'status' => 'inadimplente',
+                'trial_ends_at' => null,
+                'billing_provider' => 'asaas',
+                'billing_customer_id' => 'cus_demo_scale_001',
+                'billing_synced_at' => now()->subDay(),
+                'billing_metadata' => ['seed_demo' => true, 'health' => 'risco'],
+            ]
+        );
+
+        $contaGrowth->usuarios()->syncWithoutDetaching([
+            $ownerGrowth->id => [
+                'papel' => 'owner',
+                'ativo' => true,
+                'ultimo_acesso_em' => now()->subHours(8),
+            ],
+        ]);
+
+        $contaScale->usuarios()->syncWithoutDetaching([
+            $ownerScale->id => [
+                'papel' => 'owner',
+                'ativo' => true,
+                'ultimo_acesso_em' => now()->subDays(4),
+            ],
+        ]);
+
+        Loja::updateOrCreate(
+            ['conta_id' => $contaGrowth->id, 'nome' => 'Economia Savassi'],
+            [
+                'email' => 'savassi@rede.demo',
+                'telefone' => '(31) 3333-4100',
+                'whatsapp' => '(31) 99999-4100',
+                'cidade' => 'Belo Horizonte',
+                'uf' => 'MG',
+                'bairro' => 'Savassi',
+                'endereco' => 'Rua Pernambuco',
+                'numero' => '880',
+                'cep' => '30130-151',
+                'tipo_loja' => 'mista',
+                'status' => 'ativo',
+            ]
+        );
+
+        Loja::updateOrCreate(
+            ['conta_id' => $contaScale->id, 'nome' => 'Atacarejo Norte Messejana'],
+            [
+                'email' => 'messejana@atacarejo.demo',
+                'telefone' => '(85) 3333-5200',
+                'whatsapp' => '(85) 99999-5200',
+                'cidade' => 'Fortaleza',
+                'uf' => 'CE',
+                'bairro' => 'Messejana',
+                'endereco' => 'Avenida Frei Cirilo',
+                'numero' => '3100',
+                'cep' => '60840-285',
+                'tipo_loja' => 'fisica',
+                'status' => 'ativo',
+            ]
+        );
+
+        Assinatura::updateOrCreate(
+            ['conta_id' => $contaGrowth->id, 'plano_id' => $planoGrowth->id],
+            [
+                'status' => 'ativa',
+                'ciclo_cobranca' => 'mensal',
+                'valor' => 149.90,
+                'inicia_em' => now()->subMonths(2)->toDateString(),
+                'expira_em' => now()->addDays(18)->toDateString(),
+                'observacoes' => 'Conta demo saudavel para leitura de MRR e expansao.',
+                'billing_provider' => 'asaas',
+                'billing_subscription_id' => 'sub_demo_growth_001',
+                'billing_checkout_url' => 'https://asaas.demo/faturas/growth-001',
+                'billing_status' => 'ACTIVE',
+                'billing_last_synced_at' => now()->subDays(3),
+                'billing_payload' => ['seed_demo' => true, 'status' => 'ACTIVE'],
+            ]
+        );
+
+        Assinatura::updateOrCreate(
+            ['conta_id' => $contaScale->id, 'plano_id' => $planoScale->id],
+            [
+                'status' => 'inadimplente',
+                'ciclo_cobranca' => 'anual',
+                'valor' => 2999.00,
+                'inicia_em' => now()->subMonths(6)->toDateString(),
+                'expira_em' => now()->addMonths(6)->toDateString(),
+                'observacoes' => 'Conta demo em risco para validar governanca comercial e suporte.',
+                'billing_provider' => 'asaas',
+                'billing_subscription_id' => 'sub_demo_scale_001',
+                'billing_checkout_url' => 'https://asaas.demo/faturas/scale-001',
+                'billing_status' => 'OVERDUE',
+                'billing_last_synced_at' => now()->subDay(),
+                'billing_payload' => ['seed_demo' => true, 'status' => 'OVERDUE'],
+            ]
+        );
+
+        return [
+            'growth' => $contaGrowth,
+            'scale' => $contaScale,
+        ];
+    }
+
+    private function seedChamadosSuporte(Conta $conta, User $owner, array $contasPlataforma): void
+    {
+        foreach ([
+            [
+                'protocolo' => 'MP-DEMO-COBRANCA-001',
+                'conta_id' => $contasPlataforma['scale']->id ?? null,
+                'nome' => 'Owner Atacarejo Demo',
+                'email' => 'owner.atacarejo.demo@maniadepreco.com.br',
+                'empresa' => 'Atacarejo Norte Demo',
+                'categoria' => 'cobranca',
+                'prioridade' => 'critica',
+                'status' => 'novo',
+                'assunto' => 'Assinatura em risco de bloqueio',
+                'mensagem' => 'Precisamos regularizar a cobranca antes da proxima janela de fechamento.',
+                'observacao_interna' => 'Conta de alto valor. Priorizar contato comercial e financeiro.',
+            ],
+            [
+                'protocolo' => 'MP-DEMO-CATALOGO-001',
+                'conta_id' => $conta->id,
+                'user_id' => $owner->id,
+                'nome' => $owner->name,
+                'email' => $owner->email,
+                'empresa' => $conta->nome_fantasia,
+                'categoria' => 'catalogo',
+                'prioridade' => 'alta',
+                'status' => 'em_analise',
+                'assunto' => 'Revisar publicacao de ofertas da semana',
+                'mensagem' => 'Quero validar se a vitrine publica esta refletindo os melhores precos cadastrados.',
+                'observacao_interna' => 'Chamado demo para demonstrar triagem operacional.',
+                'respondido_em' => now()->subHours(5),
+            ],
+            [
+                'protocolo' => 'MP-DEMO-COMERCIAL-001',
+                'conta_id' => $contasPlataforma['growth']->id ?? null,
+                'nome' => 'Owner Rede Demo',
+                'email' => 'owner.rede.demo@maniadepreco.com.br',
+                'empresa' => 'Rede Economia Inteligente',
+                'categoria' => 'comercial',
+                'prioridade' => 'normal',
+                'status' => 'respondido',
+                'assunto' => 'Avaliar expansao para novas lojas',
+                'mensagem' => 'Estamos analisando incluir mais unidades e queremos entender limites do plano.',
+                'observacao_interna' => 'Oportunidade de upgrade quando modulo multiunidade evoluir.',
+                'respondido_em' => now()->subDay(),
+            ],
+        ] as $dados) {
+            ChamadoSuporte::updateOrCreate(
+                ['protocolo' => $dados['protocolo']],
+                [
+                    'conta_id' => $dados['conta_id'] ?? null,
+                    'user_id' => $dados['user_id'] ?? null,
+                    'nome' => $dados['nome'],
+                    'email' => $dados['email'],
+                    'telefone' => $dados['telefone'] ?? null,
+                    'empresa' => $dados['empresa'],
+                    'categoria' => $dados['categoria'],
+                    'prioridade' => $dados['prioridade'],
+                    'status' => $dados['status'],
+                    'assunto' => $dados['assunto'],
+                    'mensagem' => $dados['mensagem'],
+                    'origem_url' => url('/suporte'),
+                    'observacao_interna' => $dados['observacao_interna'],
+                    'respondido_em' => $dados['respondido_em'] ?? null,
+                    'resolvido_em' => null,
+                    'ip' => '127.0.0.1',
+                    'user_agent' => 'Seeder',
+                ]
+            );
+        }
+    }
+
+    private function seedBillingEventos(): void
+    {
+        foreach ([
+            [
+                'provider' => 'asaas',
+                'event_id' => 'evt_demo_subscription_active',
+                'event_type' => 'SUBSCRIPTION_CREATED',
+                'status' => 'processado',
+                'processed_at' => now()->subDays(3),
+                'payload' => [
+                    'subscription' => 'sub_demo_growth_001',
+                    'status' => 'ACTIVE',
+                    'seed_demo' => true,
+                ],
+            ],
+            [
+                'provider' => 'asaas',
+                'event_id' => 'evt_demo_payment_overdue',
+                'event_type' => 'PAYMENT_OVERDUE',
+                'status' => 'processado',
+                'processed_at' => now()->subDay(),
+                'payload' => [
+                    'subscription' => 'sub_demo_scale_001',
+                    'status' => 'OVERDUE',
+                    'seed_demo' => true,
+                ],
+            ],
+            [
+                'provider' => 'asaas',
+                'event_id' => 'evt_demo_retry_failed',
+                'event_type' => 'PAYMENT_RECEIVED',
+                'status' => 'falhou',
+                'failed_at' => now()->subHours(6),
+                'error_message' => 'Evento demo com payload incompleto para validar observabilidade.',
+                'payload' => [
+                    'subscription' => null,
+                    'seed_demo' => true,
+                ],
+            ],
+        ] as $dados) {
+            BillingWebhookEvent::updateOrCreate(
+                [
+                    'provider' => $dados['provider'],
+                    'event_id' => $dados['event_id'],
+                ],
+                [
+                    'event_type' => $dados['event_type'],
+                    'status' => $dados['status'],
+                    'payload' => $dados['payload'],
+                    'processed_at' => $dados['processed_at'] ?? null,
+                    'failed_at' => $dados['failed_at'] ?? null,
+                    'error_message' => $dados['error_message'] ?? null,
+                ]
+            );
+        }
     }
 
     private function seedAuditoria(Conta $conta, User $owner): void

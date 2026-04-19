@@ -50,10 +50,23 @@
         <button class="button" type="submit">Entrar no painel</button>
     </form>
 
-    @if (app()->environment('local'))
+    @if (app()->environment(['local', 'testing']))
         <div class="demo-box">
-            <p>Credenciais da base demo local:</p>
-            <code>test@example.com / password</code>
+            <p>Acessos da base demo local para testar os principais paineis:</p>
+            <div class="demo-grid">
+                <div class="demo-account">
+                    <strong>Lojista <span>admin</span></strong>
+                    <code>test@example.com / password</code>
+                </div>
+                <div class="demo-account">
+                    <strong>Super admin <span>plataforma</span></strong>
+                    <code>admin@maniadepreco.com.br / password</code>
+                </div>
+                <div class="demo-account">
+                    <strong>Cliente <span>alertas</span></strong>
+                    <code>cliente.demo@maniadepreco.com.br / password</code>
+                </div>
+            </div>
         </div>
     @endif
 

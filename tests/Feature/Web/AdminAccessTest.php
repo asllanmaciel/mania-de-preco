@@ -90,6 +90,16 @@ class AdminAccessTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
+    public function test_login_page_shows_local_demo_accesses(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('Acessos da base demo local')
+            ->assertSee('test@example.com / password')
+            ->assertSee('admin@maniadepreco.com.br / password')
+            ->assertSee('cliente.demo@maniadepreco.com.br / password');
+    }
+
     public function test_user_can_reset_password_with_valid_token(): void
     {
         $user = User::create([
