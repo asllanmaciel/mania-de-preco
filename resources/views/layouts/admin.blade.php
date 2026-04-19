@@ -1103,6 +1103,10 @@
                             <small>implantacao</small>
                         </a>
                         @if (in_array('gestao', $capacidadesConta, true))
+                            <a class="menu-link {{ request()->routeIs('admin.assinatura') ? 'is-active' : '' }}" href="{{ route('admin.assinatura') }}">
+                                <span>Assinatura</span>
+                                <small>plano e cobranca</small>
+                            </a>
                             <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
                                 <span>Configuracoes</span>
                                 <small>minha empresa</small>

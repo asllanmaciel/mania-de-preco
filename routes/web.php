@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\AuditoriaController as AdminAuditoriaController;
+use App\Http\Controllers\Web\Admin\AssinaturaController as AdminAssinaturaController;
 use App\Http\Controllers\Web\Admin\Financeiro\CategoriaFinanceiraController as AdminCategoriaFinanceiraController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaPagarController as AdminContaPagarController;
 use App\Http\Controllers\Web\Admin\Financeiro\ContaReceberController as AdminContaReceberController;
@@ -65,6 +66,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::get('/onboarding', OnboardingController::class)->name('onboarding')->middleware('conta.can:onboarding');
         Route::get('/auditoria', AdminAuditoriaController::class)->name('auditoria')->middleware('conta.can:equipe');
+        Route::get('/assinatura', AdminAssinaturaController::class)
+            ->name('assinatura')
+            ->middleware('conta.can:gestao');
         Route::get('/configuracoes', [AdminConfiguracaoContaController::class, 'edit'])
             ->name('configuracoes.edit')
             ->middleware('conta.can:gestao');

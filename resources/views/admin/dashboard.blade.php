@@ -106,6 +106,7 @@
                 @foreach (array_slice($saudeConta['sinais'], 0, 3) as $sinal)
                     @php
                         $capacidadeSinal = [
+                            'admin.assinatura' => 'gestao',
                             'admin.configuracoes.edit' => 'gestao',
                             'admin.financeiro.index' => 'financeiro',
                             'admin.precos.index' => 'precos',

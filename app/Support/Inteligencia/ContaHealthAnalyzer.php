@@ -143,6 +143,7 @@ class ContaHealthAnalyzer
                 'titulo' => 'Assinatura pede acao comercial',
                 'descricao' => 'A conta nao esta em status ativo ou trial, o que pode interromper expansao e uso continuo.',
                 'acao' => 'Revisar assinatura',
+                'rota' => 'admin.assinatura',
             ];
         }
 

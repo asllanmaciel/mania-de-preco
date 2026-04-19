@@ -205,6 +205,33 @@ class AdminOperationsTest extends TestCase
         ]);
     }
 
+    public function test_owner_can_open_subscription_area(): void
+    {
+        [$user, $conta] = $this->criarContaComUsuario();
+        $this->assinarContaComPlanoLimitado($conta, [
+            'limite_usuarios' => 5,
+            'limite_lojas' => 4,
+            'limite_produtos' => 100,
+        ]);
+
+        $assinatura = Assinatura::where('conta_id', $conta->id)->firstOrFail();
+        $assinatura->update([
+            'billing_provider' => 'asaas',
+            'billing_status' => 'ACTIVE',
+            'billing_checkout_url' => 'https://asaas.test/fatura/123',
+            'expira_em' => now()->addDays(20)->toDateString(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('admin.assinatura'))
+            ->assertOk()
+            ->assertSee('Assinatura e plano')
+            ->assertSee('Plano Limitado')
+            ->assertSee('Consumo do plano')
+            ->assertSee('Abrir cobranca')
+            ->assertSee('Historico comercial');
+    }
+
     public function test_owner_can_manage_team_members(): void
     {
         [$user, $conta] = $this->criarContaComUsuario();
@@ -316,6 +343,10 @@ class AdminOperationsTest extends TestCase
 
         $this->actingAs($operador)
             ->get(route('admin.configuracoes.edit'))
+            ->assertForbidden();
+
+        $this->actingAs($operador)
+            ->get(route('admin.assinatura'))
             ->assertForbidden();
     }
 
