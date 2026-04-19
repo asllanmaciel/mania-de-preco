@@ -153,6 +153,20 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Publicar o primeiro preco');
     }
 
+    public function test_authenticated_user_can_open_launch_readiness_center(): void
+    {
+        [$user] = $this->criarContaComUsuario();
+
+        $this->actingAs($user)
+            ->get(route('admin.lancamento'))
+            ->assertOk()
+            ->assertSee('Centro de lancamento')
+            ->assertSee('Prontidao de lancamento')
+            ->assertSee('Dados comerciais completos')
+            ->assertSee('Produtos publicados no comparador')
+            ->assertSee('Pendencias criticas');
+    }
+
     public function test_authenticated_user_can_open_notifications_center(): void
     {
         [$user] = $this->criarContaComUsuario();
@@ -553,6 +567,7 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Onboarding da conta')
             ->assertSee('Saude da conta')
             ->assertSee('Score executivo')
+            ->assertSee('Ver prontidao')
             ->assertSee('Abrir onboarding');
     }
 

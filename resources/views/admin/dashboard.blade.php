@@ -15,8 +15,9 @@
             </div>
 
             <div class="visual-action-grid">
+                <a class="button" href="{{ route('admin.lancamento') }}"><x-ui.icon name="spark" /> Ver prontidao</a>
                 @if (in_array('financeiro', $capacidadesConta, true))
-                    <a class="button" href="{{ route('admin.financeiro.index') }}"><x-ui.icon name="wallet" /> Abrir financeiro</a>
+                    <a class="button-secondary" href="{{ route('admin.financeiro.index') }}"><x-ui.icon name="wallet" /> Abrir financeiro</a>
                 @endif
                 @if (in_array('lojas', $capacidadesConta, true))
                     <a class="button-secondary" href="{{ route('admin.lojas.index') }}"><x-ui.icon name="store" /> Operar lojas</a>

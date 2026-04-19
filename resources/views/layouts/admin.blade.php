@@ -843,6 +843,10 @@
                                 <span class="menu-icon"><x-ui.icon name="home" /></span>
                                 <span>Dashboard<small>visao geral</small></span>
                             </a>
+                            <a class="menu-link {{ request()->routeIs('admin.lancamento') ? 'is-active' : '' }}" href="{{ route('admin.lancamento') }}">
+                                <span class="menu-icon"><x-ui.icon name="spark" /></span>
+                                <span>Lancamento<small>prontidao</small></span>
+                            </a>
                             <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
                                 <span class="menu-icon"><x-ui.icon name="compass" /></span>
                                 <span>Onboarding<small>implantacao</small></span>
@@ -1098,6 +1102,11 @@
                 <x-ui.icon name="home" />
                 <strong>Inicio</strong>
                 <span>painel</span>
+            </a>
+            <a class="mobile-dock-link {{ request()->routeIs('admin.lancamento') ? 'is-active' : '' }}" href="{{ route('admin.lancamento') }}">
+                <x-ui.icon name="spark" />
+                <strong>Lancar</strong>
+                <span>pronto</span>
             </a>
             <a class="mobile-dock-link {{ request()->routeIs('admin.perfil.*') ? 'is-active' : '' }}" href="{{ route('admin.perfil.edit') }}">
                 <x-ui.icon name="user" />

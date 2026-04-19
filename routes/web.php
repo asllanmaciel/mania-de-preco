@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Admin\FinanceiroController as AdminFinanceiroContro
 use App\Http\Controllers\Web\Admin\Financeiro\ContaFinanceiraController as AdminContaFinanceiraController;
 use App\Http\Controllers\Web\Admin\Financeiro\MovimentacaoFinanceiraController as AdminMovimentacaoFinanceiraController;
 use App\Http\Controllers\Web\Admin\EquipeController as AdminEquipeController;
+use App\Http\Controllers\Web\Admin\LancamentoController as AdminLancamentoController;
 use App\Http\Controllers\Web\Admin\LojaController as AdminLojaController;
 use App\Http\Controllers\Web\Admin\NotificacaoController as AdminNotificacaoController;
 use App\Http\Controllers\Web\Admin\OnboardingController;
@@ -85,6 +86,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->name('admin.')->middleware('panel:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('/lancamento', AdminLancamentoController::class)->name('lancamento');
         Route::get('/perfil', [AdminPerfilController::class, 'edit'])->name('perfil.edit');
         Route::put('/perfil', [AdminPerfilController::class, 'update'])->name('perfil.update');
         Route::put('/perfil/senha', [AdminPerfilController::class, 'updatePassword'])->name('perfil.password');
