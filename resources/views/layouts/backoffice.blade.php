@@ -5,93 +5,321 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', 'Painel') | Mania de Preco</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
 
         <style>
             :root {
-                --bg:#f4ecdf;
-                --surface:rgba(255,250,242,.88);
-                --line:rgba(78,43,25,.12);
-                --text:#24140e;
-                --muted:#715349;
-                --accent:#ff6b2c;
-                --accent-2:#0f9f8f;
-                --shadow:0 24px 60px rgba(57,29,16,.12);
-                --radius-xl:30px;
-                --radius-lg:22px;
-                --radius-md:16px;
+                --bg:#f6f8fb;
+                --surface:#fff;
+                --surface-soft:#f8fafc;
+                --line:#e8edf5;
+                --text:#19202e;
+                --muted:#687385;
+                --primary:#5d87ff;
+                --primary-soft:#edf3ff;
+                --success:#13deb9;
+                --success-soft:#e6fffa;
+                --warning:#ffae1f;
+                --warning-soft:#fff6e5;
+                --danger:#fa896b;
+                --danger-soft:#fff1ed;
+                --shadow:0 14px 34px rgba(31,42,68,.07);
+                --radius-xl:24px;
+                --radius-lg:18px;
             }
+
             * { box-sizing:border-box; }
             body {
                 margin:0;
                 min-height:100vh;
-                font-family:"Space Grotesk", sans-serif;
+                font-family:"Manrope", sans-serif;
                 color:var(--text);
                 background:
-                    radial-gradient(circle at top left, rgba(255,107,44,.18), transparent 30%),
-                    radial-gradient(circle at top right, rgba(15,159,143,.16), transparent 24%),
-                    linear-gradient(180deg, #fff7ea 0%, #f4ecdf 48%, #efe3d0 100%);
+                    radial-gradient(circle at 10% 0%, rgba(93,135,255,.14), transparent 28%),
+                    radial-gradient(circle at 90% 2%, rgba(19,222,185,.11), transparent 24%),
+                    var(--bg);
             }
             a { color:inherit; text-decoration:none; }
-            .shell { max-width:1280px; margin:0 auto; padding:28px 18px 48px; display:grid; gap:18px; }
-            .topbar, .section-head, .toolbar { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
-            .brand { display:inline-flex; align-items:center; gap:12px; font-weight:700; }
+            button, input, select, textarea { font:inherit; }
+
+            .backoffice-shell { display:grid; grid-template-columns:300px minmax(0, 1fr); min-height:100vh; }
+            .sidebar {
+                position:sticky;
+                top:0;
+                align-self:start;
+                min-height:100vh;
+                padding:22px 18px;
+                background:var(--surface);
+                border-right:1px solid var(--line);
+                box-shadow:10px 0 30px rgba(31,42,68,.03);
+            }
+            .brand {
+                display:flex;
+                align-items:center;
+                gap:12px;
+                margin-bottom:20px;
+                font-weight:800;
+            }
             .brand-badge {
-                display:inline-grid; place-items:center; width:42px; height:42px; border-radius:14px;
-                background:linear-gradient(135deg,var(--accent),#ff9f52); color:#27140e; font-family:"IBM Plex Mono", monospace;
+                display:grid;
+                place-items:center;
+                width:46px;
+                height:46px;
+                border-radius:16px;
+                color:#fff;
+                background:linear-gradient(135deg,var(--primary),#7c5cff);
+                box-shadow:0 14px 24px rgba(93,135,255,.28);
+                font:800 .9rem "IBM Plex Mono", monospace;
             }
-            .nav { display:flex; gap:10px; flex-wrap:wrap; }
-            .chip, .button, .button-secondary, .logout-button {
-                display:inline-flex; align-items:center; justify-content:center; padding:12px 16px; border-radius:14px;
-                border:1px solid var(--line); background:rgba(255,255,255,.72); color:var(--text); font-weight:600; font-family:inherit;
+            .brand span:last-child { line-height:1.25; }
+            .side-card {
+                padding:16px;
+                border-radius:20px;
+                background:linear-gradient(135deg,#22304b,#2f4f9f);
+                color:#fff;
+                box-shadow:var(--shadow);
+                margin-bottom:18px;
             }
-            .button { background:linear-gradient(135deg,var(--accent),#ff9f52); border-color:transparent; color:#2d150d; box-shadow:0 18px 36px rgba(255,107,44,.18); }
-            .button-secondary { background:rgba(255,255,255,.72); }
-            .logout-button { background:#2a160f; border-color:#2a160f; color:#fff5ef; cursor:pointer; }
-            .card { background:var(--surface); border:1px solid rgba(255,255,255,.7); border-radius:var(--radius-lg); box-shadow:var(--shadow); backdrop-filter:blur(14px); }
-            .card-body { padding:24px; }
-            .hero { padding:28px; border-radius:var(--radius-xl); }
-            .hero h1 { margin:0; font-size:clamp(2rem,4vw,3rem); line-height:1; }
-            .hero p { margin:10px 0 0; color:var(--muted); line-height:1.7; max-width:800px; }
-            .grid-4, .grid-3, .grid-2, .list { display:grid; gap:18px; }
-            .grid-4 { grid-template-columns:repeat(4, minmax(0, 1fr)); }
-            .grid-3 { grid-template-columns:repeat(3, minmax(0, 1fr)); }
-            .grid-2 { grid-template-columns:repeat(2, minmax(0, 1fr)); }
-            .metric, .list-row, .mini-card { padding:18px; border-radius:18px; background:rgba(255,255,255,.72); border:1px solid rgba(76,42,22,.08); }
-            .metric strong, .mini-card strong { display:block; margin-bottom:8px; font-size:1.8rem; }
-            .metric span, .mini-card span, .list-row small { color:var(--muted); line-height:1.6; }
-            .list-row strong { display:block; margin-bottom:6px; }
-            .flash-box { padding:16px 18px; border-radius:18px; background:rgba(15,159,143,.08); border:1px solid rgba(15,159,143,.12); color:#0a7167; }
-            @media (max-width:980px) {
-                .topbar, .section-head, .toolbar, .nav { flex-direction:column; align-items:stretch; }
+            .side-card strong { display:block; margin-bottom:6px; font-size:1rem; }
+            .side-card p { margin:0; color:rgba(255,255,255,.72); line-height:1.6; font-size:.88rem; }
+            .nav-title {
+                display:block;
+                margin:18px 4px 8px;
+                color:var(--muted);
+                font-size:.72rem;
+                font-weight:800;
+                letter-spacing:.12em;
+                text-transform:uppercase;
+            }
+            .nav {
+                display:grid;
+                gap:8px;
+            }
+            .chip {
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                min-height:44px;
+                padding:11px 13px;
+                border-radius:14px;
+                border:1px solid transparent;
+                background:transparent;
+                color:#5f6b7a;
+                font-weight:800;
+                transition:.18s ease;
+            }
+            .chip:hover {
+                color:var(--primary);
+                background:var(--primary-soft);
+                border-color:#dce7ff;
+            }
+            .chip::after {
+                content:"";
+                width:8px;
+                height:8px;
+                border-radius:50%;
+                background:#d8dee8;
+            }
+            .chip:hover::after { background:var(--primary); }
+
+            .page-wrapper { min-width:0; }
+            .shell {
+                display:grid;
+                gap:18px;
+                width:min(100% - 36px, 1400px);
+                margin:0 auto;
+                padding:22px 0 52px;
+            }
+            .topbar {
+                position:sticky;
+                top:0;
+                z-index:15;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:18px;
+                margin:0 -18px 4px;
+                padding:18px;
+                background:rgba(246,248,251,.84);
+                backdrop-filter:blur(18px);
+                border-bottom:1px solid rgba(232,237,245,.82);
+            }
+            .topbar h1 { margin:0; font-size:clamp(1.7rem,3vw,2.35rem); letter-spacing:-.06em; line-height:1.05; }
+            .topbar p { margin:7px 0 0; color:var(--muted); line-height:1.6; max-width:780px; }
+            .topbar-actions, .section-head, .toolbar {
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-start;
+                gap:14px;
+                flex-wrap:wrap;
+            }
+            .topbar-actions { align-items:center; justify-content:flex-end; }
+            .card {
+                background:var(--surface);
+                border:1px solid var(--line);
+                border-radius:var(--radius-xl);
+                box-shadow:var(--shadow);
+            }
+            .card-body { padding:22px; }
+            .hero {
+                padding:28px;
+                border-radius:var(--radius-xl);
+                background:
+                    linear-gradient(135deg, rgba(93,135,255,.10), transparent 42%),
+                    var(--surface);
+            }
+            .hero h1 { margin:0; font-size:clamp(1.9rem,4vw,2.8rem); line-height:1; letter-spacing:-.07em; }
+            .hero p { margin:10px 0 0; color:var(--muted); line-height:1.7; max-width:820px; }
+            .grid-4, .grid-3, .grid-2, .list {
+                display:grid;
+                gap:16px;
+            }
+            .grid-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+            .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+            .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .metric, .list-row, .mini-card {
+                padding:18px;
+                border-radius:var(--radius-lg);
+                background:var(--surface);
+                border:1px solid var(--line);
+                box-shadow:0 5px 16px rgba(31,42,68,.04);
+            }
+            .metric { position:relative; overflow:hidden; }
+            .metric::after {
+                content:"";
+                position:absolute;
+                right:-34px;
+                top:-34px;
+                width:96px;
+                height:96px;
+                border-radius:50%;
+                background:var(--primary-soft);
+            }
+            .metric strong, .mini-card strong {
+                display:block;
+                position:relative;
+                margin-bottom:8px;
+                font-size:1.72rem;
+                letter-spacing:-.05em;
+            }
+            .metric span, .mini-card span, .list-row small {
+                color:var(--muted);
+                line-height:1.6;
+            }
+            .list-row {
+                display:grid;
+                grid-template-columns:minmax(0,1fr) auto;
+                gap:14px;
+                align-items:center;
+            }
+            .list-row strong { display:block; margin-bottom:5px; }
+            .flash-box {
+                padding:15px 17px;
+                border-radius:var(--radius-lg);
+                background:var(--success-soft);
+                border:1px solid #c8f7ed;
+                color:#0f8f78;
+                line-height:1.7;
+            }
+            .button, .button-secondary, .logout-button {
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                min-height:42px;
+                padding:11px 15px;
+                border-radius:12px;
+                border:1px solid var(--line);
+                background:#fff;
+                color:var(--text);
+                font-weight:800;
+                font-family:inherit;
+                cursor:pointer;
+                transition:.18s ease;
+            }
+            .button {
+                color:#fff;
+                border-color:transparent;
+                background:linear-gradient(135deg,var(--primary),#7c5cff);
+                box-shadow:0 12px 22px rgba(93,135,255,.22);
+            }
+            .button-secondary { background:var(--surface-soft); }
+            .logout-button { color:#fff; border-color:#172033; background:#172033; }
+            .button:hover, .button-secondary:hover, .logout-button:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
+            input, select, textarea {
+                width:100%;
+                min-height:46px;
+                padding:12px 14px;
+                border-radius:12px;
+                border:1px solid var(--line);
+                background:#fff;
+                color:var(--text);
+                outline:none;
+            }
+            textarea { min-height:130px; resize:vertical; }
+            input:focus, select:focus, textarea:focus {
+                border-color:rgba(93,135,255,.55);
+                box-shadow:0 0 0 4px rgba(93,135,255,.10);
+            }
+
+            @media (max-width:1100px) {
+                .backoffice-shell { grid-template-columns:1fr; }
+                .sidebar { position:static; min-height:auto; }
+                .nav { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
                 .grid-4, .grid-3, .grid-2 { grid-template-columns:1fr; }
+                .list-row { grid-template-columns:1fr; }
+            }
+            @media (max-width:720px) {
+                .shell { width:min(100% - 20px, 1180px); padding-top:12px; }
+                .topbar, .section-head, .toolbar, .topbar-actions { flex-direction:column; align-items:stretch; }
                 .button, .button-secondary, .chip, .logout-button { width:100%; }
+                .sidebar { padding:16px 12px; }
             }
         </style>
     </head>
     <body>
-        <div class="shell">
-            <header class="topbar">
+        <div class="backoffice-shell">
+            <aside class="sidebar">
                 <a class="brand" href="@yield('brand_route', route('painel.redirect'))">
                     <span class="brand-badge">MP</span>
                     <span>@yield('brand_label', 'Mania de Preco')</span>
                 </a>
 
-                <div class="nav">
+                <section class="side-card">
+                    <strong>Backoffice</strong>
+                    <p>Governanca da plataforma com leitura clara de contas, planos, suporte e acesso.</p>
+                </section>
+
+                <span class="nav-title">Navegacao</span>
+                <nav class="nav">
                     @yield('nav')
                     <a class="chip" href="{{ url('/') }}">Home publica</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="logout-button" type="submit">Sair</button>
-                    </form>
+                </nav>
+            </aside>
+
+            <div class="page-wrapper">
+                <div class="shell">
+                    <header class="topbar">
+                        <div>
+                            <h1>@yield('title', 'Painel')</h1>
+                            <p>Ambiente de gestao para acompanhar operacao, crescimento e qualidade da plataforma.</p>
+                        </div>
+
+                        <div class="topbar-actions">
+                            <a class="button-secondary" href="{{ route('painel.redirect') }}">Meu painel</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="logout-button" type="submit">Sair</button>
+                            </form>
+                        </div>
+                    </header>
+
+                    @if (session('status'))
+                        <div class="flash-box">{{ session('status') }}</div>
+                    @endif
+
+                    @yield('content')
                 </div>
-            </header>
-
-            @if (session('status'))
-                <div class="flash-box">{{ session('status') }}</div>
-            @endif
-
-            @yield('content')
+            </div>
         </div>
     </body>
 </html>

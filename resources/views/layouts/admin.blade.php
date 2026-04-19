@@ -5,670 +5,413 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', 'Painel') | Mania de Preco</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
 
         <style>
             :root {
-                --bg: #f4ecdf;
-                --bg-strong: #1f130e;
-                --surface: rgba(255, 250, 242, 0.88);
-                --surface-soft: rgba(255, 255, 255, 0.68);
-                --line: rgba(78, 43, 25, 0.12);
-                --text: #24140e;
-                --muted: #715349;
-                --accent: #ff6b2c;
-                --accent-2: #0f9f8f;
-                --accent-3: #ffd08a;
-                --success: #177245;
-                --danger: #b64833;
-                --shadow: 0 24px 60px rgba(57, 29, 16, 0.12);
-                --radius-xl: 30px;
-                --radius-lg: 22px;
-                --radius-md: 16px;
+                --bg: #f6f8fb;
+                --surface: #ffffff;
+                --surface-soft: #f8fafc;
+                --line: #e8edf5;
+                --line-strong: #d9e2ef;
+                --text: #19202e;
+                --muted: #687385;
+                --primary: #5d87ff;
+                --primary-soft: #edf3ff;
+                --success: #13deb9;
+                --success-soft: #e6fffa;
+                --warning: #ffae1f;
+                --warning-soft: #fff6e5;
+                --danger: #fa896b;
+                --danger-soft: #fff1ed;
+                --sidebar: #ffffff;
+                --rail: #f1f5fb;
+                --shadow: 0 16px 34px rgba(31, 42, 68, 0.08);
+                --shadow-soft: 0 8px 22px rgba(31, 42, 68, 0.06);
+                --radius-xl: 24px;
+                --radius-lg: 18px;
+                --radius-md: 14px;
+                --sidebar-width: 318px;
             }
 
-            * {
-                box-sizing: border-box;
-            }
-
+            * { box-sizing: border-box; }
             body {
                 margin: 0;
                 min-height: 100vh;
-                font-family: "Space Grotesk", sans-serif;
+                font-family: "Manrope", sans-serif;
                 color: var(--text);
                 background:
-                    radial-gradient(circle at top left, rgba(255, 107, 44, 0.18), transparent 30%),
-                    radial-gradient(circle at top right, rgba(15, 159, 143, 0.16), transparent 24%),
-                    linear-gradient(180deg, #fff7ea 0%, #f4ecdf 48%, #efe3d0 100%);
+                    radial-gradient(circle at 12% 0%, rgba(93, 135, 255, 0.14), transparent 28%),
+                    radial-gradient(circle at 86% 4%, rgba(19, 222, 185, 0.12), transparent 22%),
+                    var(--bg);
             }
+            a { color: inherit; text-decoration: none; }
+            button, input, select, textarea { font: inherit; }
 
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
-
-            .admin-shell {
-                display: grid;
-                grid-template-columns: 280px minmax(0, 1fr);
-                min-height: 100vh;
-            }
-
+            .admin-shell { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-height: 100vh; }
             .sidebar {
-                position: relative;
                 position: sticky;
                 top: 0;
                 align-self: start;
+                display: grid;
+                grid-template-columns: 74px minmax(0, 1fr);
                 min-height: 100vh;
-                padding: 28px 22px;
-                background:
-                    linear-gradient(180deg, rgba(42, 22, 15, 0.98) 0%, rgba(26, 14, 10, 0.98) 100%);
-                color: #fff6ef;
-                overflow: hidden;
+                background: var(--sidebar);
+                border-right: 1px solid var(--line);
+                box-shadow: 10px 0 30px rgba(31, 42, 68, 0.03);
+                z-index: 20;
             }
-
-            .sidebar::after {
-                content: "";
-                position: absolute;
-                inset: auto -40px -40px auto;
-                width: 200px;
-                height: 200px;
-                background: rgba(255, 107, 44, 0.16);
-                border-radius: 50%;
-                filter: blur(20px);
-            }
-
-            .brand {
-                display: inline-flex;
+            .sidebar-rail {
+                display: flex;
+                flex-direction: column;
                 align-items: center;
                 gap: 12px;
-                font-weight: 700;
-                letter-spacing: 0.03em;
+                padding: 18px 12px;
+                background: var(--rail);
+                border-right: 1px solid var(--line);
             }
-
-            .brand-badge {
+            .brand-mark, .rail-link, .menu-icon, .avatar {
                 display: inline-grid;
                 place-items: center;
-                width: 42px;
-                height: 42px;
-                border-radius: 14px;
-                background: linear-gradient(135deg, var(--accent), #ff9f52);
-                color: #27140e;
-                font-family: "IBM Plex Mono", monospace;
-                font-size: 0.95rem;
+                flex: 0 0 auto;
             }
-
-            .account-panel,
-            .menu-card,
-            .support-card {
-                position: relative;
-                z-index: 1;
-                margin-top: 24px;
-                padding: 18px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.07);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                backdrop-filter: blur(10px);
-            }
-
-            .account-panel p,
-            .support-card p {
-                margin: 8px 0 0;
-                color: rgba(255, 244, 236, 0.74);
-                line-height: 1.6;
-                font-size: 0.95rem;
-            }
-
-            .account-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                border-radius: 999px;
-                margin-top: 14px;
-                background: rgba(255, 208, 138, 0.14);
-                color: #ffd9a7;
-                font-size: 0.85rem;
-            }
-
-            .menu-title,
-            .support-card strong {
-                display: block;
-                font-size: 0.92rem;
-                text-transform: uppercase;
-                letter-spacing: 0.12em;
-                color: rgba(255, 244, 236, 0.62);
-            }
-
-            .menu-links {
-                display: grid;
-                gap: 10px;
-                margin-top: 14px;
-            }
-
-            .menu-link {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 14px 16px;
+            .brand-mark {
+                width: 46px;
+                height: 46px;
                 border-radius: 16px;
-                background: rgba(255, 255, 255, 0.04);
+                color: #fff;
+                background: linear-gradient(135deg, var(--primary), #7c5cff);
+                box-shadow: 0 14px 24px rgba(93, 135, 255, 0.28);
+                font: 800 0.9rem "IBM Plex Mono", monospace;
+            }
+            .rail-stack { display: grid; gap: 10px; width: 100%; margin-top: 14px; }
+            .rail-link {
+                width: 50px;
+                height: 50px;
+                border-radius: 16px;
+                color: #7a869a;
+                background: transparent;
                 border: 1px solid transparent;
-                transition: 0.2s ease;
+                font: 700 0.72rem "IBM Plex Mono", monospace;
+                transition: 0.18s ease;
             }
-
-            .menu-link:hover,
-            .menu-link.is-active {
-                transform: translateX(2px);
-                border-color: rgba(255, 208, 138, 0.24);
-                background: rgba(255, 255, 255, 0.1);
+            .rail-link:hover, .rail-link.is-active {
+                color: var(--primary);
+                background: #fff;
+                border-color: var(--line);
+                box-shadow: var(--shadow-soft);
             }
-
-            .menu-link small {
-                color: rgba(255, 244, 236, 0.58);
-            }
-
-            .main {
-                padding: 28px;
-                padding-bottom: 96px;
-            }
-
-            .topbar {
+            .sidebar-panel {
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
+                flex-direction: column;
                 gap: 18px;
-                margin-bottom: 24px;
+                min-height: 100vh;
+                padding: 22px 18px;
+                overflow-y: auto;
             }
-
-            .mobile-context,
-            .mobile-dock {
-                display: none;
+            .brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+            .brand-text strong { display: block; font-size: 1.02rem; letter-spacing: -0.02em; }
+            .brand-text span { display: block; margin-top: 2px; color: var(--muted); font-size: 0.82rem; }
+            .account-panel {
+                padding: 16px;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #22304b, #2f4f9f);
+                color: #fff;
+                box-shadow: var(--shadow-soft);
+                overflow: hidden;
+                position: relative;
             }
-
-            .mobile-context {
-                padding: 16px 18px;
-                border-radius: 24px;
-                background: linear-gradient(135deg, rgba(42, 22, 15, 0.96), rgba(26, 14, 10, 0.96));
-                color: #fff6ef;
-                box-shadow: 0 18px 40px rgba(42, 22, 15, 0.24);
-                margin-bottom: 18px;
+            .account-panel::after {
+                content: "";
+                position: absolute;
+                right: -48px;
+                bottom: -64px;
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.12);
             }
-
-            .mobile-context strong {
+            .account-panel h2 { position: relative; margin: 8px 0 8px; font-size: 1.18rem; letter-spacing: -0.04em; }
+            .account-panel p { position: relative; margin: 0; color: rgba(255, 255, 255, 0.72); line-height: 1.6; font-size: 0.88rem; }
+            .menu-title {
                 display: block;
-                font-size: 1.05rem;
-                margin-bottom: 6px;
-            }
-
-            .mobile-context small {
-                display: block;
-                color: rgba(255, 244, 236, 0.72);
-                line-height: 1.6;
-            }
-
-            .mobile-context-row {
-                display: flex;
-                justify-content: space-between;
-                gap: 12px;
-                align-items: center;
-            }
-
-            .mobile-dock {
-                position: fixed;
-                left: 12px;
-                right: 12px;
-                bottom: 12px;
-                z-index: 30;
-                grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
-                gap: 10px;
-                padding: 10px;
-                border-radius: 24px;
-                background: rgba(32, 18, 12, 0.94);
-                box-shadow: 0 24px 50px rgba(31, 19, 14, 0.28);
-                backdrop-filter: blur(18px);
-            }
-
-            .mobile-dock-link {
-                display: grid;
-                gap: 4px;
-                justify-items: center;
-                padding: 10px 6px;
-                border-radius: 18px;
-                color: rgba(255, 244, 236, 0.68);
-                font-size: 0.72rem;
-                text-align: center;
-                transition: 0.2s ease;
-            }
-
-            .mobile-dock-link strong {
-                font-size: 0.82rem;
-                font-weight: 700;
-                color: inherit;
-            }
-
-            .mobile-dock-link.is-active,
-            .mobile-dock-link:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #fff6ef;
-            }
-
-            .topbar h1 {
-                margin: 0;
-                font-size: clamp(2rem, 4vw, 3.1rem);
-                line-height: 1;
-            }
-
-            .topbar p {
-                margin: 8px 0 0;
+                margin: 16px 4px 8px;
                 color: var(--muted);
-                max-width: 760px;
-                line-height: 1.7;
+                font-size: 0.72rem;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
             }
-
-            .topbar-actions {
-                display: flex;
-                align-items: center;
+            .menu-links { display: grid; gap: 6px; }
+            .menu-link {
+                display: grid;
+                grid-template-columns: 38px minmax(0, 1fr) auto;
                 gap: 12px;
-                flex-wrap: wrap;
+                align-items: center;
+                min-height: 48px;
+                padding: 8px 10px;
+                border-radius: 14px;
+                color: #5f6b7a;
+                border: 1px solid transparent;
+                transition: 0.18s ease;
             }
-
-            .ghost-link,
-            .logout-button,
-            .button,
-            .button-secondary,
-            .button-danger {
+            .menu-link:hover, .menu-link.is-active {
+                color: var(--primary);
+                background: var(--primary-soft);
+                border-color: #dce7ff;
+            }
+            .menu-link span:not(.menu-icon) { display: block; color: inherit; font-weight: 800; font-size: 0.92rem; }
+            .menu-link small { display: block; margin-top: 2px; color: var(--muted); font-size: 0.74rem; }
+            .menu-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 13px;
+                background: #fff;
+                border: 1px solid var(--line);
+                color: currentColor;
+                font: 800 0.72rem "IBM Plex Mono", monospace;
+            }
+            .account-chip, .pill, .badge {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 12px 16px;
-                border-radius: 14px;
+                width: fit-content;
+                gap: 8px;
+                border-radius: 999px;
+                font-weight: 800;
+            }
+            .account-chip {
+                position: relative;
+                margin-top: 12px;
+                padding: 7px 10px;
+                background: rgba(255, 255, 255, 0.14);
+                color: #fff;
+                font-size: 0.78rem;
+            }
+            .support-card {
+                margin-top: auto;
+                padding: 16px;
+                border-radius: 18px;
+                background: var(--surface-soft);
                 border: 1px solid var(--line);
-                background: rgba(255, 255, 255, 0.72);
-                color: var(--text);
-                font-weight: 600;
-                font-family: inherit;
-                cursor: pointer;
-                transition: 0.2s ease;
             }
+            .support-card strong { display: block; margin-bottom: 6px; }
+            .support-card p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 0.86rem; }
 
-            .logout-button {
-                background: #2a160f;
-                border-color: #2a160f;
-                color: #fff5ef;
-            }
-
-            .button {
-                background: linear-gradient(135deg, var(--accent), #ff9f52);
-                border-color: transparent;
-                color: #2d150d;
-                box-shadow: 0 18px 36px rgba(255, 107, 44, 0.18);
-            }
-
-            .button-secondary {
-                background: rgba(255, 255, 255, 0.72);
-            }
-
-            .button-danger {
-                background: rgba(182, 72, 51, 0.1);
-                border-color: rgba(182, 72, 51, 0.12);
-                color: var(--danger);
-            }
-
-            .ghost-link:hover,
-            .logout-button:hover,
-            .button:hover,
-            .button-secondary:hover,
-            .button-danger:hover {
-                transform: translateY(-1px);
-            }
-
-            .content {
+            .page-wrapper { min-width: 0; }
+            .main {
                 display: grid;
+                gap: 22px;
+                width: min(100% - 36px, 1420px);
+                margin: 0 auto;
+                padding: 22px 0 52px;
+            }
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 15;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 gap: 18px;
+                margin: 0 -18px 4px;
+                padding: 18px;
+                background: rgba(246, 248, 251, 0.84);
+                backdrop-filter: blur(18px);
+                border-bottom: 1px solid rgba(232, 237, 245, 0.82);
+            }
+            .topbar-title { display: flex; gap: 14px; align-items: center; min-width: 0; }
+            .topbar-kicker {
+                display: block;
+                margin-bottom: 6px;
+                color: var(--primary);
+                font-size: 0.76rem;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+            .topbar h1 { margin: 0; font-size: clamp(1.72rem, 3vw, 2.45rem); line-height: 1.05; letter-spacing: -0.06em; }
+            .topbar p { margin: 7px 0 0; color: var(--muted); max-width: 780px; line-height: 1.6; }
+            .topbar-actions, .toolbar-actions, .filter-row, .subnav, .list-actions, .checklist-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .avatar {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: #fff;
+                border: 1px solid var(--line);
+                color: var(--primary);
+                font-weight: 900;
+                box-shadow: var(--shadow-soft);
+            }
+            .ghost-link, .logout-button, .button, .button-secondary, .button-danger {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 42px;
+                padding: 11px 15px;
+                border-radius: 12px;
+                border: 1px solid var(--line);
+                background: #fff;
+                color: var(--text);
+                font-weight: 800;
+                cursor: pointer;
+                transition: 0.18s ease;
+                box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
+            }
+            .button {
+                color: #fff;
+                border-color: transparent;
+                background: linear-gradient(135deg, var(--primary), #7c5cff);
+                box-shadow: 0 12px 22px rgba(93, 135, 255, 0.22);
+            }
+            .button-secondary { background: var(--surface-soft); }
+            .logout-button {
+                color: #fff;
+                border-color: #172033;
+                background: #172033;
+            }
+            .button-danger {
+                color: #be4f39;
+                border-color: #ffd9cf;
+                background: var(--danger-soft);
+            }
+            .ghost-link:hover, .logout-button:hover, .button:hover, .button-secondary:hover, .button-danger:hover {
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-soft);
             }
 
+            .content, .stack, .mini-grid, .progress-stack, .signal-list, .onboarding-groups, .checklist-stack, .table-head, .list-grid { display: grid; gap: 16px; }
             .card {
                 background: var(--surface);
-                border: 1px solid rgba(255, 255, 255, 0.7);
-                border-radius: var(--radius-lg);
-                box-shadow: var(--shadow);
-                backdrop-filter: blur(14px);
+                border: 1px solid var(--line);
+                border-radius: var(--radius-xl);
+                box-shadow: var(--shadow-soft);
             }
-
-            .card-body {
-                padding: 24px;
-            }
-
-            .grid-4,
-            .grid-3,
-            .grid-2 {
+            .card-body { padding: 22px; }
+            .grid-4, .grid-3, .grid-2, .stats-grid, .highlight-grid, .panel-grid, .month-grid, .form-grid {
                 display: grid;
-                gap: 18px;
+                gap: 16px;
             }
+            .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .grid-3, .stats-grid, .highlight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .grid-2, .panel-grid { grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr); }
+            .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .month-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: end; }
 
-            .grid-4 {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+            .metric-card, .highlight-card, .mini-card, .stat-card-soft, .month-card, .signal-item, .onboarding-group, .checklist-item, .table-row, .list-row {
+                border-radius: var(--radius-lg);
+                background: var(--surface);
+                border: 1px solid var(--line);
             }
-
-            .grid-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+            .metric-card { padding: 20px; overflow: hidden; position: relative; }
+            .metric-card::after {
+                content: "";
+                position: absolute;
+                right: -30px;
+                top: -30px;
+                width: 90px;
+                height: 90px;
+                border-radius: 50%;
+                background: var(--primary-soft);
             }
-
-            .grid-2 {
-                grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
-            }
-
-            .metric-card {
-                padding: 22px;
-            }
-
-            .metric-label {
-                display: block;
-                margin-bottom: 12px;
-                color: var(--muted);
-                font-size: 0.95rem;
-            }
-
-            .metric-value {
-                display: block;
-                font-size: clamp(1.8rem, 3vw, 2.7rem);
-                line-height: 1;
-                font-weight: 700;
-            }
-
+            .metric-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: 0.92rem; font-weight: 700; }
+            .metric-value { display: block; position: relative; font-size: clamp(1.65rem, 3vw, 2.35rem); line-height: 1; letter-spacing: -0.06em; }
             .metric-trend {
                 display: inline-flex;
                 align-items: center;
-                margin-top: 12px;
-                padding: 8px 10px;
+                margin-top: 14px;
+                padding: 7px 10px;
                 border-radius: 999px;
-                background: rgba(15, 159, 143, 0.12);
-                color: var(--accent-2);
-                font-size: 0.86rem;
+                background: var(--success-soft);
+                color: #0f8f78;
+                font-size: 0.82rem;
+                font-weight: 800;
             }
+            .metric-trend.is-danger { background: var(--danger-soft); color: #be4f39; }
 
-            .metric-trend.is-danger {
-                background: rgba(182, 72, 51, 0.12);
-                color: var(--danger);
-            }
-
-            .section-header {
+            .section-header, .toolbar {
                 display: flex;
-                align-items: flex-start;
                 justify-content: space-between;
-                gap: 12px;
-                margin-bottom: 18px;
+                align-items: flex-start;
+                gap: 14px;
             }
-
-            .section-header h2,
-            .section-header h3 {
-                margin: 0;
-                font-size: 1.2rem;
-            }
-
-            .section-header p {
-                margin: 8px 0 0;
+            .section-header h2, .section-header h3 { margin: 0; font-size: 1.16rem; letter-spacing: -0.03em; }
+            .section-header p, .helper-text, .mini-card span, .mini-card small, .stat-card-soft span, .signal-item span, .signal-item small, .table-row small, .list-row small {
                 color: var(--muted);
                 line-height: 1.6;
             }
-
-            .mini-grid {
-                display: grid;
-                gap: 12px;
-            }
-
-            .mini-card {
-                padding: 16px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.7);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .mini-card strong {
+            .section-header p { margin: 7px 0 0; }
+            .mini-card, .highlight-card, .stat-card-soft, .month-card, .signal-item, .onboarding-group, .checklist-item, .table-row, .list-row { padding: 16px; }
+            .mini-card strong, .highlight-card strong, .stat-card-soft strong, .signal-item strong, .table-row strong, .list-row strong {
                 display: block;
                 margin-bottom: 6px;
-                font-size: 1.05rem;
             }
+            .highlight-card strong, .stat-card-soft strong { font-size: 1.45rem; letter-spacing: -0.04em; }
 
-            .mini-card span,
-            .mini-card small,
-            .table-list small {
-                color: var(--muted);
-                line-height: 1.6;
+            .pill, .badge {
+                padding: 8px 11px;
+                border: 1px solid #dce7ff;
+                background: var(--primary-soft);
+                color: var(--primary);
+                font-size: 0.8rem;
             }
+            .badge.is-warning { border-color: #ffe5b8; background: var(--warning-soft); color: #b76d00; }
+            .badge.is-muted { border-color: var(--line); background: var(--surface-soft); color: var(--muted); }
 
-            .table-list {
-                display: grid;
-                gap: 12px;
-            }
-
-            .table-row {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                gap: 16px;
-                padding: 16px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.66);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .table-row strong {
-                display: block;
-                margin-bottom: 4px;
-            }
-
-            .table-row code {
-                font-family: "IBM Plex Mono", monospace;
-                font-size: 0.82rem;
-                color: var(--muted);
-            }
-
-            .badge {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                height: fit-content;
-                padding: 8px 12px;
-                border-radius: 999px;
-                font-size: 0.82rem;
-                background: rgba(15, 159, 143, 0.12);
-                color: var(--accent-2);
-            }
-
-            .badge.is-warning {
-                background: rgba(255, 107, 44, 0.12);
-                color: var(--accent);
-            }
-
-            .badge.is-muted {
-                background: rgba(60, 34, 24, 0.08);
-                color: var(--muted);
-            }
-
-            .empty-state {
-                padding: 26px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.7);
-                border: 1px dashed rgba(76, 42, 22, 0.18);
-                color: var(--muted);
-                line-height: 1.8;
-            }
-
-            .flash-box,
-            .error-box {
-                padding: 16px 18px;
-                border-radius: 18px;
+            .flash-box, .error-box, .empty-state {
+                padding: 15px 17px;
+                border-radius: var(--radius-lg);
                 line-height: 1.7;
             }
+            .flash-box { background: var(--success-soft); border: 1px solid #c8f7ed; color: #0f8f78; }
+            .error-box { background: var(--danger-soft); border: 1px solid #ffd9cf; color: #a54631; }
+            .empty-state { background: var(--surface-soft); border: 1px dashed var(--line-strong); color: var(--muted); }
 
-            .flash-box {
-                background: rgba(15, 159, 143, 0.08);
-                border: 1px solid rgba(15, 159, 143, 0.12);
-                color: #0a7167;
-            }
-
-            .error-box {
-                background: rgba(182, 72, 51, 0.08);
-                border: 1px solid rgba(182, 72, 51, 0.12);
-                color: #8c3525;
-            }
-
-            .toolbar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 16px;
-                flex-wrap: wrap;
-            }
-
-            .toolbar-actions,
-            .filter-row {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                flex-wrap: wrap;
-            }
-
-            .stack {
-                display: grid;
-                gap: 18px;
-            }
-
-            .stats-grid {
-                display: grid;
-                gap: 14px;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-
-            .stat-card-soft {
-                padding: 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.7);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .stat-card-soft strong {
-                display: block;
-                margin-bottom: 6px;
-                font-size: 1.4rem;
-            }
-
-            .stat-card-soft span {
-                color: var(--muted);
-                line-height: 1.6;
-            }
-
-            .table-head,
-            .list-grid {
-                display: grid;
-                gap: 12px;
-            }
-
-            .table-head {
+            .table-list, .list { display: grid; gap: 12px; }
+            .table-head, .list-row {
                 grid-template-columns: minmax(0, 1.2fr) minmax(160px, 0.5fr) minmax(160px, 0.5fr) auto;
+                align-items: center;
+            }
+            .table-head {
                 padding: 0 10px;
                 color: var(--muted);
-                font-size: 0.86rem;
+                font-size: 0.78rem;
+                font-weight: 800;
                 text-transform: uppercase;
                 letter-spacing: 0.08em;
             }
-
-            .list-row {
-                display: grid;
-                grid-template-columns: minmax(0, 1.2fr) minmax(160px, 0.5fr) minmax(160px, 0.5fr) auto;
-                gap: 16px;
-                align-items: center;
-                padding: 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.68);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .list-row strong {
-                display: block;
-                margin-bottom: 4px;
-            }
-
-            .list-row small,
-            .list-row code {
+            .table-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+            .list-row { display: grid; gap: 14px; }
+            .list-row code, .table-row code {
                 color: var(--muted);
-                line-height: 1.6;
-            }
-
-            .list-row code {
                 font-family: "IBM Plex Mono", monospace;
-            }
-
-            .list-actions {
-                display: inline-flex;
-                gap: 10px;
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            .pill {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 8px 12px;
-                border-radius: 999px;
                 font-size: 0.82rem;
-                background: rgba(255, 255, 255, 0.78);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-                color: var(--muted);
             }
 
-            .form-grid {
-                display: grid;
-                gap: 16px;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .field-group,
-            .field-group-full {
-                display: grid;
-                gap: 8px;
-            }
-
-            .field-group-full {
-                grid-column: 1 / -1;
-            }
-
-            .field-group label,
-            .field-group-full label {
-                font-size: 0.94rem;
-                font-weight: 600;
-            }
-
-            .field-group input,
-            .field-group select,
-            .field-group textarea,
-            .field-group-full input,
-            .field-group-full select,
-            .field-group-full textarea,
-            .filter-row input,
-            .filter-row select {
+            .field-group, .field-group-full { display: grid; gap: 8px; }
+            .field-group-full { grid-column: 1 / -1; }
+            .field-group label, .field-group-full label { font-size: 0.9rem; font-weight: 800; }
+            .field-group input, .field-group select, .field-group textarea, .field-group-full input, .field-group-full select, .field-group-full textarea, .filter-row input, .filter-row select {
                 width: 100%;
-                padding: 14px 16px;
-                border-radius: 14px;
-                border: 1px solid rgba(76, 42, 22, 0.12);
-                background: rgba(255, 255, 255, 0.92);
-                font: inherit;
+                min-height: 46px;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid var(--line);
+                background: #fff;
                 color: var(--text);
+                outline: none;
+                transition: 0.18s ease;
             }
-
-            .field-group textarea,
-            .field-group-full textarea {
-                min-height: 140px;
-                resize: vertical;
+            .field-group textarea, .field-group-full textarea { min-height: 130px; resize: vertical; }
+            input:focus, select:focus, textarea:focus {
+                border-color: rgba(93, 135, 255, 0.55);
+                box-shadow: 0 0 0 4px rgba(93, 135, 255, 0.10);
             }
-
-            .field-group small,
-            .field-group-full small {
-                color: var(--muted);
-                line-height: 1.6;
-            }
-
             .form-actions {
                 display: flex;
                 justify-content: space-between;
@@ -677,520 +420,270 @@
                 flex-wrap: wrap;
                 margin-top: 8px;
             }
-
-            .inline-form {
-                margin: 0;
-            }
-
-            .helper-text {
-                color: var(--muted);
-                line-height: 1.7;
-            }
-
-            .remember-toggle {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                font-weight: 500;
-                color: var(--text);
-            }
-
-            .remember-toggle input {
-                width: auto;
-                accent-color: var(--accent);
-            }
-
-            .pagination-wrap nav {
-                display: flex;
-                justify-content: center;
-            }
-
-            .pagination-wrap svg {
-                width: 18px;
-                height: 18px;
-            }
-
-            .subnav {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-            }
-
-            .subnav-link {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 10px 14px;
-                border-radius: 999px;
-                border: 1px solid rgba(76, 42, 22, 0.1);
-                background: rgba(255, 255, 255, 0.68);
-                color: var(--muted);
-                font-size: 0.92rem;
-                transition: 0.2s ease;
-            }
-
-            .subnav-link.is-active,
-            .subnav-link:hover {
-                color: var(--text);
-                border-color: rgba(255, 107, 44, 0.22);
-                background: rgba(255, 240, 230, 0.9);
-            }
-
-            .panel-grid {
-                display: grid;
-                grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-                gap: 18px;
-            }
-
-            .month-grid {
-                display: grid;
-                grid-template-columns: repeat(6, minmax(0, 1fr));
-                gap: 12px;
-                align-items: end;
-            }
-
-            .month-card {
-                padding: 16px 14px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .month-card strong {
-                display: block;
-                font-size: 0.9rem;
-                margin-bottom: 12px;
-                color: var(--muted);
-            }
-
-            .month-bars {
-                display: grid;
-                gap: 8px;
-            }
-
-            .month-bar-group {
-                display: grid;
-                gap: 6px;
-            }
-
-            .month-bar {
-                position: relative;
-                height: 10px;
-                border-radius: 999px;
-                background: rgba(44, 24, 17, 0.08);
-                overflow: hidden;
-            }
-
-            .month-bar > span {
-                display: block;
-                height: 100%;
-                border-radius: inherit;
-            }
-
-            .month-bar.is-receita > span {
-                background: linear-gradient(90deg, #0f9f8f, #34d399);
-            }
-
-            .month-bar.is-despesa > span {
-                background: linear-gradient(90deg, #ff6b2c, #f59e0b);
-            }
-
-            .month-legend {
-                display: grid;
-                gap: 4px;
-                margin-top: 10px;
-                color: var(--muted);
-                font-size: 0.82rem;
-            }
-
-            .progress-stack {
-                display: grid;
-                gap: 14px;
-            }
-
-            .progress-row {
-                display: grid;
-                gap: 8px;
-            }
-
-            .progress-meta {
-                display: flex;
-                justify-content: space-between;
-                gap: 12px;
-                color: var(--muted);
-                font-size: 0.9rem;
-            }
+            .inline-form { margin: 0; }
+            .remember-toggle { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; }
+            .remember-toggle input { width: auto; accent-color: var(--primary); }
 
             .progress-track {
-                height: 12px;
+                height: 10px;
                 border-radius: 999px;
-                background: rgba(44, 24, 17, 0.08);
+                background: #eef2f7;
                 overflow: hidden;
             }
-
             .progress-fill {
                 display: block;
                 height: 100%;
                 border-radius: inherit;
-                background: linear-gradient(90deg, var(--accent), #ffb16c);
+                background: linear-gradient(90deg, var(--warning), var(--danger));
             }
-
-            .progress-fill.is-teal {
-                background: linear-gradient(90deg, var(--accent-2), #5eead4);
-            }
-
-            .highlight-grid {
-                display: grid;
-                gap: 14px;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-
+            .progress-fill.is-teal { background: linear-gradient(90deg, var(--success), #44d7ff); }
             .setup-banner {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 20px;
             }
+            .setup-banner h2 { margin: 12px 0 8px; font-size: clamp(1.35rem, 3vw, 1.95rem); letter-spacing: -0.04em; }
+            .setup-banner p { margin: 0; color: var(--muted); line-height: 1.7; max-width: 760px; }
+            .setup-banner-actions { display: grid; gap: 12px; min-width: min(360px, 100%); }
+            .checklist-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+            .checklist-item.is-done { background: var(--success-soft); border-color: #c8f7ed; }
+            .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #d8dee8; }
+            .status-dot.is-done { background: var(--success); box-shadow: 0 0 0 6px rgba(19, 222, 185, 0.12); }
+            .status-dot.is-pending { background: var(--warning); box-shadow: 0 0 0 6px rgba(255, 174, 31, 0.13); }
 
-            .setup-banner h2 {
-                margin: 14px 0 8px;
-                font-size: clamp(1.4rem, 3vw, 2rem);
-            }
-
-            .setup-banner p {
-                margin: 0;
-                color: var(--muted);
-                line-height: 1.7;
-                max-width: 760px;
-            }
-
-            .setup-banner-actions {
-                display: grid;
-                gap: 12px;
-                min-width: min(360px, 100%);
-            }
-
-            .onboarding-groups,
-            .checklist-stack {
-                display: grid;
-                gap: 14px;
-            }
-
-            .onboarding-group {
-                display: grid;
-                gap: 12px;
-                padding: 18px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .checklist-item {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                gap: 16px;
-                align-items: center;
-                padding: 16px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.82);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .checklist-item.is-done {
-                background: rgba(226, 255, 249, 0.72);
-                border-color: rgba(15, 159, 143, 0.12);
-            }
-
-            .checklist-item strong {
-                display: block;
-                margin-bottom: 6px;
-            }
-
-            .checklist-item span {
-                color: var(--muted);
-                line-height: 1.6;
-            }
-
-            .checklist-actions {
+            .month-bars, .month-legend, .month-bar-group { display: grid; gap: 8px; }
+            .month-bar { height: 10px; border-radius: 999px; background: #eef2f7; overflow: hidden; }
+            .month-bar > span { display: block; height: 100%; border-radius: inherit; }
+            .month-bar.is-receita > span { background: linear-gradient(90deg, var(--success), #44d7ff); }
+            .month-bar.is-despesa > span { background: linear-gradient(90deg, var(--danger), var(--warning)); }
+            .pagination-wrap nav { display: flex; justify-content: center; }
+            .pagination-wrap svg { width: 18px; height: 18px; }
+            .subnav-link {
                 display: inline-flex;
                 align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-                justify-content: flex-end;
+                justify-content: center;
+                padding: 10px 13px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: #fff;
+                color: var(--muted);
+                font-weight: 800;
+                font-size: 0.9rem;
             }
+            .subnav-link.is-active, .subnav-link:hover { color: var(--primary); background: var(--primary-soft); border-color: #dce7ff; }
 
-            .status-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: rgba(60, 34, 24, 0.16);
-            }
-
-            .status-dot.is-done {
-                background: var(--accent-2);
-                box-shadow: 0 0 0 6px rgba(15, 159, 143, 0.12);
-            }
-
-            .status-dot.is-pending {
-                background: var(--accent);
-                box-shadow: 0 0 0 6px rgba(255, 107, 44, 0.12);
-            }
-
-            .highlight-card {
-                padding: 18px;
+            .mobile-context, .mobile-dock { display: none; }
+            .mobile-context {
+                padding: 16px;
                 border-radius: 20px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(76, 42, 22, 0.08);
+                background: #172033;
+                color: #fff;
+                box-shadow: var(--shadow-soft);
             }
-
-            .highlight-card strong {
-                display: block;
-                font-size: 1.6rem;
-                margin-bottom: 8px;
+            .mobile-context-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+            .mobile-context strong { display: block; margin-bottom: 4px; }
+            .mobile-context small { color: rgba(255, 255, 255, 0.72); line-height: 1.5; }
+            .mobile-dock {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                z-index: 40;
+                grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+                gap: 8px;
+                padding: 8px;
+                border-radius: 22px;
+                background: rgba(255, 255, 255, 0.92);
+                border: 1px solid var(--line);
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(18px);
             }
-
-            .highlight-card span,
-            .highlight-card small {
-                color: var(--muted);
-                line-height: 1.6;
-            }
-
-            .signal-list {
+            .mobile-dock-link {
                 display: grid;
-                gap: 12px;
-            }
-
-            .signal-item {
-                display: grid;
-                gap: 6px;
-                padding: 16px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(76, 42, 22, 0.08);
-            }
-
-            .signal-item strong {
-                display: block;
-                font-size: 1rem;
-            }
-
-            .signal-item small,
-            .signal-item span {
+                gap: 3px;
+                justify-items: center;
+                padding: 9px 6px;
+                border-radius: 16px;
                 color: var(--muted);
-                line-height: 1.6;
+                text-align: center;
+                font-size: 0.72rem;
             }
+            .mobile-dock-link strong { color: inherit; font-size: 0.8rem; }
+            .mobile-dock-link.is-active, .mobile-dock-link:hover { color: var(--primary); background: var(--primary-soft); }
 
             @media (max-width: 1180px) {
-                .admin-shell {
-                    grid-template-columns: 1fr;
-                }
-
-                .sidebar {
-                    position: static;
-                    min-height: auto;
-                    padding-bottom: 20px;
-                }
-
-                .grid-4,
-                .grid-3,
-                .grid-2,
-                .stats-grid,
-                .form-grid,
-                .panel-grid,
-                .highlight-grid,
-                .month-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .table-head,
-                .list-row {
-                    grid-template-columns: 1fr;
-                    padding-left: 0;
-                    padding-right: 0;
-                }
+                .admin-shell { grid-template-columns: 1fr; }
+                .sidebar { display: none; }
+                .main { width: min(100% - 28px, 1180px); padding-bottom: 108px; }
+                .mobile-context, .mobile-dock { display: grid; }
+                .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid { grid-template-columns: 1fr; }
+                .table-head, .list-row { grid-template-columns: 1fr; }
             }
-
-            @media (max-width: 980px) {
-                .sidebar {
-                    display: none;
-                }
-
-                .mobile-context,
-                .mobile-dock {
-                    display: grid;
-                }
-            }
-
             @media (max-width: 720px) {
-                .main {
-                    padding: 18px;
-                    padding-bottom: 110px;
-                }
-
-                .setup-banner,
-                .topbar {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-
-                .topbar-actions,
-                .section-header,
-                .toolbar,
-                .toolbar-actions,
-                .filter-row,
-                .form-actions,
-                .list-actions,
-                .subnav,
-                .checklist-actions {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-
-                .checklist-item {
-                    grid-template-columns: 1fr;
-                }
-
-                .ghost-link,
-                .logout-button,
-                .button,
-                .button-secondary,
-                .button-danger {
-                    width: 100%;
-                }
-
-                .mobile-dock {
-                    left: 10px;
-                    right: 10px;
-                    bottom: 10px;
-                    gap: 8px;
-                    padding: 8px;
-                }
+                .main { width: min(100% - 20px, 1180px); padding-top: 12px; }
+                .topbar { margin: 0 -10px 0; padding: 14px 10px; flex-direction: column; align-items: stretch; }
+                .topbar-actions, .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
+                .topbar-title { align-items: flex-start; }
+                .avatar { display: none; }
+                .checklist-item, .table-row { grid-template-columns: 1fr; }
+                .ghost-link, .logout-button, .button, .button-secondary, .button-danger { width: 100%; }
             }
         </style>
     </head>
     <body>
         <div class="admin-shell">
             <aside class="sidebar">
-                <a class="brand" href="{{ route('admin.dashboard') }}">
-                    <span class="brand-badge">MP</span>
-                    <span>Mania de Preco</span>
-                </a>
-
-                <section class="account-panel">
-                    <span class="menu-title">Conta ativa</span>
-                    <h2 style="margin: 10px 0 0; font-size: 1.5rem;">{{ $conta->nome_fantasia }}</h2>
-                    <p>Area administrativa para operar financeiro, catalogo e estrategia de precos em um unico lugar.</p>
-                    <span class="account-chip">
-                        {{ $assinaturaAtual?->status ?? 'sem assinatura' }}
-                    </span>
-                    @if (! empty($papelAtualConta))
-                        <span class="account-chip" style="margin-left:8px;">
-                            {{ $papelAtualConta }}
-                        </span>
-                    @endif
-                </section>
-
-                <nav class="menu-card">
-                    <span class="menu-title">Navegacao</span>
-                    <div class="menu-links">
-                        <a class="menu-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
-                            <span>Dashboard</span>
-                            <small>visao geral</small>
-                        </a>
-                        <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
-                            <span>Onboarding</span>
-                            <small>implantacao</small>
-                        </a>
-                        @if (in_array('gestao', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.assinatura') ? 'is-active' : '' }}" href="{{ route('admin.assinatura') }}">
-                                <span>Assinatura</span>
-                                <small>plano e cobranca</small>
-                            </a>
-                            <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
-                                <span>Configuracoes</span>
-                                <small>minha empresa</small>
-                            </a>
-                        @endif
-                        @if (in_array('lojas', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
-                                <span>Lojas</span>
-                                <small>operacao</small>
-                            </a>
+                <div class="sidebar-rail">
+                    <a class="brand-mark" href="{{ route('admin.dashboard') }}">MP</a>
+                    <nav class="rail-stack" aria-label="Atalhos do painel">
+                        <a class="rail-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">IN</a>
+                        @if (in_array('financeiro', $capacidadesConta, true))
+                            <a class="rail-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">FI</a>
                         @endif
                         @if (in_array('catalogo', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
-                                <span>Produtos</span>
-                                <small>catalogo</small>
-                            </a>
+                            <a class="rail-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">PR</a>
                         @endif
-                        @if (in_array('precos', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
-                                <span>Precos</span>
-                                <small>comparador</small>
-                            </a>
+                        @if (in_array('lojas', $capacidadesConta, true))
+                            <a class="rail-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">LJ</a>
                         @endif
-                        @if (in_array('financeiro', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
-                                <span>Financeiro</span>
-                                <small>caixa e titulos</small>
-                            </a>
-                        @endif
-                        @if (in_array('equipe', $capacidadesConta, true))
-                            <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
-                                <span>Equipe</span>
-                                <small>acessos e papeis</small>
-                            </a>
-                            <a class="menu-link {{ request()->routeIs('admin.auditoria') ? 'is-active' : '' }}" href="{{ route('admin.auditoria') }}">
-                                <span>Auditoria</span>
-                                <small>historico de acoes</small>
-                            </a>
-                        @endif
-                    </div>
-                </nav>
+                    </nav>
+                </div>
 
-                <section class="support-card">
-                    <strong>Base de teste</strong>
-                    <p>Essa primeira versao do painel ja conversa com a conta real do usuario logado e prepara o terreno para onboarding, catalogo e operacao financeira.</p>
-                </section>
+                <div class="sidebar-panel">
+                    <a class="brand" href="{{ route('admin.dashboard') }}">
+                        <span class="brand-text">
+                            <strong>Mania de Preco</strong>
+                            <span>Painel lojista</span>
+                        </span>
+                    </a>
+
+                    <section class="account-panel">
+                        <span class="menu-title" style="margin:0; color:rgba(255,255,255,.62);">Conta ativa</span>
+                        <h2>{{ $conta->nome_fantasia }}</h2>
+                        <p>Operacao, catalogo, financeiro e precos em uma unica cabine de comando.</p>
+                        <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
+                        @if (! empty($papelAtualConta))
+                            <span class="account-chip">{{ $papelAtualConta }}</span>
+                        @endif
+                    </section>
+
+                    <nav class="menu-card" aria-label="Navegacao administrativa">
+                        <span class="menu-title">Geral</span>
+                        <div class="menu-links">
+                            <a class="menu-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
+                                <span class="menu-icon">IN</span>
+                                <span>Dashboard<small>visao geral</small></span>
+                            </a>
+                            <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
+                                <span class="menu-icon">ON</span>
+                                <span>Onboarding<small>implantacao</small></span>
+                            </a>
+                        </div>
+
+                        <span class="menu-title">Operacao</span>
+                        <div class="menu-links">
+                            @if (in_array('lojas', $capacidadesConta, true))
+                                <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
+                                    <span class="menu-icon">LJ</span>
+                                    <span>Lojas<small>operacao</small></span>
+                                </a>
+                            @endif
+                            @if (in_array('catalogo', $capacidadesConta, true))
+                                <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
+                                    <span class="menu-icon">PR</span>
+                                    <span>Produtos<small>catalogo</small></span>
+                                </a>
+                            @endif
+                            @if (in_array('precos', $capacidadesConta, true))
+                                <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
+                                    <span class="menu-icon">PC</span>
+                                    <span>Precos<small>comparador</small></span>
+                                </a>
+                            @endif
+                            @if (in_array('financeiro', $capacidadesConta, true))
+                                <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
+                                    <span class="menu-icon">FI</span>
+                                    <span>Financeiro<small>caixa e titulos</small></span>
+                                </a>
+                            @endif
+                        </div>
+
+                        @if (in_array('gestao', $capacidadesConta, true) || in_array('equipe', $capacidadesConta, true))
+                            <span class="menu-title">Gestao</span>
+                            <div class="menu-links">
+                                @if (in_array('gestao', $capacidadesConta, true))
+                                    <a class="menu-link {{ request()->routeIs('admin.assinatura') ? 'is-active' : '' }}" href="{{ route('admin.assinatura') }}">
+                                        <span class="menu-icon">AS</span>
+                                        <span>Assinatura<small>plano e cobranca</small></span>
+                                    </a>
+                                    <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
+                                        <span class="menu-icon">CO</span>
+                                        <span>Configuracoes<small>minha empresa</small></span>
+                                    </a>
+                                @endif
+                                @if (in_array('equipe', $capacidadesConta, true))
+                                    <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
+                                        <span class="menu-icon">EQ</span>
+                                        <span>Equipe<small>acessos e papeis</small></span>
+                                    </a>
+                                    <a class="menu-link {{ request()->routeIs('admin.auditoria') ? 'is-active' : '' }}" href="{{ route('admin.auditoria') }}">
+                                        <span class="menu-icon">AU</span>
+                                        <span>Auditoria<small>historico de acoes</small></span>
+                                    </a>
+                                @endif
+                            </div>
+                        @endif
+                    </nav>
+
+                    <section class="support-card">
+                        <strong>Operacao guiada</strong>
+                        <p>Use o menu por contexto: primeiro venda e catalogo, depois financeiro, equipe e ajustes de conta.</p>
+                    </section>
+                </div>
             </aside>
 
-            <main class="main">
-                <section class="mobile-context">
-                    <div class="mobile-context-row">
-                        <div>
-                            <strong>{{ $conta->nome_fantasia }}</strong>
-                            <small>@yield('heading')</small>
+            <div class="page-wrapper">
+                <main class="main">
+                    <section class="mobile-context">
+                        <div class="mobile-context-row">
+                            <div>
+                                <strong>{{ $conta->nome_fantasia }}</strong>
+                                <small>@yield('heading')</small>
+                            </div>
+                            <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
                         </div>
-                        <span class="account-chip">{{ $assinaturaAtual?->status ?? 'sem assinatura' }}</span>
-                    </div>
-                </section>
+                    </section>
 
-                <header class="topbar">
-                    <div>
-                        <h1>@yield('heading')</h1>
-                        <p>@yield('subheading')</p>
-                    </div>
+                    <header class="topbar">
+                        <div class="topbar-title">
+                            <span class="avatar">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                            <div>
+                                <span class="topbar-kicker">Painel lojista</span>
+                                <h1>@yield('heading')</h1>
+                                <p>@yield('subheading')</p>
+                            </div>
+                        </div>
 
-                    <div class="topbar-actions">
-                        <a class="ghost-link" href="{{ url('/') }}">Ver home publica</a>
-                        <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
+                        <div class="topbar-actions">
+                            <a class="ghost-link" href="{{ url('/') }}">Home publica</a>
+                            <a class="ghost-link" href="{{ route('admin.perfil.edit') }}">Meu perfil</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="logout-button" type="submit">Sair</button>
+                            </form>
+                        </div>
+                    </header>
 
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="logout-button" type="submit">Sair</button>
-                        </form>
-                    </div>
-                </header>
+                    <section class="content">
+                        @if (session('status'))
+                            <div class="flash-box">{{ session('status') }}</div>
+                        @endif
 
-                <section class="content">
-                    @if (session('status'))
-                        <div class="flash-box">{{ session('status') }}</div>
-                    @endif
-
-                    @yield('content')
-                </section>
-            </main>
+                        @yield('content')
+                    </section>
+                </main>
+            </div>
         </div>
 
         <nav class="mobile-dock" aria-label="Navegacao principal do admin">
