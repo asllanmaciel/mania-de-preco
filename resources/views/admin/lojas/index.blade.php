@@ -50,6 +50,34 @@
 
     <section class="card">
         <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <span class="pill">Prontidao comercial</span>
+                    <h2>Lojas preparadas para aparecer melhor</h2>
+                    <p>Antes de vender mais, cada loja precisa ter contato, preco e prova publica minimamente consistentes.</p>
+                </div>
+                <a class="button-secondary" href="{{ route('admin.precos.index') }}">Conectar precos</a>
+            </div>
+
+            <div class="highlight-grid">
+                <article class="highlight-card">
+                    <strong>{{ number_format($lojasResumo['sem_preco'], 0, ',', '.') }}</strong>
+                    <span>lojas sem precos cadastrados. Elas existem, mas ainda nao alimentam o comparador.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($lojasResumo['sem_contato'], 0, ',', '.') }}</strong>
+                    <span>lojas sem e-mail, telefone ou WhatsApp. Complete contatos para passar mais confianca.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($lojasResumo['com_avaliacoes'], 0, ',', '.') }}</strong>
+                    <span>lojas com avaliacoes publicas, um sinal importante para conversao.</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
             @if ($lojas->isEmpty())
                 <div class="empty-state">
                     Nenhuma loja foi cadastrada ainda. Esse e o primeiro passo operacional do SaaS porque organiza a conta e abre caminho para tabela de precos, catalogo e comparacao publica.

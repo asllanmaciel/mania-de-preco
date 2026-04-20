@@ -36,11 +36,27 @@ class PrecoController extends AdminController
             ->paginate(10)
             ->withQueryString();
 
+        $precosBase = Preco::query()->whereIn('loja_id', $lojasDaConta->pluck('id'));
+        $precosSemUrl = (clone $precosBase)
+            ->where(fn ($query) => $query->whereNull('url_produto')->orWhere('url_produto', ''))
+            ->count();
+        $precosResumo = [
+            'menor' => (float) (clone $precosBase)->min('preco'),
+            'maior' => (float) (clone $precosBase)->max('preco'),
+            'media' => round((float) (clone $precosBase)->avg('preco'), 2),
+            'sem_url' => $precosSemUrl,
+            'produtos_sem_preco' => Produto::query()
+                ->where('status', 'ativo')
+                ->whereDoesntHave('precos', fn ($query) => $query->whereIn('loja_id', $lojasDaConta->pluck('id')))
+                ->count(),
+        ];
+
         return $this->responder($request, 'admin.precos.index', [
             'lojaIdSelecionada' => $lojaId,
             'lojasDaConta' => $lojasDaConta,
             'precos' => $precos,
             'usoPlano' => $this->usageMeter->resumo($conta),
+            'precosResumo' => $precosResumo,
         ], $conta);
     }
 

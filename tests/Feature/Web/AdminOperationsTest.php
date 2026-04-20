@@ -94,6 +94,7 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.lojas.index'))
             ->assertOk()
             ->assertSee('Operacao por loja')
+            ->assertSee('Prontidao comercial')
             ->assertSee('Loja Centro');
     }
 
@@ -516,12 +517,14 @@ class AdminOperationsTest extends TestCase
         $this->actingAs($catalogo)
             ->get(route('admin.produtos.index'))
             ->assertOk()
-            ->assertSee('Catalogo de produtos');
+            ->assertSee('Catalogo de produtos')
+            ->assertSee('Prontidao da vitrine');
 
         $this->actingAs($catalogo)
             ->get(route('admin.precos.index'))
             ->assertOk()
-            ->assertSee('Tabela de precos');
+            ->assertSee('Tabela de precos')
+            ->assertSee('Qualidade do comparador');
 
         $this->actingAs($catalogo)
             ->get(route('admin.financeiro.index'))

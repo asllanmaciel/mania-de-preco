@@ -38,10 +38,22 @@ class LojaController extends AdminController
             ->paginate(10)
             ->withQueryString();
 
+        $lojasResumo = [
+            'sem_preco' => $conta->lojas()->doesntHave('precos')->count(),
+            'sem_contato' => $conta->lojas()
+                ->where(fn ($query) => $query
+                    ->whereNull('email')
+                    ->whereNull('whatsapp')
+                    ->whereNull('telefone'))
+                ->count(),
+            'com_avaliacoes' => $conta->lojas()->has('avaliacoes')->count(),
+        ];
+
         return $this->responder($request, 'admin.lojas.index', [
             'busca' => $busca,
             'lojas' => $lojas,
             'usoPlano' => $this->usageMeter->resumo($conta),
+            'lojasResumo' => $lojasResumo,
         ], $conta);
     }
 

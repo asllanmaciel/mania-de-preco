@@ -57,6 +57,38 @@
 
     <section class="card">
         <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <span class="pill">Qualidade do comparador</span>
+                    <h2>Precos que sustentam a decisao do cliente</h2>
+                    <p>Uma leitura rapida para saber se a vitrine tem amplitude, destino de clique e cobertura suficiente.</p>
+                </div>
+                <a class="button-secondary" href="{{ route('admin.produtos.index') }}">Ver produtos sem preco</a>
+            </div>
+
+            <div class="highlight-grid">
+                <article class="highlight-card">
+                    <strong>R$ {{ number_format($precosResumo['menor'], 2, ',', '.') }}</strong>
+                    <span>menor preco ativo nas lojas da conta.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>R$ {{ number_format($precosResumo['media'], 2, ',', '.') }}</strong>
+                    <span>preco medio atual para orientar ajuste e campanha.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($precosResumo['sem_url'], 0, ',', '.') }}</strong>
+                    <span>precos sem URL de destino. Adicione links para reduzir atrito no clique.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($precosResumo['produtos_sem_preco'], 0, ',', '.') }}</strong>
+                    <span>produtos ativos ainda sem preco nesta conta.</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
             @if ($precos->isEmpty())
                 <div class="empty-state">
                     Ainda nao existem precos cadastrados para as lojas da conta. Assim que voce relacionar um produto a uma loja, essa area passa a sustentar o comparador publico.

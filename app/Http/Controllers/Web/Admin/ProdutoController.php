@@ -43,10 +43,23 @@ class ProdutoController extends AdminController
             ->paginate(10)
             ->withQueryString();
 
+        $produtosAtivosTotal = Produto::query()->where('status', 'ativo')->count();
+        $produtosSemPreco = Produto::query()
+            ->where('status', 'ativo')
+            ->doesntHave('precos')
+            ->count();
+        $produtosSemImagem = Produto::query()
+            ->where('status', 'ativo')
+            ->where(fn ($query) => $query->whereNull('imagem_principal')->orWhere('imagem_principal', ''))
+            ->count();
+
         return $this->responder($request, 'admin.produtos.index', [
             'busca' => $busca,
             'statusSelecionado' => $status,
             'produtos' => $produtos,
+            'produtosAtivosTotal' => $produtosAtivosTotal,
+            'produtosSemPreco' => $produtosSemPreco,
+            'produtosSemImagem' => $produtosSemImagem,
         ], $conta);
     }
 

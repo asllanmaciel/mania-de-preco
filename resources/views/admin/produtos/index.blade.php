@@ -53,6 +53,34 @@
 
     <section class="card">
         <div class="card-body stack">
+            <div class="section-header">
+                <div>
+                    <span class="pill">Prontidao da vitrine</span>
+                    <h2>O que falta para o catalogo vender melhor</h2>
+                    <p>Corrija lacunas que reduzem confianca na busca publica e deixam o comparador menos convincente.</p>
+                </div>
+                <a class="button-secondary" href="{{ route('admin.precos.index') }}">Revisar precos</a>
+            </div>
+
+            <div class="highlight-grid">
+                <article class="highlight-card">
+                    <strong>{{ number_format($produtosAtivosTotal, 0, ',', '.') }}</strong>
+                    <span>produtos ativos prontos para aparecer nas vitrines e comparativos.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($produtosSemPreco, 0, ',', '.') }}</strong>
+                    <span>produtos ativos sem preco. Eles existem no catalogo, mas ainda nao disputam no comparador.</span>
+                </article>
+                <article class="highlight-card">
+                    <strong>{{ number_format($produtosSemImagem, 0, ',', '.') }}</strong>
+                    <span>produtos sem imagem principal. Priorize fotos para aumentar leitura e confianca.</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
             @if ($produtos->isEmpty())
                 <div class="empty-state">
                     Ainda nao existem produtos no catalogo. Cadastre o primeiro item para começar a ligar lojas e precos dentro do SaaS.
