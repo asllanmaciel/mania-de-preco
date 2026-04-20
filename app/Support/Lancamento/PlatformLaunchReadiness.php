@@ -159,6 +159,13 @@ class PlatformLaunchReadiness
                     'rota' => route('super-admin.planos.index'),
                 ],
                 [
+                    'titulo' => 'Provedor de cobrança definido',
+                    'descricao' => 'Asaas será o provedor principal do MVP; Mercado Pago fica planejado como alternativa futura.',
+                    'concluida' => config('billing.default_provider') === 'asaas',
+                    'critica' => true,
+                    'acao' => 'Definir BILLING_PROVIDER=asaas',
+                ],
+                [
                     'titulo' => 'Integração Asaas com chave',
                     'descricao' => 'A chave de API habilita criação e sincronização de clientes e assinaturas.',
                     'concluida' => filled(config('billing.providers.asaas.api_key')),

@@ -9,6 +9,7 @@ use App\Models\Plano;
 use App\Services\Auditoria\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ContaAssinaturaController extends Controller
@@ -118,7 +119,7 @@ class ContaAssinaturaController extends Controller
             'expira_em' => ['nullable', 'date'],
             'cancelada_em' => ['nullable', 'date'],
             'observacoes' => ['nullable', 'string'],
-            'billing_provider' => ['nullable', 'string', 'max:50'],
+            'billing_provider' => ['nullable', Rule::in(['asaas'])],
         ]);
     }
 

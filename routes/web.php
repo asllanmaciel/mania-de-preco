@@ -41,6 +41,7 @@ use App\Http\Controllers\Web\SuperAdmin\ChamadoSuporteController as SuperAdminCh
 use App\Http\Controllers\Web\SuperAdmin\ContaController as SuperAdminContaController;
 use App\Http\Controllers\Web\SuperAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\Web\SuperAdmin\PlanoController as SuperAdminPlanoController;
+use App\Http\Controllers\Web\SuperAdmin\RoadmapController as SuperAdminRoadmapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
@@ -76,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('super-admin')->name('super-admin.')->middleware('panel:super-admin')->group(function () {
         Route::get('/', SuperAdminDashboardController::class)->name('dashboard');
         Route::get('analytics', SuperAdminAnalyticsController::class)->name('analytics');
+        Route::get('roadmap', SuperAdminRoadmapController::class)->name('roadmap');
         Route::resource('contas', SuperAdminContaController::class)->only(['index', 'show']);
         Route::resource('planos', SuperAdminPlanoController::class)->except(['show', 'destroy']);
         Route::get('suporte', [SuperAdminChamadoSuporteController::class, 'index'])->name('suporte.index');

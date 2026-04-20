@@ -158,6 +158,7 @@ class AdminAccessTest extends TestCase
             ->assertSee('Experiência pública')
             ->assertSee('Operação e suporte')
             ->assertSee('Limites de abuso em rotas sensíveis')
+            ->assertSee('Provedor de cobrança definido')
             ->assertSee('Analytics de produto ativo')
             ->assertSee('Sinais de produto')
             ->assertSee('contas monitoradas');
@@ -290,6 +291,27 @@ class AdminAccessTest extends TestCase
             ->assertSee('Cafe Analytics 500g')
             ->assertSee('Loja Analytics')
             ->assertSee('sinais mobile');
+    }
+
+    public function test_super_admin_can_open_launch_roadmap_panel(): void
+    {
+        $user = User::create([
+            'name' => 'Super Admin Roadmap',
+            'email' => 'admin-roadmap@example.com',
+            'password' => 'password',
+            'is_super_admin' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('super-admin.roadmap'))
+            ->assertOk()
+            ->assertSee('Roadmap vivo')
+            ->assertSee('Checklist operacional')
+            ->assertSee('MVP web')
+            ->assertSee('Cobran')
+            ->assertSee('App mobile cliente')
+            ->assertSee('Mercado Pago')
+            ->assertSee('Próximas ações');
     }
 
     public function test_super_admin_can_open_accounts_index_and_account_detail(): void

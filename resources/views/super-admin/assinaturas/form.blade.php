@@ -72,7 +72,13 @@
                     </label>
                     <label style="display:grid; gap:8px;">
                         <span>Provedor de cobranca</span>
-                        <input type="text" name="billing_provider" value="{{ old('billing_provider', $assinatura->billing_provider) }}" placeholder="asaas" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">
+                        <select name="billing_provider" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">
+                            <option value="">Definir depois</option>
+                            <option value="asaas" @selected(old('billing_provider', $assinatura->billing_provider ?: config('billing.default_provider')) === 'asaas')>
+                                Asaas | recomendado para o MVP
+                            </option>
+                        </select>
+                        <small style="color:var(--muted); line-height:1.6;">Mercado Pago está no roadmap como alternativa futura, mas o fluxo operacional do lançamento será validado primeiro com Asaas.</small>
                     </label>
                 </div>
 

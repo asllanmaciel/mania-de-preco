@@ -750,10 +750,11 @@
                             'titulo' => 'Governanca',
                             'descricao' => 'Visao executiva da plataforma.',
                             'icone' => 'shield',
-                            'active' => request()->routeIs('super-admin.dashboard') || request()->routeIs('super-admin.analytics'),
+                            'active' => request()->routeIs('super-admin.dashboard') || request()->routeIs('super-admin.analytics') || request()->routeIs('super-admin.roadmap'),
                             'items' => collect([
                                 ['titulo' => 'Visao geral', 'descricao' => 'saude global', 'rota' => route('super-admin.dashboard'), 'icone' => 'home', 'active' => request()->routeIs('super-admin.dashboard')],
                                 ['titulo' => 'Analytics', 'descricao' => 'sinais e funil', 'rota' => route('super-admin.analytics'), 'icone' => 'chart', 'active' => request()->routeIs('super-admin.analytics')],
+                                ['titulo' => 'Roadmap', 'descricao' => 'plano de lancamento', 'rota' => route('super-admin.roadmap'), 'icone' => 'compass', 'active' => request()->routeIs('super-admin.roadmap')],
                             ]),
                         ],
                         [

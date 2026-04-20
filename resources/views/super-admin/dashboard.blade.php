@@ -7,6 +7,7 @@
 @section('nav')
     <a class="chip" href="{{ route('super-admin.dashboard') }}">Visao geral</a>
     <a class="chip" href="{{ route('super-admin.analytics') }}">Analytics</a>
+    <a class="chip" href="{{ route('super-admin.roadmap') }}">Roadmap</a>
     <a class="chip" href="{{ route('super-admin.contas.index') }}">Contas</a>
     <a class="chip" href="{{ route('super-admin.planos.index') }}">Planos</a>
     <a class="chip" href="{{ route('super-admin.suporte.index') }}">Suporte</a>
@@ -24,6 +25,7 @@
             <a class="button" href="{{ route('super-admin.contas.index') }}">Abrir gestao de contas</a>
             <a class="button-secondary" href="{{ route('super-admin.planos.index') }}">Abrir catalogo de planos</a>
             <a class="button-secondary" href="{{ route('super-admin.analytics') }}">Ver analytics</a>
+            <a class="button-secondary" href="{{ route('super-admin.roadmap') }}">Ver roadmap de lançamento</a>
             <a class="button-secondary" href="{{ route('super-admin.suporte.index') }}">Ver chamados</a>
             <a class="button-secondary" href="{{ route('cliente.dashboard') }}">Ver area do cliente</a>
         </div>
