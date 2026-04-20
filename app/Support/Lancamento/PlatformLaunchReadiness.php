@@ -3,6 +3,7 @@
 namespace App\Support\Lancamento;
 
 use App\Models\Assinatura;
+use App\Models\AnalyticsEvent;
 use App\Models\ChamadoSuporte;
 use App\Models\Conta;
 use App\Models\Loja;
@@ -28,6 +29,7 @@ class PlatformLaunchReadiness
             'precos' => Preco::count(),
             'usuarios' => User::count(),
             'usuarios_com_consentimento' => User::whereNotNull('termos_aceitos_em')->count(),
+            'eventos_analytics' => AnalyticsEvent::count(),
             'super_admins' => User::where('is_super_admin', true)->count(),
             'planos_ativos' => Plano::where('status', 'ativo')->count(),
             'assinaturas_operacionais' => Assinatura::whereIn('status', ['trial', 'ativa'])->count(),
@@ -240,6 +242,14 @@ class PlatformLaunchReadiness
                     'critica' => true,
                     'acao' => 'Validar consentimento LGPD',
                     'rota' => route('termos'),
+                ],
+                [
+                    'titulo' => 'Analytics de produto ativo',
+                    'descricao' => 'Busca, visualizacao, cadastro e suporte devem gerar sinais internos para orientar lancamento.',
+                    'concluida' => Schema::hasTable('analytics_events'),
+                    'critica' => false,
+                    'acao' => 'Monitorar sinais',
+                    'rota' => route('super-admin.dashboard'),
                 ],
             ],
         ];

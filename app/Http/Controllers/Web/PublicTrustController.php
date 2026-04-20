@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\ChamadoSuporte;
 use App\Notifications\ChamadoSuporteAbertoNotification;
+use App\Support\Analytics\ProductAnalytics;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -34,7 +35,7 @@ class PublicTrustController extends Controller
         ]);
     }
 
-    public function abrirChamado(Request $request): RedirectResponse
+    public function abrirChamado(Request $request, ProductAnalytics $analytics): RedirectResponse
     {
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:255'],
@@ -67,6 +68,13 @@ class PublicTrustController extends Controller
 
         Notification::route('mail', $chamado->email)
             ->notify(new ChamadoSuporteAbertoNotification($chamado));
+
+        $analytics->track($request, 'support.ticket_created', 'public', [
+            'categoria' => $chamado->categoria,
+            'prioridade' => $chamado->prioridade,
+            'empresa' => $chamado->empresa,
+            'tem_conta' => $conta !== null,
+        ], $chamado, $conta);
 
         return redirect()
             ->route('suporte')

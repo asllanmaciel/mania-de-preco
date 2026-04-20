@@ -359,11 +359,15 @@
             .icon-button, .profile-trigger {
                 min-height:44px;
                 border-radius:14px;
-                border:1px solid var(--line);
-                background:#fff;
+                border:1px solid transparent;
+                background:transparent;
                 color:var(--text);
                 cursor:pointer;
                 transition:.18s ease;
+            }
+            .icon-button:hover, .profile-trigger:hover, .topbar-menu[open] > summary {
+                background:rgba(244,90,36,.08);
+                color:var(--primary);
             }
             .icon-button {
                 position:relative;
@@ -387,8 +391,8 @@
             .topbar-menu[open] .dropdown-caret { transform:rotate(180deg); }
             .notification-dot {
                 position:absolute;
-                top:8px;
-                right:8px;
+                top:3px;
+                right:3px;
                 display:grid;
                 place-items:center;
                 min-width:17px;

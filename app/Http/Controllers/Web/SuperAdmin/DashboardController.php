@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\AlertaPreco;
 use App\Models\Assinatura;
+use App\Models\AnalyticsEvent;
 use App\Models\ChamadoSuporte;
 use App\Models\Conta;
 use App\Models\HistoricoPreco;
@@ -33,6 +34,8 @@ class DashboardController extends Controller
                 'planos_ativos' => Plano::where('status', 'ativo')->count(),
                 'assinaturas_ativas' => Assinatura::whereIn('status', ['trial', 'ativa', 'inadimplente'])->count(),
                 'chamados_abertos' => ChamadoSuporte::whereNotIn('status', ['resolvido', 'fechado'])->count(),
+                'eventos_24h' => AnalyticsEvent::where('ocorreu_em', '>=', now()->subDay())->count(),
+                'eventos_publicos_7d' => AnalyticsEvent::where('area', 'public')->where('ocorreu_em', '>=', now()->subDays(7))->count(),
                 'mrr' => (float) Assinatura::query()
                     ->whereIn('status', ['ativa', 'inadimplente'])
                     ->get()
@@ -47,6 +50,18 @@ class DashboardController extends Controller
             'assinaturasRecentes' => Assinatura::query()
                 ->with(['conta', 'plano'])
                 ->latest('id')
+                ->take(6)
+                ->get(),
+            'eventosRecentes' => AnalyticsEvent::query()
+                ->with(['usuario', 'conta'])
+                ->latest('ocorreu_em')
+                ->take(8)
+                ->get(),
+            'eventosPorTipo' => AnalyticsEvent::query()
+                ->selectRaw('evento, count(*) as total')
+                ->where('ocorreu_em', '>=', now()->subDays(7))
+                ->groupBy('evento')
+                ->orderByDesc('total')
                 ->take(6)
                 ->get(),
         ]);

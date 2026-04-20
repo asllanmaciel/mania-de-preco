@@ -154,6 +154,8 @@ class AdminAccessTest extends TestCase
             ->assertSee('Experiência pública')
             ->assertSee('Operação e suporte')
             ->assertSee('Limites de abuso em rotas sensíveis')
+            ->assertSee('Analytics de produto ativo')
+            ->assertSee('Sinais de produto')
             ->assertSee('contas monitoradas');
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Analytics\ProductAnalytics;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ProductAnalytics $analytics): RedirectResponse
     {
         $dados = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -40,6 +41,10 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $request->session()->regenerate();
+
+        $analytics->track($request, 'auth.customer_registered', 'auth', [
+            'origem' => 'cadastro_publico',
+        ], $user);
 
         return redirect()
             ->intended(route('cliente.dashboard'))

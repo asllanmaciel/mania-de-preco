@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\AlertaPreco;
 use App\Models\HistoricoPreco;
 use App\Models\Produto;
+use App\Support\Analytics\ProductAnalytics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class PublicProductController extends Controller
 {
-    public function __invoke(Request $request, Produto $produto): View
+    public function __invoke(Request $request, Produto $produto, ProductAnalytics $analytics): View
     {
         abort_unless($produto->status === 'ativo', 404);
 
@@ -67,6 +68,16 @@ class PublicProductController extends Controller
             ->withMin('precos as menor_preco', 'preco')
             ->take(4)
             ->get();
+
+        $analytics->track($request, 'public.product.viewed', 'public', [
+            'produto' => $produto->nome,
+            'categoria' => $produto->categoria?->nome,
+            'marca' => $produto->marca?->nome,
+            'ofertas' => $ofertas->count(),
+            'menor_preco' => $menorPreco,
+            'maior_preco' => $maiorPreco,
+            'economia' => $economia,
+        ], $produto);
 
         return view('produtos.show', [
             'produto' => $produto,

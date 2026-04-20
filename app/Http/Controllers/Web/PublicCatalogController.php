@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Loja;
 use App\Models\Preco;
 use App\Models\Produto;
+use App\Support\Analytics\ProductAnalytics;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Illuminate\View\View;
 
 class PublicCatalogController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, ProductAnalytics $analytics): View
     {
         $filtros = $this->normalizarFiltros($request);
         $produtos = $this->ordenarProdutos($this->produtosBase($filtros), $filtros['ordenar'])
@@ -48,6 +49,19 @@ class PublicCatalogController extends Controller
             ->orderBy('tipo_preco')
             ->pluck('tipo_preco');
 
+        if ($this->temFiltroAtivo($filtros)) {
+            $analytics->track($request, 'public.catalog.filtered', 'public', [
+                'busca' => $filtros['busca'],
+                'categoria' => $filtros['categoriaSlug'],
+                'cidade' => $filtros['cidade'],
+                'tipo_preco' => $filtros['tipoPreco'],
+                'preco_ate' => $filtros['precoAte'],
+                'ordenar' => $filtros['ordenar'],
+                'total_resultados' => $snapshot['total_resultados'],
+                'total_ofertas' => $snapshot['total_ofertas'],
+            ]);
+        }
+
         return view('welcome', [
             'busca' => $filtros['busca'],
             'categoriaSlug' => $filtros['categoriaSlug'],
@@ -69,6 +83,16 @@ class PublicCatalogController extends Controller
             'pulse' => $snapshot['pulse'],
             'radarMercado' => $snapshot['radar_mercado'],
         ]);
+    }
+
+    private function temFiltroAtivo(array $filtros): bool
+    {
+        return $filtros['busca'] !== ''
+            || $filtros['categoriaSlug'] !== ''
+            || $filtros['cidade'] !== ''
+            || $filtros['tipoPreco'] !== ''
+            || $filtros['precoAte'] !== null
+            || $filtros['ordenar'] !== 'menor_preco';
     }
 
     public function radar(Request $request): JsonResponse

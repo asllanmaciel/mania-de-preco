@@ -122,7 +122,71 @@
         <article class="metric"><strong>{{ number_format($metricas['planos_ativos'], 0, ',', '.') }}</strong><span>planos ativos no portfolio</span></article>
         <article class="metric"><strong>{{ number_format($metricas['assinaturas_ativas'], 0, ',', '.') }}</strong><span>assinaturas em operacao</span></article>
         <article class="metric"><strong>{{ number_format($metricas['chamados_abertos'], 0, ',', '.') }}</strong><span>chamados aguardando suporte</span></article>
+        <article class="metric"><strong>{{ number_format($metricas['eventos_24h'], 0, ',', '.') }}</strong><span>eventos de produto nas ultimas 24h</span></article>
+        <article class="metric"><strong>{{ number_format($metricas['eventos_publicos_7d'], 0, ',', '.') }}</strong><span>sinais publicos nos ultimos 7 dias</span></article>
         <article class="metric"><strong>R$ {{ number_format($metricas['mrr'], 2, ',', '.') }}</strong><span>receita mensal recorrente estimada</span></article>
+    </section>
+
+    <section class="grid-2">
+        <article class="card">
+            <div class="card-body">
+                <div class="section-head">
+                    <div>
+                        <h2 style="margin:0;">Sinais de produto</h2>
+                        <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Eventos reais capturados para entender busca, interesse, cadastro e suporte antes de ampliar investimento em trafego.</p>
+                    </div>
+                </div>
+
+                <div class="list">
+                    @forelse ($eventosPorTipo as $evento)
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ $evento->evento }}</strong>
+                                <small>volume nos ultimos 7 dias</small>
+                            </div>
+                            <span class="badge">{{ number_format($evento->total, 0, ',', '.') }}</span>
+                        </div>
+                    @empty
+                        <div class="list-row">
+                            <strong>Nenhum evento capturado ainda</strong>
+                            <small>Os sinais aparecem aqui conforme usuarios navegam pela vitrine publica e pelo cadastro.</small>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </article>
+
+        <article class="card">
+            <div class="card-body">
+                <div class="section-head">
+                    <div>
+                        <h2 style="margin:0;">Linha do tempo recente</h2>
+                        <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Ultimas interacoes relevantes registradas pela plataforma.</p>
+                    </div>
+                </div>
+
+                <div class="list">
+                    @forelse ($eventosRecentes as $evento)
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ $evento->evento }}</strong>
+                                <small>
+                                    {{ $evento->area }} |
+                                    {{ $evento->usuario?->email ?? 'visitante' }} |
+                                    {{ $evento->ocorreu_em?->format('d/m H:i') }}
+                                </small>
+                            </div>
+                            <span class="badge is-muted">{{ $evento->conta?->nome_fantasia ?? 'publico' }}</span>
+                        </div>
+                    @empty
+                        <div class="list-row">
+                            <strong>Sem eventos recentes</strong>
+                            <small>Quando a vitrine receber uso real, a linha do tempo passa a mostrar os sinais mais novos.</small>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </article>
     </section>
 
     <section class="grid-2">

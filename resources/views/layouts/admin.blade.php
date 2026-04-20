@@ -418,12 +418,15 @@
             .icon-button, .profile-trigger {
                 min-height: 44px;
                 border-radius: 14px;
-                border: 1px solid var(--line);
-                background: #fff;
+                border: 1px solid transparent;
+                background: transparent;
                 color: var(--text);
                 cursor: pointer;
-                box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
                 transition: 0.18s ease;
+            }
+            .icon-button:hover, .profile-trigger:hover, .topbar-menu[open] > summary {
+                background: rgba(244, 90, 36, 0.08);
+                color: var(--primary);
             }
             .icon-button {
                 position: relative;
@@ -450,8 +453,8 @@
             }
             .notification-dot {
                 position: absolute;
-                top: 8px;
-                right: 8px;
+                top: 3px;
+                right: 3px;
                 display: grid;
                 place-items: center;
                 min-width: 17px;
@@ -778,6 +781,15 @@
                 margin-bottom: 6px;
             }
             .highlight-card strong, .stat-card-soft strong { font-size: 1.45rem; letter-spacing: -0.04em; }
+            .card-title-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+            .card-title-row strong {
+                margin-bottom: 2px;
+            }
 
             .pill, .badge {
                 padding: 8px 11px;
@@ -999,6 +1011,66 @@
             }
             .legend-dot.is-danger::before { background: var(--danger); }
             .legend-dot.is-warning::before { background: var(--warning); }
+            .apex-chart-shell {
+                position: relative;
+                overflow: hidden;
+                border-radius: 22px;
+                border: 1px solid var(--line);
+                background:
+                    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 240, 0.72)),
+                    radial-gradient(circle at 12% 8%, rgba(244, 90, 36, 0.10), transparent 28%),
+                    #fff;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+            }
+            .apex-chart {
+                display: block;
+                width: 100%;
+                height: auto;
+                min-height: 280px;
+            }
+            .apex-grid-line { stroke: rgba(104, 115, 133, 0.15); stroke-width: 1; }
+            .apex-zero-line { stroke: rgba(25, 32, 46, 0.28); stroke-dasharray: 5 7; stroke-width: 1.2; }
+            .apex-area { fill: url(#cashAreaGradient); opacity: 0.92; }
+            .apex-line {
+                fill: none;
+                stroke: var(--primary);
+                stroke-width: 4;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                filter: drop-shadow(0 8px 12px rgba(244, 90, 36, 0.18));
+            }
+            .apex-point {
+                fill: #fff;
+                stroke: var(--primary);
+                stroke-width: 3;
+            }
+            .apex-bar-receita { fill: rgba(11, 143, 128, 0.72); }
+            .apex-bar-despesa { fill: rgba(239, 91, 53, 0.72); }
+            .apex-axis-label {
+                fill: var(--muted);
+                font: 800 11px var(--font-sans);
+                letter-spacing: 0.02em;
+            }
+            .apex-value-pill {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
+                padding: 0 14px 14px;
+            }
+            .apex-value-pill span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 38px;
+                padding: 9px 10px;
+                border-radius: 13px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid var(--line);
+                color: var(--muted);
+                font-size: 0.78rem;
+                font-weight: 800;
+                text-align: center;
+            }
             .pagination-wrap nav { display: flex; justify-content: center; }
             .pagination-wrap svg { width: 18px; height: 18px; }
             .subnav-link {
@@ -1072,6 +1144,7 @@
                 .section-header, .toolbar, .toolbar-actions, .filter-row, .form-actions, .list-actions, .subnav, .checklist-actions, .setup-banner { flex-direction: column; align-items: stretch; }
                 .page-heading { align-items: flex-start; flex-direction: column; padding-top: 18px; }
                 .page-heading-actions { justify-content: flex-start; }
+                .apex-value-pill { grid-template-columns: 1fr; }
                 .avatar { display: none; }
                 .profile-trigger .avatar { display: inline-grid; }
                 .profile-trigger > span:last-child { display: none; }

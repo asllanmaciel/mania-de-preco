@@ -65,6 +65,11 @@ class PublicCatalogTest extends TestCase
             ->assertOk()
             ->assertSee('Mania Online')
             ->assertDontSee('Loja Centro');
+
+        $this->assertDatabaseHas('analytics_events', [
+            'evento' => 'public.catalog.filtered',
+            'area' => 'public',
+        ]);
     }
 
     public function test_public_catalog_can_filter_by_payment_type(): void
@@ -109,6 +114,12 @@ class PublicCatalogTest extends TestCase
             ->assertSee('O que esperar desta loja')
             ->assertSee('Loja Centro')
             ->assertSee('Excelente atendimento.');
+
+        $this->assertDatabaseHas('analytics_events', [
+            'evento' => 'public.store.viewed',
+            'sujeito_type' => $lojaCentro->getMorphClass(),
+            'sujeito_id' => $lojaCentro->id,
+        ]);
     }
 
     public function test_public_store_page_handles_empty_catalog_with_recommendations(): void
@@ -142,6 +153,12 @@ class PublicCatalogTest extends TestCase
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Onde comprar agora')
             ->assertSee('/images/demo/produtos/shared/contexto-prateleira.svg');
+
+        $this->assertDatabaseHas('analytics_events', [
+            'evento' => 'public.product.viewed',
+            'sujeito_type' => $produto->getMorphClass(),
+            'sujeito_id' => $produto->id,
+        ]);
     }
 
     public function test_public_project_page_renders_live_product_overview(): void
@@ -253,6 +270,11 @@ class PublicCatalogTest extends TestCase
         $this->assertNotNull($chamado->termos_aceitos_em);
         $this->assertSame(config('legal.termos_versao'), $chamado->termos_versao);
         $this->assertSame(config('legal.privacidade_versao'), $chamado->privacidade_versao);
+        $this->assertDatabaseHas('analytics_events', [
+            'evento' => 'support.ticket_created',
+            'sujeito_type' => $chamado->getMorphClass(),
+            'sujeito_id' => $chamado->id,
+        ]);
 
         Notification::assertSentOnDemand(ChamadoSuporteAbertoNotification::class, function ($notification, array $channels, AnonymousNotifiable $notifiable) use ($chamado) {
             return $channels === ['mail']

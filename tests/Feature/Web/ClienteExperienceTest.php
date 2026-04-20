@@ -42,6 +42,12 @@ class ClienteExperienceTest extends TestCase
         $this->assertNotNull($user->termos_aceitos_em);
         $this->assertSame(config('legal.termos_versao'), $user->termos_versao);
         $this->assertSame(config('legal.privacidade_versao'), $user->privacidade_versao);
+        $this->assertDatabaseHas('analytics_events', [
+            'evento' => 'auth.customer_registered',
+            'area' => 'auth',
+            'sujeito_type' => $user->getMorphClass(),
+            'sujeito_id' => $user->id,
+        ]);
 
         $this->get(route('cliente.dashboard'))
             ->assertOk()

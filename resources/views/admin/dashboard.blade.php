@@ -86,9 +86,24 @@
 
             <div class="highlight-grid">
                 @foreach ($planoDoDia as $acao)
+                    @php
+                        $iconeAcao = [
+                            'lancamento' => 'spark',
+                            'caixa' => 'wallet',
+                            'vitrine' => 'store',
+                            'recebimento' => 'credit-card',
+                            'saude' => 'shield',
+                            'crescimento' => 'trend',
+                        ][$acao['impacto']] ?? 'spark';
+                    @endphp
                     <article class="highlight-card">
-                        <span class="pill">{{ $acao['impacto'] }}</span>
-                        <strong>{{ $acao['titulo'] }}</strong>
+                        <div class="card-title-row">
+                            <span class="visual-icon"><x-ui.icon :name="$iconeAcao" /></span>
+                            <span>
+                                <span class="pill">{{ $acao['impacto'] }}</span>
+                                <strong>{{ $acao['titulo'] }}</strong>
+                            </span>
+                        </div>
                         <span>{{ $acao['descricao'] }}</span>
                         <a class="ghost-link" href="{{ $acao['rota'] }}">{{ $acao['acao'] }}</a>
                     </article>
@@ -109,17 +124,26 @@
 
             <div class="highlight-grid">
                 <article class="highlight-card">
-                    <strong>{{ $saudeConta['score'] }}/100</strong>
+                    <div class="card-title-row">
+                        <span class="visual-icon is-teal"><x-ui.icon name="shield" /></span>
+                        <strong>{{ $saudeConta['score'] }}/100</strong>
+                    </div>
                     <span>{{ $saudeConta['nivel']['descricao'] }}</span>
                 </article>
 
                 <article class="highlight-card">
-                    <strong>{{ $saudeConta['proxima_acao']['titulo'] ?? 'Conta em ritmo bom' }}</strong>
+                    <div class="card-title-row">
+                        <span class="visual-icon is-warning"><x-ui.icon name="alert" /></span>
+                        <strong>{{ $saudeConta['proxima_acao']['titulo'] ?? 'Conta em ritmo bom' }}</strong>
+                    </div>
                     <span>{{ $saudeConta['proxima_acao']['descricao'] ?? 'Continue acompanhando os sinais da operacao.' }}</span>
                 </article>
 
                 <article class="highlight-card">
-                    <strong>{{ number_format(count($saudeConta['sinais']), 0, ',', '.') }}</strong>
+                    <div class="card-title-row">
+                        <span class="visual-icon"><x-ui.icon name="bell" /></span>
+                        <strong>{{ number_format(count($saudeConta['sinais']), 0, ',', '.') }}</strong>
+                    </div>
                     <span>sinais priorizados para orientar a proxima decisao</span>
                 </article>
             </div>
@@ -281,6 +305,78 @@
                     <span class="legend-dot">Receitas</span>
                     <span class="legend-dot is-danger">Despesas</span>
                     <span class="legend-dot is-warning">Saldo mensal</span>
+                </div>
+
+                @php
+                    $cashChart = $serieMensal->values();
+                    $chartTop = 34;
+                    $chartBottom = 218;
+                    $chartLeft = 46;
+                    $chartRight = 676;
+                    $chartWidth = $chartRight - $chartLeft;
+                    $chartSteps = max(1, $cashChart->count() - 1);
+                    $saldoValores = $cashChart->pluck('saldo')->push(0);
+                    $saldoMinimo = min(-1, (float) $saldoValores->min());
+                    $saldoMaximo = max(1, (float) $saldoValores->max());
+                    $saldoIntervalo = max(1, $saldoMaximo - $saldoMinimo);
+                    $maiorBarraChart = max(1, (float) $cashChart->max('receitas'), (float) $cashChart->max('despesas'));
+                    $zeroY = $chartTop + (($saldoMaximo - 0) / $saldoIntervalo) * ($chartBottom - $chartTop);
+                    $chartPoints = $cashChart->map(function ($mes, $index) use ($chartLeft, $chartWidth, $chartSteps, $chartTop, $chartBottom, $saldoMaximo, $saldoIntervalo) {
+                        $x = $chartLeft + (($chartWidth / $chartSteps) * $index);
+                        $y = $chartTop + (($saldoMaximo - $mes['saldo']) / $saldoIntervalo) * ($chartBottom - $chartTop);
+
+                        return [
+                            ...$mes,
+                            'x' => round($x, 2),
+                            'y' => round($y, 2),
+                        ];
+                    });
+                    $linePath = $chartPoints->map(fn ($point, $index) => ($index === 0 ? 'M' : 'L') . $point['x'] . ' ' . $point['y'])->implode(' ');
+                    $areaPath = $chartPoints->isNotEmpty()
+                        ? $linePath . ' L ' . $chartPoints->last()['x'] . ' ' . $chartBottom . ' L ' . $chartPoints->first()['x'] . ' ' . $chartBottom . ' Z'
+                        : '';
+                    $ultimoMes = $cashChart->last();
+                @endphp
+
+                <div class="apex-chart-shell" aria-label="Grafico financeiro dos ultimos meses">
+                    <svg class="apex-chart" viewBox="0 0 720 300" role="img" aria-labelledby="cash-chart-title cash-chart-desc">
+                        <title id="cash-chart-title">Evolucao financeira mensal</title>
+                        <desc id="cash-chart-desc">Linha de saldo mensal com barras de receitas e despesas nos ultimos seis meses.</desc>
+                        <defs>
+                            <linearGradient id="cashAreaGradient" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stop-color="#f45a24" stop-opacity="0.28" />
+                                <stop offset="100%" stop-color="#f45a24" stop-opacity="0.02" />
+                            </linearGradient>
+                        </defs>
+
+                        @foreach ([58, 98, 138, 178, 218] as $gridY)
+                            <line class="apex-grid-line" x1="{{ $chartLeft }}" x2="{{ $chartRight }}" y1="{{ $gridY }}" y2="{{ $gridY }}" />
+                        @endforeach
+                        <line class="apex-zero-line" x1="{{ $chartLeft }}" x2="{{ $chartRight }}" y1="{{ $zeroY }}" y2="{{ $zeroY }}" />
+
+                        @foreach ($chartPoints as $point)
+                            @php
+                                $receitaHeight = ($point['receitas'] / $maiorBarraChart) * 112;
+                                $despesaHeight = ($point['despesas'] / $maiorBarraChart) * 112;
+                            @endphp
+                            <rect class="apex-bar-receita" x="{{ $point['x'] - 13 }}" y="{{ 230 - $receitaHeight }}" width="9" height="{{ max(2, $receitaHeight) }}" rx="5" />
+                            <rect class="apex-bar-despesa" x="{{ $point['x'] + 4 }}" y="{{ 230 - $despesaHeight }}" width="9" height="{{ max(2, $despesaHeight) }}" rx="5" />
+                        @endforeach
+
+                        <path class="apex-area" d="{{ $areaPath }}" />
+                        <path class="apex-line" d="{{ $linePath }}" />
+
+                        @foreach ($chartPoints as $point)
+                            <circle class="apex-point" cx="{{ $point['x'] }}" cy="{{ $point['y'] }}" r="5" />
+                            <text class="apex-axis-label" x="{{ $point['x'] }}" y="268" text-anchor="middle">{{ strtoupper($point['label']) }}</text>
+                        @endforeach
+                    </svg>
+
+                    <div class="apex-value-pill">
+                        <span>Ultimo saldo: R$ {{ number_format((float) ($ultimoMes['saldo'] ?? 0), 2, ',', '.') }}</span>
+                        <span>Receitas: R$ {{ number_format((float) ($ultimoMes['receitas'] ?? 0), 2, ',', '.') }}</span>
+                        <span>Despesas: R$ {{ number_format((float) ($ultimoMes['despesas'] ?? 0), 2, ',', '.') }}</span>
+                    </div>
                 </div>
 
                 <div class="month-grid">

@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Loja;
+use App\Support\Analytics\ProductAnalytics;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class PublicStoreController extends Controller
 {
-    public function __invoke(Loja $loja): View
+    public function __invoke(Request $request, Loja $loja, ProductAnalytics $analytics): View
     {
         abort_unless($loja->status === 'ativo', 404);
 
@@ -73,6 +75,16 @@ class PublicStoreController extends Controller
             ->orderByDesc('precos_count')
             ->take(4)
             ->get();
+
+        $analytics->track($request, 'public.store.viewed', 'public', [
+            'loja' => $loja->nome,
+            'cidade' => $loja->cidade,
+            'uf' => $loja->uf,
+            'ofertas' => $ofertas->count(),
+            'precos' => $loja->precos_count,
+            'preco_medio' => $precoMedio,
+            'avaliacao_media' => $avaliacaoMedia,
+        ], $loja);
 
         return view('lojas.show', [
             'loja' => $loja,
