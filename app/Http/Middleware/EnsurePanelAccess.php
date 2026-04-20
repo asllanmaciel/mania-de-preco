@@ -21,6 +21,10 @@ class EnsurePanelAccess
             default => false,
         };
 
+        if (! $allowed && $request->isMethod('GET')) {
+            return redirect()->to($user->rotaInicialPainel());
+        }
+
         abort_unless($allowed, 403);
 
         return $next($request);

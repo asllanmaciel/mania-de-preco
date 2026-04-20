@@ -51,6 +51,25 @@ class ChamadoSuporteController extends Controller
         ]);
     }
 
+    public function show(Request $request, ChamadoSuporte $chamado): View
+    {
+        $chamado->load(['conta', 'usuario']);
+
+        $proximoChamado = ChamadoSuporte::query()
+            ->where('id', '<', $chamado->id)
+            ->whereNotIn('status', ['resolvido', 'fechado'])
+            ->latest('id')
+            ->first();
+
+        return view('super-admin.suporte.show', [
+            'user' => $request->user(),
+            'chamado' => $chamado,
+            'proximoChamado' => $proximoChamado,
+            'statusDisponiveis' => ChamadoSuporte::statusDisponiveis(),
+            'prioridadesDisponiveis' => ChamadoSuporte::prioridadesDisponiveis(),
+        ]);
+    }
+
     public function update(Request $request, ChamadoSuporte $chamado): RedirectResponse
     {
         $dados = $request->validate([
@@ -72,7 +91,7 @@ class ChamadoSuporteController extends Controller
         $chamado->save();
 
         return redirect()
-            ->route('super-admin.suporte.index')
+            ->route('super-admin.suporte.show', $chamado)
             ->with('status', "Chamado {$chamado->protocolo} atualizado.");
     }
 }

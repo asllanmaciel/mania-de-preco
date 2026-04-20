@@ -3,8 +3,12 @@
 namespace Tests\Feature\Web;
 
 use App\Models\Conta;
+use App\Models\AnalyticsEvent;
+use App\Models\Categoria;
 use App\Models\ChamadoSuporte;
+use App\Models\Loja;
 use App\Models\Plano;
+use App\Models\Produto;
 use App\Models\Assinatura;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -184,7 +188,15 @@ class AdminAccessTest extends TestCase
             ->get(route('super-admin.suporte.index'))
             ->assertOk()
             ->assertSee('Central de suporte')
+            ->assertSee('Fila operacional em cards')
             ->assertSee('MP-20260419-ABC123')
+            ->assertSee('Cobranca bloqueada');
+
+        $this->actingAs($user)
+            ->get(route('super-admin.suporte.show', $chamado))
+            ->assertOk()
+            ->assertSee('Mensagem do cliente')
+            ->assertSee('Atualizar chamado')
             ->assertSee('Cobranca bloqueada');
 
         $this->actingAs($user)
@@ -193,13 +205,91 @@ class AdminAccessTest extends TestCase
                 'prioridade' => 'alta',
                 'observacao_interna' => 'Cliente orientado e cobranca regularizada.',
             ])
-            ->assertRedirect(route('super-admin.suporte.index'));
+            ->assertRedirect(route('super-admin.suporte.show', $chamado));
 
         $chamado->refresh();
 
         $this->assertSame('resolvido', $chamado->status);
         $this->assertSame('alta', $chamado->prioridade);
         $this->assertNotNull($chamado->resolvido_em);
+    }
+
+    public function test_super_admin_can_open_analytics_center(): void
+    {
+        $user = User::create([
+            'name' => 'Super Admin Analytics',
+            'email' => 'admin-analytics@example.com',
+            'password' => 'password',
+            'is_super_admin' => true,
+        ]);
+
+        $categoria = Categoria::create([
+            'nome' => 'Mercearia',
+            'slug' => 'mercearia-analytics',
+        ]);
+
+        $produto = Produto::create([
+            'nome' => 'Cafe Analytics 500g',
+            'slug' => 'cafe-analytics-500g',
+            'categoria_id' => $categoria->id,
+            'status' => 'ativo',
+        ]);
+
+        $loja = Loja::create([
+            'nome' => 'Loja Analytics',
+            'cidade' => 'Curitiba',
+            'uf' => 'PR',
+            'tipo_loja' => 'fisica',
+            'status' => 'ativo',
+        ]);
+
+        AnalyticsEvent::create([
+            'user_id' => $user->id,
+            'evento' => 'mobile.catalog.filtered',
+            'area' => 'mobile',
+            'metadata' => ['cidade' => 'Curitiba'],
+            'ip' => '127.0.0.1',
+            'ocorreu_em' => now(),
+        ]);
+
+        AnalyticsEvent::create([
+            'user_id' => $user->id,
+            'evento' => 'mobile.product.viewed',
+            'area' => 'mobile',
+            'sujeito_type' => Produto::class,
+            'sujeito_id' => $produto->id,
+            'metadata' => ['produto' => $produto->nome],
+            'ip' => '127.0.0.1',
+            'ocorreu_em' => now(),
+        ]);
+
+        AnalyticsEvent::create([
+            'evento' => 'public.store.viewed',
+            'area' => 'public',
+            'sujeito_type' => Loja::class,
+            'sujeito_id' => $loja->id,
+            'metadata' => ['loja' => $loja->nome],
+            'ip' => '127.0.0.2',
+            'ocorreu_em' => now(),
+        ]);
+
+        AnalyticsEvent::create([
+            'user_id' => $user->id,
+            'evento' => 'mobile.customer_registered',
+            'area' => 'mobile',
+            'ip' => '127.0.0.1',
+            'ocorreu_em' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('super-admin.analytics', ['periodo' => 30]))
+            ->assertOk()
+            ->assertSee('Analytics para saber onde o Mania de Pre')
+            ->assertSee('Funil de convers')
+            ->assertSee('mobile.product.viewed')
+            ->assertSee('Cafe Analytics 500g')
+            ->assertSee('Loja Analytics')
+            ->assertSee('sinais mobile');
     }
 
     public function test_super_admin_can_open_accounts_index_and_account_detail(): void
@@ -483,7 +573,7 @@ class AdminAccessTest extends TestCase
 
         $this->actingAs($user)
             ->get('/admin')
-            ->assertForbidden();
+            ->assertRedirect('/cliente');
     }
 
     public function test_admin_user_cannot_access_super_admin_panel(): void
@@ -511,6 +601,40 @@ class AdminAccessTest extends TestCase
 
         $this->actingAs($user)
             ->get('/super-admin')
+            ->assertRedirect('/admin');
+    }
+
+    public function test_panel_post_requests_still_forbid_wrong_profile(): void
+    {
+        $user = User::create([
+            'name' => 'Conta Web',
+            'email' => 'web-post@example.com',
+            'password' => 'password',
+            'is_super_admin' => false,
+        ]);
+
+        $conta = Conta::create([
+            'nome_fantasia' => 'Conta Web Post',
+            'slug' => 'conta-web-post',
+            'email' => 'web-post@example.com',
+            'status' => 'trial',
+            'trial_ends_at' => now()->addDays(14),
+        ]);
+
+        $conta->usuarios()->attach($user->id, [
+            'papel' => 'owner',
+            'ativo' => true,
+            'ultimo_acesso_em' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->post('/super-admin/planos', [
+                'nome' => 'Plano Indevido',
+                'slug' => 'plano-indevido',
+                'valor_mensal' => 10,
+                'valor_anual' => 100,
+                'status' => 'ativo',
+            ])
             ->assertForbidden();
     }
 }

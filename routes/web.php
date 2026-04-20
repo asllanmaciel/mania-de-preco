@@ -36,6 +36,7 @@ use App\Http\Controllers\Web\PublicTrustController;
 use App\Http\Controllers\Web\PublicUpdatesController;
 use App\Http\Controllers\Web\SuperAdmin\ContaAssinaturaController as SuperAdminContaAssinaturaController;
 use App\Http\Controllers\Web\SuperAdmin\AssinaturaBillingController as SuperAdminAssinaturaBillingController;
+use App\Http\Controllers\Web\SuperAdmin\AnalyticsController as SuperAdminAnalyticsController;
 use App\Http\Controllers\Web\SuperAdmin\ChamadoSuporteController as SuperAdminChamadoSuporteController;
 use App\Http\Controllers\Web\SuperAdmin\ContaController as SuperAdminContaController;
 use App\Http\Controllers\Web\SuperAdmin\DashboardController as SuperAdminDashboardController;
@@ -74,9 +75,11 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('super-admin')->name('super-admin.')->middleware('panel:super-admin')->group(function () {
         Route::get('/', SuperAdminDashboardController::class)->name('dashboard');
+        Route::get('analytics', SuperAdminAnalyticsController::class)->name('analytics');
         Route::resource('contas', SuperAdminContaController::class)->only(['index', 'show']);
         Route::resource('planos', SuperAdminPlanoController::class)->except(['show', 'destroy']);
         Route::get('suporte', [SuperAdminChamadoSuporteController::class, 'index'])->name('suporte.index');
+        Route::get('suporte/{chamado}', [SuperAdminChamadoSuporteController::class, 'show'])->name('suporte.show');
         Route::patch('suporte/{chamado}', [SuperAdminChamadoSuporteController::class, 'update'])->name('suporte.update');
         Route::get('contas/{conta}/assinaturas/nova', [SuperAdminContaAssinaturaController::class, 'create'])
             ->name('contas.assinaturas.create');

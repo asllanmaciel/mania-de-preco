@@ -12,18 +12,114 @@
 @endsection
 
 @section('content')
+    <style>
+        .support-board {
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0, 1fr));
+            gap:16px;
+        }
+
+        .support-card {
+            position:relative;
+            display:grid;
+            gap:18px;
+            min-height:100%;
+            padding:22px;
+            border-radius:24px;
+            background:var(--surface);
+            border:1px solid var(--line);
+            box-shadow:var(--shadow);
+            transition:.18s ease;
+        }
+
+        .support-card:hover {
+            transform:translateY(-3px);
+            border-color:rgba(244,90,36,.28);
+            box-shadow:0 20px 42px rgba(31,42,68,.10);
+        }
+
+        .support-card::before {
+            content:"";
+            position:absolute;
+            inset:0 auto 0 0;
+            width:5px;
+            border-radius:24px 0 0 24px;
+            background:var(--success);
+        }
+
+        .support-card.is-critica::before { background:var(--danger); }
+        .support-card.is-alta::before { background:var(--warning); }
+        .support-card.is-resolvido::before { background:#9aa6b8; }
+
+        .support-card-head {
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:14px;
+        }
+
+        .support-card h2 {
+            margin:8px 0 0;
+            font-size:1.15rem;
+            line-height:1.25;
+            letter-spacing:-.035em;
+        }
+
+        .support-card p {
+            margin:0;
+            color:var(--muted);
+            line-height:1.65;
+        }
+
+        .support-card-meta {
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+
+        .support-card-footer {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            color:var(--muted);
+            font-size:.85rem;
+        }
+
+        .support-arrow {
+            display:inline-grid;
+            place-items:center;
+            width:38px;
+            height:38px;
+            border-radius:999px;
+            color:var(--primary);
+            background:var(--primary-soft);
+            border:1px solid var(--line);
+            font-weight:900;
+        }
+
+        @media (max-width:1180px) {
+            .support-board { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width:720px) {
+            .support-board { grid-template-columns:1fr; }
+            .support-card-footer { align-items:flex-start; flex-direction:column; }
+        }
+    </style>
+
     <section class="card hero">
         <h1>Central de suporte</h1>
-        <p>Fila operacional para acompanhar pedidos de clientes, incidentes, duvidas de cobranca e sinais de atrito antes que eles virem churn.</p>
+        <p>Fila operacional em cards para priorizar incidentes, dúvidas de cobrança e sinais de atrito antes que eles virem churn.</p>
         <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
-            <a class="button" href="{{ route('suporte') }}">Ver pagina publica</a>
+            <a class="button" href="{{ route('suporte') }}">Ver página pública</a>
             <a class="button-secondary" href="{{ route('super-admin.suporte.index') }}">Atualizar fila</a>
         </div>
     </section>
 
     <section class="grid-3">
         <article class="metric"><strong>{{ number_format($metricas['abertos'], 0, ',', '.') }}</strong><span>chamados em aberto</span></article>
-        <article class="metric"><strong>{{ number_format($metricas['criticos'], 0, ',', '.') }}</strong><span>prioridade critica</span></article>
+        <article class="metric"><strong>{{ number_format($metricas['criticos'], 0, ',', '.') }}</strong><span>prioridade crítica</span></article>
         <article class="metric"><strong>{{ number_format($metricas['resolvidos'], 0, ',', '.') }}</strong><span>resolvidos ou fechados</span></article>
     </section>
 
@@ -57,86 +153,48 @@
         </div>
     </section>
 
-    <section class="grid-2">
+    <section class="support-board">
         @forelse ($chamados as $chamado)
-            <article class="card">
-                <div class="card-body">
-                    <div class="section-head">
-                        <div>
-                            <h2 style="margin:0;">{{ $chamado->assunto }}</h2>
-                            <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">
-                                {{ $chamado->protocolo }} | {{ $chamado->nome }} | {{ $chamado->email }}
-                            </p>
-                        </div>
-                        <span class="chip">{{ $chamado->statusLabel() }}</span>
+            @php
+                $cardClass = match ($chamado->prioridade) {
+                    'critica' => 'is-critica',
+                    'alta' => 'is-alta',
+                    default => '',
+                };
+
+                if (in_array($chamado->status, ['resolvido', 'fechado'], true)) {
+                    $cardClass = 'is-resolvido';
+                }
+            @endphp
+
+            <a class="support-card {{ $cardClass }}" href="{{ route('super-admin.suporte.show', $chamado) }}" aria-label="Abrir chamado {{ $chamado->protocolo }}">
+                <div class="support-card-head">
+                    <div>
+                        <span class="badge is-muted">{{ $chamado->protocolo }}</span>
+                        <h2>{{ $chamado->assunto }}</h2>
                     </div>
-
-                    <div class="grid-3" style="margin-top:18px;">
-                        <div class="mini-card">
-                            <strong>{{ $chamado->categoriaLabel() }}</strong>
-                            <span>categoria</span>
-                        </div>
-                        <div class="mini-card">
-                            <strong>{{ $chamado->prioridadeLabel() }}</strong>
-                            <span>prioridade</span>
-                        </div>
-                        <div class="mini-card">
-                            <strong>{{ $chamado->created_at->format('d/m H:i') }}</strong>
-                            <span>entrada</span>
-                        </div>
-                    </div>
-
-                    <div class="list" style="margin-top:18px;">
-                        <div class="list-row">
-                            <strong>Mensagem</strong>
-                            <small>{{ $chamado->mensagem }}</small>
-                        </div>
-                        <div class="list-row">
-                            <strong>Contexto</strong>
-                            <small>
-                                Empresa: {{ $chamado->empresa ?: 'nao informada' }} |
-                                Conta vinculada: {{ $chamado->conta?->nome_fantasia ?? 'sem vinculo' }} |
-                                Origem: {{ $chamado->origem_url ?: 'nao informada' }}
-                            </small>
-                        </div>
-                    </div>
-
-                    <form method="POST" action="{{ route('super-admin.suporte.update', $chamado) }}" style="display:grid; gap:12px; margin-top:18px;">
-                        @csrf
-                        @method('PATCH')
-                        <div class="grid-2">
-                            <label style="display:grid; gap:8px;">
-                                <span>Status</span>
-                                <select name="status" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">
-                                    @foreach ($statusDisponiveis as $valor => $rotulo)
-                                        <option value="{{ $valor }}" @selected(old('status', $chamado->status) === $valor)>{{ $rotulo }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-
-                            <label style="display:grid; gap:8px;">
-                                <span>Prioridade</span>
-                                <select name="prioridade" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">
-                                    @foreach ($prioridadesDisponiveis as $valor => $rotulo)
-                                        <option value="{{ $valor }}" @selected(old('prioridade', $chamado->prioridade) === $valor)>{{ $rotulo }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                        </div>
-
-                        <label style="display:grid; gap:8px;">
-                            <span>Observacao interna</span>
-                            <textarea name="observacao_interna" rows="4" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">{{ old('observacao_interna', $chamado->observacao_interna) }}</textarea>
-                        </label>
-
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-                            <button class="button" type="submit">Atualizar chamado</button>
-                        </div>
-                    </form>
+                    <span class="support-arrow">›</span>
                 </div>
-            </article>
+
+                <p>{{ str($chamado->mensagem)->limit(150) }}</p>
+
+                <div class="support-card-meta">
+                    <span class="badge {{ $chamado->status === 'novo' ? 'is-warning' : (in_array($chamado->status, ['resolvido', 'fechado'], true) ? 'is-muted' : '') }}">
+                        {{ $chamado->statusLabel() }}
+                    </span>
+                    <span class="badge {{ $chamado->prioridade === 'critica' ? 'is-danger' : ($chamado->prioridade === 'alta' ? 'is-warning' : 'is-muted') }}">
+                        {{ $chamado->prioridadeLabel() }}
+                    </span>
+                    <span class="badge is-muted">{{ $chamado->categoriaLabel() }}</span>
+                </div>
+
+                <div class="support-card-footer">
+                    <span>{{ $chamado->nome }} | {{ $chamado->empresa ?: 'sem empresa' }}</span>
+                    <span>{{ $chamado->created_at->format('d/m H:i') }}</span>
+                </div>
+            </a>
         @empty
-            <article class="card">
+            <article class="card" style="grid-column:1 / -1;">
                 <div class="card-body">
                     <h2 style="margin:0;">Fila limpa</h2>
                     <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Nenhum chamado encontrado para os filtros atuais. Bom sinal, mas continue monitorando os pontos de atrito da jornada.</p>
