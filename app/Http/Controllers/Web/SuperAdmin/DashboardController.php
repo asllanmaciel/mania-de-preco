@@ -12,15 +12,17 @@ use App\Models\Loja;
 use App\Models\Plano;
 use App\Models\Produto;
 use App\Models\User;
+use App\Support\Lancamento\PlatformLaunchReadiness;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, PlatformLaunchReadiness $readiness): View
     {
         return view('super-admin.dashboard', [
             'user' => $request->user(),
+            'prontidaoLancamento' => $readiness->analisar(),
             'metricas' => [
                 'contas' => Conta::count(),
                 'lojas' => Loja::count(),

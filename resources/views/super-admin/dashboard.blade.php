@@ -27,6 +27,91 @@
         </div>
     </section>
 
+    <section class="card">
+        <div class="card-body">
+            <div class="section-head">
+                <div>
+                    <h2 style="margin:0;">Prontidao global de lancamento</h2>
+                    <p style="margin:8px 0 0; color:var(--muted); line-height:1.7;">Checklist executivo para saber o que ainda bloqueia producao, cobranca, experiencia publica e operacao antes de abrir o produto para clientes reais.</p>
+                </div>
+                <span class="badge {{ $prontidaoLancamento['pendencias_criticas'] > 0 ? 'is-danger' : '' }}">
+                    {{ $prontidaoLancamento['pendencias_criticas'] }} bloqueios criticos
+                </span>
+            </div>
+
+            <div class="readiness-panel" style="margin-top:18px;">
+                <aside class="readiness-score">
+                    <div>
+                        <span class="badge {{ $prontidaoLancamento['pronta'] ? '' : 'is-warning' }}">
+                            {{ $prontidaoLancamento['nivel']['nome'] }}
+                        </span>
+                        <strong style="margin-top:18px;">{{ $prontidaoLancamento['score'] }}%</strong>
+                        <p>{{ $prontidaoLancamento['nivel']['descricao'] }}</p>
+                    </div>
+
+                    <div class="readiness-actions">
+                        @forelse ($prontidaoLancamento['proximas_acoes'] as $acao)
+                            <article class="checklist-item" style="background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.12);">
+                                <div>
+                                    <strong>{{ $acao['titulo'] }}</strong>
+                                    <span style="color:rgba(255,255,255,.68);">{{ $acao['grupo'] }} | {{ $acao['critica'] ? 'critico' : 'recomendado' }}</span>
+                                </div>
+                                @if (! empty($acao['rota']))
+                                    <a class="button-secondary" href="{{ $acao['rota'] }}">{{ $acao['acao'] }}</a>
+                                @else
+                                    <span class="badge is-muted">{{ $acao['acao'] }}</span>
+                                @endif
+                            </article>
+                        @empty
+                            <article class="checklist-item" style="background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.12);">
+                                <div>
+                                    <strong>Nenhuma pendencia relevante</strong>
+                                    <span style="color:rgba(255,255,255,.68);">A plataforma esta pronta para uma rodada controlada de lancamento.</span>
+                                </div>
+                            </article>
+                        @endforelse
+                    </div>
+                </aside>
+
+                <div class="readiness-groups">
+                    @foreach ($prontidaoLancamento['grupos'] as $grupo)
+                        <article class="readiness-group">
+                            <div class="progress-meta">
+                                <span><x-ui.icon :name="$grupo['icone']" /> {{ $grupo['titulo'] }}</span>
+                                <span>{{ $grupo['score'] }}%</span>
+                            </div>
+                            <p class="helper-text">{{ $grupo['descricao'] }}</p>
+                            <div class="progress-track" style="margin:10px 0 12px;">
+                                <span class="progress-fill {{ $grupo['score'] >= 75 ? 'is-teal' : '' }}" style="width: {{ $grupo['score'] }}%;"></span>
+                            </div>
+
+                            <div class="checklist-stack">
+                                @foreach ($grupo['etapas'] as $etapa)
+                                    <article class="checklist-item">
+                                        <div>
+                                            <strong>{{ $etapa['titulo'] }}</strong>
+                                            <span>{{ $etapa['descricao'] }}</span>
+                                        </div>
+                                        <div class="checklist-actions">
+                                            <span class="badge {{ $etapa['concluida'] ? '' : ($etapa['critica'] ? 'is-danger' : 'is-warning') }}">
+                                                {{ $etapa['concluida'] ? 'pronto' : ($etapa['critica'] ? 'critico' : 'pendente') }}
+                                            </span>
+                                            @if (! empty($etapa['rota']))
+                                                <a class="{{ $etapa['concluida'] ? 'button-secondary' : 'button' }}" href="{{ $etapa['rota'] }}">
+                                                    {{ $etapa['concluida'] ? 'Revisar' : $etapa['acao'] }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="grid-3">
         <article class="metric"><strong>{{ number_format($metricas['contas'], 0, ',', '.') }}</strong><span>contas monitoradas</span></article>
         <article class="metric"><strong>{{ number_format($metricas['lojas'], 0, ',', '.') }}</strong><span>lojas publicadas</span></article>

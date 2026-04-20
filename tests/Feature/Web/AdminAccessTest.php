@@ -148,6 +148,11 @@ class AdminAccessTest extends TestCase
         $this->get('/super-admin')
             ->assertOk()
             ->assertSee('Super admin da plataforma')
+            ->assertSee('Prontidao global de lancamento')
+            ->assertSee('Produção e infraestrutura')
+            ->assertSee('Receita e cobrança')
+            ->assertSee('Experiência pública')
+            ->assertSee('Operação e suporte')
             ->assertSee('contas monitoradas');
     }
 

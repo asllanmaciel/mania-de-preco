@@ -192,6 +192,35 @@ class PublicCatalogTest extends TestCase
             ->assertSee('Quando algo trava');
     }
 
+    public function test_public_robots_txt_blocks_private_areas_and_points_to_sitemap(): void
+    {
+        $this->get(route('seo.robots'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertSee('User-agent: *')
+            ->assertSee('Disallow: /admin')
+            ->assertSee('Disallow: /super-admin')
+            ->assertSee('Disallow: /cliente')
+            ->assertSee('Disallow: /painel')
+            ->assertSee('Sitemap: ' . route('seo.sitemap'));
+    }
+
+    public function test_public_sitemap_lists_public_catalog_store_product_and_updates(): void
+    {
+        [$lojaCentro, , $produto] = $this->seedCatalogoDemo();
+
+        $this->get(route('seo.sitemap'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertSee('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', false)
+            ->assertSee('<loc>' . route('home') . '</loc>', false)
+            ->assertSee('<loc>' . route('ofertas') . '</loc>', false)
+            ->assertSee('<loc>' . route('novidades.index') . '</loc>', false)
+            ->assertSee('<loc>' . route('lojas.public.show', $lojaCentro) . '</loc>', false)
+            ->assertSee('<loc>' . route('produtos.public.show', $produto) . '</loc>', false)
+            ->assertSee('2026-04-18_155559-seed-demo-ampliado-e-filtros-publicos-mais-fortes');
+    }
+
     public function test_public_support_page_can_open_ticket_with_protocol(): void
     {
         $this->post(route('suporte.chamados.store'), [

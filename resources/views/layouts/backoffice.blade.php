@@ -313,6 +313,110 @@
                 color:var(--muted);
                 line-height:1.6;
             }
+            .badge {
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                min-height:30px;
+                padding:6px 10px;
+                border-radius:999px;
+                color:#0f8f78;
+                background:var(--success-soft);
+                border:1px solid #c8f7ed;
+                font-size:.78rem;
+                font-weight:900;
+            }
+            .badge.is-warning {
+                color:#b76d00;
+                background:var(--warning-soft);
+                border-color:#ffe5b8;
+            }
+            .badge.is-danger {
+                color:#be4f39;
+                background:var(--danger-soft);
+                border-color:#ffd9cf;
+            }
+            .badge.is-muted {
+                color:var(--muted);
+                background:var(--surface-soft);
+                border-color:var(--line);
+            }
+            .readiness-panel {
+                display:grid;
+                grid-template-columns:.82fr 1.18fr;
+                gap:16px;
+                align-items:stretch;
+            }
+            .readiness-score {
+                display:grid;
+                gap:14px;
+                align-content:space-between;
+                min-height:100%;
+                padding:22px;
+                border-radius:var(--radius-xl);
+                background:
+                    radial-gradient(circle at 84% 16%, rgba(19,222,185,.18), transparent 28%),
+                    linear-gradient(135deg,#18233a,#263d78);
+                color:#fff;
+                overflow:hidden;
+            }
+            .readiness-score p { margin:0; color:rgba(255,255,255,.72); line-height:1.7; }
+            .readiness-score strong { display:block; font-size:clamp(3rem,7vw,5.2rem); line-height:.9; letter-spacing:-.07em; }
+            .readiness-groups, .readiness-actions, .readiness-group, .checklist-stack {
+                display:grid;
+                gap:12px;
+            }
+            .readiness-group {
+                padding:16px;
+                border-radius:var(--radius-lg);
+                background:var(--surface-soft);
+                border:1px solid var(--line);
+            }
+            .progress-meta {
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:12px;
+                font-weight:900;
+            }
+            .progress-track {
+                height:10px;
+                border-radius:999px;
+                background:#e9eef7;
+                overflow:hidden;
+            }
+            .progress-fill {
+                display:block;
+                height:100%;
+                border-radius:inherit;
+                background:linear-gradient(90deg,var(--primary),#7c5cff);
+            }
+            .progress-fill.is-teal { background:linear-gradient(90deg,#0f8f78,var(--success)); }
+            .checklist-item {
+                display:grid;
+                grid-template-columns:minmax(0,1fr) auto;
+                gap:12px;
+                align-items:center;
+                padding:13px;
+                border-radius:15px;
+                background:#fff;
+                border:1px solid var(--line);
+            }
+            .checklist-item strong { display:block; margin-bottom:4px; }
+            .checklist-item span { color:var(--muted); line-height:1.5; font-size:.88rem; }
+            .checklist-actions {
+                display:flex;
+                align-items:center;
+                justify-content:flex-end;
+                gap:8px;
+                flex-wrap:wrap;
+            }
+            .helper-text {
+                margin:4px 0 0;
+                color:var(--muted);
+                line-height:1.6;
+                font-size:.9rem;
+            }
             .metric-head {
                 position:relative;
                 display:flex;
@@ -407,7 +511,7 @@
                 .backoffice-shell { grid-template-columns:1fr; }
                 .sidebar { position:static; min-height:auto; }
                 .nav { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
-                .grid-4, .grid-3, .grid-2 { grid-template-columns:1fr; }
+                .grid-4, .grid-3, .grid-2, .readiness-panel { grid-template-columns:1fr; }
                 .list-row { grid-template-columns:1fr; }
             }
             @media (max-width:720px) {
@@ -417,6 +521,8 @@
                 .dropdown-panel { position:static; width:100%; margin-top:10px; }
                 .button, .button-secondary, .chip, .logout-button { width:100%; }
                 .sidebar { padding:16px 12px; }
+                .checklist-item { grid-template-columns:1fr; }
+                .checklist-actions { justify-content:flex-start; }
             }
         </style>
     </head>
