@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', 'Painel') | Mania de Preco</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
 
         <style>
             :root {
@@ -26,13 +26,17 @@
                 --shadow:0 14px 34px rgba(31,42,68,.07);
                 --radius-xl:24px;
                 --radius-lg:18px;
+                --font-sans:"Plus Jakarta Sans", sans-serif;
+                --font-mono:"IBM Plex Mono", monospace;
+                --tracking-tight:-.045em;
             }
 
             * { box-sizing:border-box; }
+            html { text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; }
             body {
                 margin:0;
                 min-height:100vh;
-                font-family:"Manrope", sans-serif;
+                font-family:var(--font-sans);
                 color:var(--text);
                 background:
                     radial-gradient(circle at 10% 0%, rgba(93,135,255,.14), transparent 28%),
@@ -77,7 +81,7 @@
                 color:#fff;
                 background:linear-gradient(135deg,var(--primary),#7c5cff);
                 box-shadow:0 14px 24px rgba(93,135,255,.28);
-                font:800 .9rem "IBM Plex Mono", monospace;
+                font:800 .9rem var(--font-mono);
             }
             .brand span:last-child { line-height:1.25; }
             .side-card {
@@ -152,7 +156,7 @@
                 backdrop-filter:blur(18px);
                 border-bottom:1px solid rgba(232,237,245,.82);
             }
-            .topbar h1 { margin:0; font-size:clamp(1.7rem,3vw,2.35rem); letter-spacing:-.06em; line-height:1.05; }
+            .topbar h1 { margin:0; font-size:clamp(1.7rem,3vw,2.35rem); letter-spacing:var(--tracking-tight); line-height:1.05; text-wrap:balance; }
             .topbar p { margin:7px 0 0; color:var(--muted); line-height:1.6; max-width:780px; }
             .topbar-actions, .section-head, .toolbar {
                 display:flex;
@@ -271,7 +275,7 @@
                     linear-gradient(135deg, rgba(93,135,255,.10), transparent 42%),
                     var(--surface);
             }
-            .hero h1 { margin:0; font-size:clamp(1.9rem,4vw,2.8rem); line-height:1; letter-spacing:-.07em; }
+            .hero h1 { margin:0; font-size:clamp(1.9rem,4vw,2.8rem); line-height:1; letter-spacing:var(--tracking-tight); text-wrap:balance; }
             .hero p { margin:10px 0 0; color:var(--muted); line-height:1.7; max-width:820px; }
             .grid-4, .grid-3, .grid-2, .list {
                 display:grid;

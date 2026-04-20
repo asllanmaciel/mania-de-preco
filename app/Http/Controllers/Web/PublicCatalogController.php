@@ -109,6 +109,7 @@ class PublicCatalogController extends Controller
         $cidadeChart = $this->montarCidadesChart($precosFiltrados);
         $spreadChart = $this->montarSpreadChart($produtos->getCollection());
         $pulse = $this->montarPulse($precosFiltrados);
+        $radarMercado = $this->montarRadarMercado($produtos->getCollection());
 
         return view('welcome', [
             'busca' => $busca,
@@ -129,6 +130,7 @@ class PublicCatalogController extends Controller
             'cidadeChart' => $cidadeChart,
             'spreadChart' => $spreadChart,
             'pulse' => $pulse,
+            'radarMercado' => $radarMercado,
         ]);
     }
 
@@ -208,5 +210,32 @@ class PublicCatalogController extends Controller
             'menor' => (float) $ofertasOrdenadas->min('preco'),
             'maior' => (float) $ofertasOrdenadas->max('preco'),
         ];
+    }
+
+    private function montarRadarMercado(Collection $produtos): Collection
+    {
+        return $produtos
+            ->map(function (Produto $produto) {
+                $menor = (float) ($produto->menor_preco ?? 0);
+                $maior = (float) ($produto->maior_preco ?? 0);
+                $economia = max(0, $maior - $menor);
+                $variacao = $maior > 0 ? round(($economia / $maior) * 100, 1) : 0.0;
+                $melhorOferta = $produto->getRelationValue('melhores_ofertas')?->first();
+
+                return [
+                    'produto' => $produto->nome,
+                    'loja' => $melhorOferta?->loja?->nome ?? 'Melhor oferta',
+                    'cidade' => $melhorOferta?->loja?->cidade ?? 'cidade aberta',
+                    'menor' => $menor,
+                    'maior' => $maior,
+                    'economia' => $economia,
+                    'variacao' => $variacao,
+                    'ofertas' => (int) ($produto->precos_count ?? 0),
+                    'sinal' => $variacao >= 12 ? 'queda forte' : ($variacao >= 6 ? 'boa janela' : 'estavel'),
+                ];
+            })
+            ->sortByDesc('economia')
+            ->values()
+            ->take(5);
     }
 }

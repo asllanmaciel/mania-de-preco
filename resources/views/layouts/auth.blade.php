@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title') | Mania de Preco</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
 
         <style>
             :root {
@@ -24,13 +24,16 @@
                 --shadow:0 18px 44px rgba(31,42,68,.10);
                 --radius-xl:28px;
                 --radius-lg:18px;
+                --font-sans:"Plus Jakarta Sans", sans-serif;
+                --font-mono:"IBM Plex Mono", monospace;
             }
 
             * { box-sizing:border-box; }
+            html { text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; }
             body {
                 margin:0;
                 min-height:100vh;
-                font-family:"Manrope", sans-serif;
+                font-family:var(--font-sans);
                 color:var(--text);
                 background:
                     radial-gradient(circle at 12% 0%, rgba(93,135,255,.18), transparent 30%),
@@ -67,7 +70,7 @@
                 color:#fff;
                 background:linear-gradient(135deg,var(--primary),#7c5cff);
                 box-shadow:0 14px 24px rgba(93,135,255,.28);
-                font:800 .9rem "IBM Plex Mono", monospace;
+                font:800 .9rem var(--font-mono);
             }
             .link-chip, .button, .button-secondary {
                 display:inline-flex;
@@ -136,8 +139,9 @@
                 margin:22px 0 14px;
                 font-size:clamp(2.35rem,5vw,4.35rem);
                 line-height:.94;
-                letter-spacing:-.08em;
+                letter-spacing:-.055em;
                 max-width:10ch;
+                text-wrap:balance;
             }
             .hero p, .feature-card span, .form-copy p, .field-help, .demo-box p, .helper {
                 color:var(--muted);
@@ -263,7 +267,7 @@
                 border-radius:12px;
                 background:#172033;
                 color:#f7fbff;
-                font-family:"IBM Plex Mono", monospace;
+                font-family:var(--font-mono);
             }
             @media (max-width:980px) {
                 .layout { grid-template-columns:1fr; }

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', 'Painel') | Mania de Preco</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|ibm-plex-mono:400,500" rel="stylesheet" />
 
         <style>
             :root {
@@ -32,13 +32,17 @@
                 --radius-lg: 18px;
                 --radius-md: 14px;
                 --sidebar-width: 318px;
+                --font-sans: "Plus Jakarta Sans", sans-serif;
+                --font-mono: "IBM Plex Mono", monospace;
+                --tracking-tight: -0.045em;
             }
 
             * { box-sizing: border-box; }
+            html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
             body {
                 margin: 0;
                 min-height: 100vh;
-                font-family: "Manrope", sans-serif;
+                font-family: var(--font-sans);
                 color: var(--text);
                 background:
                     radial-gradient(circle at 12% 0%, rgba(93, 135, 255, 0.14), transparent 28%),
@@ -90,7 +94,7 @@
                 color: #fff;
                 background: linear-gradient(135deg, var(--primary), #7c5cff);
                 box-shadow: 0 14px 24px rgba(93, 135, 255, 0.28);
-                font: 800 0.9rem "IBM Plex Mono", monospace;
+                font: 800 0.9rem var(--font-mono);
             }
             .rail-stack { display: grid; gap: 10px; width: 100%; margin-top: 14px; }
             .rail-link {
@@ -225,6 +229,12 @@
                 border: 1px solid var(--line);
                 box-shadow: 0 1px 0 rgba(31, 42, 68, 0.02);
                 color: var(--muted);
+                cursor: pointer;
+                transition: 0.18s ease;
+            }
+            .topbar-search:hover {
+                background: #fff;
+                box-shadow: var(--shadow-soft);
             }
             .topbar-search strong {
                 display: block;
@@ -242,7 +252,10 @@
                 border: 1px solid var(--line);
                 background: #fff;
                 color: var(--muted);
-                font: 800 0.72rem "IBM Plex Mono", monospace;
+                font: 800 0.72rem var(--font-mono);
+            }
+            .topbar-search .dropdown-caret {
+                margin-left: 0;
             }
             .topbar-compact-brand {
                 display: none;
@@ -269,7 +282,7 @@
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
             }
-            .page-heading h1 { margin: 0; font-size: clamp(1.85rem, 3.2vw, 2.95rem); line-height: 1.02; letter-spacing: -0.07em; }
+            .page-heading h1 { margin: 0; font-size: clamp(1.85rem, 3.2vw, 2.95rem); line-height: 1.02; letter-spacing: var(--tracking-tight); text-wrap: balance; }
             .page-heading p { margin: 10px 0 0; color: var(--muted); max-width: 780px; line-height: 1.7; }
             .page-heading-actions {
                 display: flex;
@@ -398,6 +411,107 @@
                 margin: 0 0 10px;
                 font-size: 1rem;
                 letter-spacing: -0.02em;
+            }
+            .command-panel {
+                left: 0;
+                right: auto;
+                width: min(520px, calc(100vw - 28px));
+                padding: 16px;
+            }
+            .command-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            .command-head h3 {
+                margin: 0;
+            }
+            .command-head span {
+                padding: 5px 8px;
+                border-radius: 9px;
+                border: 1px solid var(--line);
+                color: var(--muted);
+                font: 800 0.72rem var(--font-mono);
+            }
+            .command-input {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-height: 46px;
+                padding: 0 13px;
+                border-radius: 14px;
+                border: 1px solid var(--line);
+                background: var(--surface-soft);
+                color: var(--muted);
+            }
+            .command-input input {
+                width: 100%;
+                border: 0;
+                outline: 0;
+                background: transparent;
+                color: var(--text);
+                font-weight: 700;
+            }
+            .command-input input::placeholder {
+                color: var(--muted);
+            }
+            .command-list {
+                display: grid;
+                gap: 9px;
+                max-height: 390px;
+                margin-top: 12px;
+                overflow-y: auto;
+                padding-right: 4px;
+            }
+            .command-item {
+                display: grid;
+                grid-template-columns: 42px minmax(0, 1fr) auto;
+                align-items: center;
+                gap: 12px;
+                padding: 11px;
+                border-radius: 15px;
+                border: 1px solid var(--line);
+                background: #fff;
+                transition: 0.18s ease;
+            }
+            .command-item:hover {
+                border-color: #dce7ff;
+                background: var(--primary-soft);
+                transform: translateY(-1px);
+            }
+            .command-item strong,
+            .command-item span {
+                display: block;
+            }
+            .command-item strong {
+                font-size: 0.92rem;
+            }
+            .command-item span {
+                margin-top: 2px;
+                color: var(--muted);
+                font-size: 0.82rem;
+                line-height: 1.45;
+            }
+            .command-item small {
+                color: var(--muted);
+                font-size: 0.74rem;
+                font-weight: 900;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+            .command-empty {
+                display: none;
+                padding: 14px;
+                border-radius: 14px;
+                background: var(--surface-soft);
+                color: var(--muted);
+                text-align: center;
+                font-weight: 800;
+            }
+            .command-empty.is-visible {
+                display: block;
             }
             .dropdown-list {
                 display: grid;
@@ -616,7 +730,7 @@
             .list-row { display: grid; gap: 14px; }
             .list-row code, .table-row code {
                 color: var(--muted);
-                font-family: "IBM Plex Mono", monospace;
+                font-family: var(--font-mono);
                 font-size: 0.82rem;
             }
 
@@ -1022,6 +1136,20 @@
                             ['titulo' => 'Precos', 'descricao' => 'Comparador e ofertas.', 'rota' => route('admin.precos.index'), 'capacidade' => 'precos'],
                             ['titulo' => 'Lojas', 'descricao' => 'Operacao e presenca local.', 'rota' => route('admin.lojas.index'), 'capacidade' => 'lojas'],
                         ])->filter(fn ($atalho) => in_array($atalho['capacidade'], $capacidadesConta, true))->take(3);
+
+                        $comandosTopbar = collect([
+                            ['titulo' => 'Dashboard', 'descricao' => 'Voltar para a visao geral da conta.', 'rota' => route('admin.dashboard'), 'icone' => 'home', 'tags' => 'inicio painel indicadores'],
+                            ['titulo' => 'Centro de lancamento', 'descricao' => 'Ver prontidao, pendencias e proximas acoes.', 'rota' => route('admin.lancamento'), 'icone' => 'spark', 'tags' => 'lancamento prontidao go to market'],
+                            ['titulo' => 'Central de acoes', 'descricao' => 'Abrir notificacoes e alertas operacionais.', 'rota' => route('admin.notificacoes'), 'icone' => 'bell', 'tags' => 'notificacoes alertas tarefas'],
+                            ['titulo' => 'Onboarding', 'descricao' => 'Acompanhar implantacao e setup da conta.', 'rota' => route('admin.onboarding'), 'icone' => 'compass', 'capacidade' => 'onboarding', 'tags' => 'setup implantacao comecar'],
+                            ['titulo' => 'Financeiro', 'descricao' => 'Caixa, titulos, contas e movimentacoes.', 'rota' => route('admin.financeiro.index'), 'icone' => 'wallet', 'capacidade' => 'financeiro', 'tags' => 'caixa dinheiro contas pagar receber'],
+                            ['titulo' => 'Produtos', 'descricao' => 'Gerenciar catalogo, imagens e marcas.', 'rota' => route('admin.produtos.index'), 'icone' => 'package', 'capacidade' => 'catalogo', 'tags' => 'catalogo produto imagem marca'],
+                            ['titulo' => 'Precos', 'descricao' => 'Publicar e revisar ofertas no comparador.', 'rota' => route('admin.precos.index'), 'icone' => 'tag', 'capacidade' => 'precos', 'tags' => 'ofertas comparador valores'],
+                            ['titulo' => 'Lojas', 'descricao' => 'Organizar unidades, canais e presenca local.', 'rota' => route('admin.lojas.index'), 'icone' => 'store', 'capacidade' => 'lojas', 'tags' => 'unidade local endereco loja'],
+                            ['titulo' => 'Equipe', 'descricao' => 'Gerenciar acessos, papeis e usuarios.', 'rota' => route('admin.equipe.index'), 'icone' => 'users', 'capacidade' => 'equipe', 'tags' => 'usuarios time acesso papel'],
+                            ['titulo' => 'Configuracoes', 'descricao' => 'Atualizar dados comerciais da conta.', 'rota' => route('admin.configuracoes.edit'), 'icone' => 'settings', 'capacidade' => 'gestao', 'tags' => 'empresa conta dados perfil'],
+                            ['titulo' => 'Home publica', 'descricao' => 'Ver a experiencia de descoberta do cliente.', 'rota' => url('/'), 'icone' => 'search', 'tags' => 'publico vitrine ofertas cliente'],
+                        ])->filter(fn ($comando) => empty($comando['capacidade']) || in_array($comando['capacidade'], $capacidadesConta, true))->values();
                     @endphp
 
                     <header class="topbar">
@@ -1031,11 +1159,39 @@
                                 <span>Mania de Preco</span>
                             </a>
 
-                            <button class="topbar-search" type="button" aria-label="Buscar ou abrir atalhos rapidos">
-                                <x-ui.icon name="search" />
-                                <strong>Buscar ou abrir atalhos</strong>
-                                <kbd>Ctrl K</kbd>
-                            </button>
+                            <details class="topbar-menu topbar-search-menu" data-command-palette>
+                                <summary class="topbar-search" aria-label="Buscar ou abrir atalhos rapidos">
+                                    <x-ui.icon name="search" />
+                                    <strong>Buscar acoes e atalhos</strong>
+                                    <kbd>Ctrl K</kbd>
+                                    <x-ui.icon name="chevron-down" class="dropdown-caret" />
+                                </summary>
+                                <div class="dropdown-panel command-panel">
+                                    <div class="command-head">
+                                        <h3>Central rapida</h3>
+                                        <span>Ctrl K</span>
+                                    </div>
+                                    <label class="command-input">
+                                        <x-ui.icon name="search" />
+                                        <input data-command-input type="search" placeholder="Digite financeiro, produtos, lojas..." autocomplete="off">
+                                    </label>
+                                    <div class="command-list" data-command-list>
+                                        @foreach ($comandosTopbar as $comando)
+                                            <a class="command-item" href="{{ $comando['rota'] }}" data-command="{{ \Illuminate\Support\Str::lower($comando['titulo'] . ' ' . $comando['descricao'] . ' ' . ($comando['tags'] ?? '')) }}">
+                                                <span class="metric-icon" style="width:42px;height:42px;border-radius:14px;">
+                                                    <x-ui.icon :name="$comando['icone']" />
+                                                </span>
+                                                <span>
+                                                    <strong>{{ $comando['titulo'] }}</strong>
+                                                    <span>{{ $comando['descricao'] }}</span>
+                                                </span>
+                                                <small>Abrir</small>
+                                            </a>
+                                        @endforeach
+                                        <div class="command-empty" data-command-empty>Nenhum atalho encontrado.</div>
+                                    </div>
+                                </div>
+                            </details>
                         </div>
 
                         <div class="topbar-actions">
@@ -1244,5 +1400,58 @@
                 </a>
             @endif
         </nav>
+
+        <script>
+            (() => {
+                const palette = document.querySelector('[data-command-palette]');
+
+                if (!palette) {
+                    return;
+                }
+
+                const input = palette.querySelector('[data-command-input]');
+                const items = Array.from(palette.querySelectorAll('[data-command]'));
+                const empty = palette.querySelector('[data-command-empty]');
+
+                const filterItems = () => {
+                    const query = (input?.value || '').trim().toLowerCase();
+                    let visible = 0;
+
+                    items.forEach((item) => {
+                        const matches = !query || item.dataset.command.includes(query);
+                        item.style.display = matches ? '' : 'none';
+                        visible += matches ? 1 : 0;
+                    });
+
+                    empty?.classList.toggle('is-visible', visible === 0);
+                };
+
+                input?.addEventListener('input', filterItems);
+
+                palette.addEventListener('toggle', () => {
+                    if (!palette.open) {
+                        if (input) {
+                            input.value = '';
+                        }
+                        filterItems();
+                        return;
+                    }
+
+                    window.setTimeout(() => input?.focus(), 60);
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    const isShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+
+                    if (!isShortcut) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    palette.open = true;
+                    window.setTimeout(() => input?.focus(), 60);
+                });
+            })();
+        </script>
     </body>
 </html>

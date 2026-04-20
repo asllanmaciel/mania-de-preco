@@ -23,7 +23,9 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Compare preços reais e descubra onde vale comprar hoje.')
+            ->assertSee('O jeito mais rápido de saber onde comprar melhor hoje.')
+            ->assertSee('Radar de preços')
+            ->assertSee('Janela de economia')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Loja Centro');
     }

@@ -161,6 +161,8 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.lancamento'))
             ->assertOk()
             ->assertSee('Centro de lancamento')
+            ->assertSee('Central rapida')
+            ->assertSee('Buscar acoes e atalhos')
             ->assertSee('Prontidao de lancamento')
             ->assertSee('Dados comerciais completos')
             ->assertSee('Produtos publicados no comparador')
