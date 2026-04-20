@@ -138,9 +138,9 @@
             .shell {
                 display:grid;
                 gap:18px;
-                width:min(100% - 36px, 1400px);
-                margin:0 auto;
-                padding:22px 0 52px;
+                width:100%;
+                margin:0;
+                padding:0 18px 52px;
             }
             .topbar {
                 position:sticky;
@@ -515,7 +515,8 @@
                 .list-row { grid-template-columns:1fr; }
             }
             @media (max-width:720px) {
-                .shell { width:min(100% - 20px, 1180px); padding-top:12px; }
+                .shell { padding:12px 10px 52px; }
+                .topbar { margin:-12px -10px 4px; padding:12px 10px; }
                 .topbar, .section-head, .toolbar, .topbar-actions, .topbar-tools { flex-direction:column; align-items:stretch; }
                 .topbar-menu, .icon-button, .profile-trigger { width:100%; }
                 .dropdown-panel { position:static; width:100%; margin-top:10px; }

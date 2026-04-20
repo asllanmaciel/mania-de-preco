@@ -192,9 +192,9 @@
             .main {
                 display: grid;
                 gap: 22px;
-                width: min(100% - 36px, 1420px);
-                margin: 0 auto;
-                padding: 0 0 52px;
+                width: 100%;
+                margin: 0;
+                padding: 0 18px 52px;
             }
             .topbar {
                 position: sticky;
@@ -974,13 +974,13 @@
                 .sidebar { display: none; }
                 .topbar-compact-brand { display: inline-flex; }
                 .topbar-search { width: min(360px, 38vw); }
-                .main { width: min(100% - 28px, 1180px); padding-bottom: 108px; }
+                .main { padding-bottom: 108px; }
                 .mobile-context, .mobile-dock { display: grid; }
                 .grid-4, .grid-3, .grid-2, .stats-grid, .form-grid, .panel-grid, .highlight-grid, .month-grid, .visual-hero { grid-template-columns: 1fr; }
                 .table-head, .list-row { grid-template-columns: 1fr; }
             }
             @media (max-width: 720px) {
-                .main { width: min(100% - 20px, 1180px); padding-top: 12px; }
+                .main { padding: 12px 10px 108px; }
                 .topbar { margin: -12px -10px 0; padding: 12px 10px; align-items: center; }
                 .topbar-search { display: none; }
                 .topbar-actions, .topbar-tools { justify-content: flex-end; }

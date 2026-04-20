@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\ApplySecurityHeaders;
 use App\Http\Middleware\EnsureContaCapability;
 use App\Http\Middleware\EnsureContaRole;
 use App\Http\Middleware\EnsurePanelAccess;
@@ -15,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            ApplySecurityHeaders::class,
+        ]);
+
         $middleware->alias([
             'panel' => EnsurePanelAccess::class,
             'conta.can' => EnsureContaCapability::class,

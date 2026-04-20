@@ -244,6 +244,37 @@ class PublicCatalogTest extends TestCase
         $this->assertSame('alta', $chamado->prioridade);
     }
 
+    public function test_public_support_ticket_creation_is_rate_limited(): void
+    {
+        \Illuminate\Support\Facades\Cache::flush();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $this->post(route('suporte.chamados.store'), [
+                'nome' => "Cliente Rate {$i}",
+                'email' => "cliente-rate-{$i}@example.com",
+                'telefone' => '(11) 99999-0000',
+                'empresa' => 'Mercado Modelo',
+                'categoria' => 'catalogo',
+                'prioridade' => 'normal',
+                'assunto' => "Teste de limite {$i}",
+                'mensagem' => 'Mensagem valida para abertura de chamado publico com limite de abuso.',
+                'origem_url' => route('suporte'),
+            ])->assertRedirect(route('suporte'));
+        }
+
+        $this->post(route('suporte.chamados.store'), [
+            'nome' => 'Cliente Bloqueado',
+            'email' => 'cliente-bloqueado@example.com',
+            'telefone' => '(11) 99999-0000',
+            'empresa' => 'Mercado Modelo',
+            'categoria' => 'catalogo',
+            'prioridade' => 'normal',
+            'assunto' => 'Tentativa bloqueada',
+            'mensagem' => 'Mensagem valida para confirmar que a sexta tentativa recebe rate limit.',
+            'origem_url' => route('suporte'),
+        ])->assertTooManyRequests();
+    }
+
     private function seedCatalogoDemo(): array
     {
         $categoria = Categoria::create([

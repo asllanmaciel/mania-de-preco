@@ -18,6 +18,10 @@ class HealthCheckTest extends TestCase
             ->assertJsonPath('checks.banco.ok', true)
             ->assertJsonPath('checks.cache.ok', true)
             ->assertJsonPath('checks.storage.ok', true)
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+            ->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
             ->assertJsonStructure([
                 'status',
                 'verificado_em',

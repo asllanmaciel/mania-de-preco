@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
 Route::get('/ofertas', PublicCatalogController::class)->name('ofertas');
-Route::get('/radar-precos', [PublicCatalogController::class, 'radar'])->name('radar.precos');
+Route::get('/radar-precos', [PublicCatalogController::class, 'radar'])->middleware('throttle:60,1')->name('radar.precos');
 Route::get('/robots.txt', [PublicSeoController::class, 'robots'])->name('seo.robots');
 Route::get('/sitemap.xml', [PublicSeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/health', HealthCheckController::class)->name('health');
@@ -54,19 +54,19 @@ Route::get('/novidades/{slug}', [PublicUpdatesController::class, 'show'])->name(
 Route::get('/termos-de-uso', [PublicTrustController::class, 'termos'])->name('termos');
 Route::get('/privacidade', [PublicTrustController::class, 'privacidade'])->name('privacidade');
 Route::get('/suporte', [PublicTrustController::class, 'suporte'])->name('suporte');
-Route::post('/suporte', [PublicTrustController::class, 'abrirChamado'])->name('suporte.chamados.store');
+Route::post('/suporte', [PublicTrustController::class, 'abrirChamado'])->middleware('throttle:5,1')->name('suporte.chamados.store');
 Route::get('/lojas/{loja}', PublicStoreController::class)->name('lojas.public.show');
 Route::get('/produtos/{produto}', PublicProductController::class)->name('produtos.public.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SessionController::class, 'create'])->name('login');
-    Route::post('/login', [SessionController::class, 'store'])->name('login.store');
+    Route::post('/login', [SessionController::class, 'store'])->middleware('throttle:6,1')->name('login.store');
     Route::get('/cadastro', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/cadastro', [RegisteredUserController::class, 'store'])->name('register.store');
+    Route::post('/cadastro', [RegisteredUserController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
     Route::get('/esqueci-minha-senha', [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])->middleware('throttle:3,1')->name('password.email');
     Route::get('/resetar-senha/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/resetar-senha', [NewPasswordController::class, 'store'])->name('password.update');
+    Route::post('/resetar-senha', [NewPasswordController::class, 'store'])->middleware('throttle:6,1')->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {

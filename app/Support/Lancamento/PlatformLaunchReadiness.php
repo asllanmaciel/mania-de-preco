@@ -119,6 +119,20 @@ class PlatformLaunchReadiness
                     'acao' => 'Validar /health',
                     'rota' => route('health'),
                 ],
+                [
+                    'titulo' => 'Limites de abuso em rotas sensíveis',
+                    'descricao' => 'Login, cadastro, senha, suporte e radar precisam de rate limit antes de receber tráfego real.',
+                    'concluida' => $this->rotasComThrottle([
+                        'login.store',
+                        'register.store',
+                        'password.email',
+                        'password.update',
+                        'suporte.chamados.store',
+                        'radar.precos',
+                    ]),
+                    'critica' => true,
+                    'acao' => 'Revisar limites de rotas',
+                ],
             ],
         ];
     }
@@ -262,6 +276,15 @@ class PlatformLaunchReadiness
             ])))
             ->where('concluida', false)
             ->values();
+    }
+
+    private function rotasComThrottle(array $nomes): bool
+    {
+        return collect($nomes)->every(function (string $nome) {
+            $rota = Route::getRoutes()->getByName($nome);
+
+            return $rota && collect($rota->gatherMiddleware())->contains(fn (string $middleware) => str_starts_with($middleware, 'throttle:'));
+        });
     }
 
     private function nivel(int $score, Collection $pendencias): array
