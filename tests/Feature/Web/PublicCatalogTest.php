@@ -134,6 +134,8 @@ class PublicCatalogTest extends TestCase
         $this->get(route('produtos.public.show', $produto))
             ->assertOk()
             ->assertSee('Resumo rápido para decidir')
+            ->assertSee('Histórico e tendência')
+            ->assertSee('Ativar alerta de queda')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Onde comprar agora')
             ->assertSee('/images/demo/produtos/shared/contexto-prateleira.svg');

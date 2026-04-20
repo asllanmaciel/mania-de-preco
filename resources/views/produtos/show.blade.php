@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ $produto->nome }} | Mania de Preço</title>
         <meta name="description" content="Compare ofertas de {{ $produto->nome }} em lojas reais e encontre o melhor preço com contexto.">
+        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="{{ asset('images/brand/mania-de-preco-mark.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -19,6 +21,7 @@
             .topbar { padding:22px 0; align-items:center; }
             .brand { display:inline-flex; align-items:center; gap:14px; font-weight:700; letter-spacing:-.03em; }
             .brand-badge { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#cf4e1b 100%); box-shadow:0 14px 30px rgba(207,78,27,.28); }
+            .brand-mark { width:44px; height:44px; border-radius:14px; box-shadow:0 14px 30px rgba(207,78,27,.22); }
             .chip, .badge { display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius:999px; }
             .chip { border:1px solid var(--line); background:rgba(255,255,255,.58); color:var(--muted); font-size:.92rem; }
             .hero, .grid, .stats, .bars, .offers, .related, .hero-actions, .media-stack, .trust-list { display:grid; gap:16px; }
@@ -54,6 +57,23 @@
             .alert-card label { display:grid; gap:7px; font-weight:700; }
             .alert-card input { width:100%; min-height:46px; padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff; color:var(--text); outline:none; }
             .related-card img { width:100%; height:140px; object-fit:cover; border-radius:16px; margin-bottom:14px; background:#fff; border:1px solid rgba(66,37,21,.08); }
+            .insight-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:16px; align-items:stretch; }
+            .trend-card { position:relative; overflow:hidden; background:linear-gradient(180deg,rgba(25,21,18,.96),rgba(43,29,20,.94)); color:#fff8ef; border:1px solid rgba(255,255,255,.15); }
+            .trend-card::before { content:""; position:absolute; inset:-1px; background:radial-gradient(circle at 88% 8%, rgba(15,159,143,.28), transparent 28%), radial-gradient(circle at 0% 0%, rgba(255,107,44,.22), transparent 24%); pointer-events:none; }
+            .trend-card > * { position:relative; z-index:1; }
+            .trend-card h2, .trend-card h3, .trend-card strong { color:#fffaf4; }
+            .trend-card .muted, .trend-card .small { color:rgba(255,248,239,.68); }
+            .trend-chart { overflow:hidden; margin-top:18px; border-radius:24px; background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.12); }
+            .trend-chart svg { display:block; width:100%; height:240px; padding:14px 10px 0; overflow:visible; }
+            .trend-line { stroke-dasharray:660; stroke-dashoffset:660; animation:drawTrend 1.8s ease forwards; }
+            .trend-area { opacity:.22; }
+            .trend-point { filter:drop-shadow(0 0 7px rgba(15,159,143,.64)); }
+            .trend-meta { display:flex; justify-content:space-between; gap:12px; padding:0 16px 16px; color:rgba(255,248,239,.72); font:500 .82rem "IBM Plex Mono", monospace; }
+            .trend-badge { display:inline-flex; align-items:center; justify-content:center; width:max-content; padding:8px 12px; border-radius:999px; color:#bcfff0; background:rgba(15,159,143,.13); border:1px solid rgba(15,159,143,.22); font:500 .78rem "IBM Plex Mono", monospace; text-transform:uppercase; letter-spacing:.08em; }
+            .decision-panel { display:grid; gap:12px; }
+            .decision-item { padding:18px; border-radius:20px; background:rgba(255,255,255,.76); border:1px solid rgba(66,37,21,.08); }
+            .decision-item strong { display:block; margin-bottom:6px; font-size:1.24rem; letter-spacing:-.05em; }
+            @keyframes drawTrend { to { stroke-dashoffset:0; } }
             .section { padding:18px 0; }
             .section-head { margin-bottom:16px; }
             .bar-meta { font-size:.92rem; }
@@ -68,7 +88,8 @@
             .footer code { padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid var(--line); font:400 .82rem "IBM Plex Mono", monospace; }
             @media (min-width:721px) { .stats { grid-template-columns:repeat(2, minmax(0, 1fr)); } .related { grid-template-columns:repeat(2, minmax(0, 1fr)); } .hero-actions { grid-template-columns:repeat(2, minmax(0, max-content)); } }
             @media (min-width:1101px) { .hero { grid-template-columns:1.02fr .98fr; } .grid { grid-template-columns:1fr 1fr; } .stats { grid-template-columns:repeat(4, minmax(0, 1fr)); } .related { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
-            @media (max-width:720px) { .topbar, .offer-head, .thumb-grid, .footer { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .thumb-button { width:100%; height:72px; } .button, .button-secondary { width:100%; } }
+            @media (max-width:920px) { .insight-grid { grid-template-columns:1fr; } }
+            @media (max-width:720px) { .topbar, .offer-head, .thumb-grid, .footer, .trend-meta { flex-direction:column; align-items:stretch; } .hero-card, .card { padding:20px; } .thumb-button { width:100%; height:72px; } .button, .button-secondary { width:100%; } }
         </style>
     </head>
     <body>
@@ -80,7 +101,7 @@
         <div class="container">
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
-                    <span class="brand-badge">MP</span>
+                    <img class="brand-mark" src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="" width="44" height="44">
                     <span>Mania de Preço</span>
                 </a>
 
@@ -115,7 +136,7 @@
                             <div class="stat"><strong>R$ {{ number_format($menorPreco, 2, ',', '.') }}</strong><span>melhor preço</span></div>
                             <div class="stat"><strong>R$ {{ number_format($economia, 2, ',', '.') }}</strong><span>economia potencial</span></div>
                             <div class="stat"><strong>{{ number_format($ofertas->count(), 0, ',', '.') }}</strong><span>ofertas ativas</span></div>
-                            <div class="stat"><strong>{{ number_format($cidades->count(), 0, ',', '.') }}</strong><span>cidades no comparativo</span></div>
+                            <div class="stat"><strong>{{ number_format($economiaPercentual, 1, ',', '.') }}%</strong><span>distância entre menor e maior</span></div>
                         </div>
                     </article>
 
@@ -173,7 +194,7 @@
                                 <span class="small">O bloco principal resume melhor valor, economia e variedade sem esconder o detalhe das lojas.</span>
                             </div>
                         </div>
-                        <div class="alert-card">
+                        <div class="alert-card" id="alerta-preco">
                             <div>
                                 <h3>Quer ser avisado quando baixar?</h3>
                                 <p class="muted" style="margin:8px 0 0;">Defina uma meta de preco e acompanhe este produto pela sua area de cliente.</p>
@@ -208,6 +229,66 @@
                             @endauth
                         </div>
                     </aside>
+                </section>
+
+                <section class="section">
+                    <div class="insight-grid">
+                        <article class="card trend-card">
+                            <span class="trend-badge">Histórico e tendência</span>
+                            <h2 style="margin-top:14px;">O preço conta uma história antes do clique.</h2>
+                            <p class="muted">Acompanhe os últimos movimentos registrados para decidir se vale comprar agora, comparar mais lojas ou ativar um alerta de queda.</p>
+
+                            @if ($historicoVisual['path'] !== '')
+                                <div class="trend-chart">
+                                    <svg viewBox="0 0 320 100" preserveAspectRatio="none" aria-label="Histórico de preço do produto">
+                                        <defs>
+                                            <linearGradient id="productTrendGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                                                <stop offset="0%" stop-color="#ff6b2c" />
+                                                <stop offset="100%" stop-color="#0f9f8f" />
+                                            </linearGradient>
+                                            <linearGradient id="productTrendArea" x1="0%" x2="0%" y1="0%" y2="100%">
+                                                <stop offset="0%" stop-color="#0f9f8f" />
+                                                <stop offset="100%" stop-color="#0f9f8f" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M0,25 L320,25 M0,50 L320,50 M0,75 L320,75" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"></path>
+                                        <path class="trend-area" d="{{ $historicoVisual['area'] }}" fill="url(#productTrendArea)"></path>
+                                        <path class="trend-line" d="{{ $historicoVisual['path'] }}" fill="none" stroke="url(#productTrendGradient)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        @foreach ($historicoVisual['pontos'] as $ponto)
+                                            <circle class="trend-point" cx="{{ $ponto['x'] }}" cy="{{ $ponto['y'] }}" r="4.3" fill="#14100d" stroke="#bcfff0" stroke-width="2"></circle>
+                                        @endforeach
+                                    </svg>
+                                    <div class="trend-meta">
+                                        <span>menor registro: R$ {{ number_format($historicoVisual['menor'], 2, ',', '.') }}</span>
+                                        <span>maior registro: R$ {{ number_format($historicoVisual['maior'], 2, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="empty" style="margin-top:18px;">Ainda não há movimentos suficientes para desenhar uma tendência deste produto.</div>
+                            @endif
+                        </article>
+
+                        <aside class="decision-panel">
+                            <div class="decision-item">
+                                <strong>{{ $tendencia === 'queda' ? 'Preço em queda' : ($tendencia === 'alta' ? 'Preço subindo' : 'Preço estável') }}</strong>
+                                <span class="small">
+                                    Variação recente de R$ {{ number_format(abs($variacaoHistorica), 2, ',', '.') }}
+                                    @if ($variacaoHistoricaPercentual !== 0.0)
+                                        ({{ $variacaoHistorica > 0 ? '+' : '-' }}{{ number_format(abs($variacaoHistoricaPercentual), 1, ',', '.') }}%)
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="decision-item">
+                                <strong>{{ $ofertas->count() > 1 ? 'Boa comparação disponível' : 'Poucas lojas no momento' }}</strong>
+                                <span class="small">{{ $ofertas->count() }} ofertas ativas e {{ $cidades->count() }} cidades no recorte atual.</span>
+                            </div>
+                            <div class="decision-item">
+                                <strong>Alerta recomendado</strong>
+                                <span class="small">Meta sugerida: R$ {{ number_format((float) $precoSugeridoAlerta, 2, ',', '.') }} para ser avisado quando o preço ficar ainda mais interessante.</span>
+                            </div>
+                            <a class="button" href="#alerta-preco">Ativar alerta de queda</a>
+                        </aside>
+                    </div>
                 </section>
 
                 <section class="section">
