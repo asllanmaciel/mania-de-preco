@@ -10,6 +10,7 @@ use App\Models\Plano;
 use App\Models\Preco;
 use App\Models\Produto;
 use App\Models\User;
+use App\Notifications\ChamadoSuporteAbertoNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -220,6 +221,14 @@ class PlatformLaunchReadiness
                     'concluida' => ! in_array(config('mail.default'), ['log', 'array'], true),
                     'critica' => true,
                     'acao' => 'Configurar provedor de e-mail',
+                ],
+                [
+                    'titulo' => 'Confirmação de protocolo por e-mail',
+                    'descricao' => 'O cliente deve receber confirmação transacional quando abre um chamado público.',
+                    'concluida' => class_exists(ChamadoSuporteAbertoNotification::class),
+                    'critica' => false,
+                    'acao' => 'Validar e-mail de suporte',
+                    'rota' => route('suporte'),
                 ],
             ],
         ];

@@ -9,23 +9,23 @@
 
         <style>
             :root {
-                --bg: #f6f8fb;
+                --bg: #f7f2ea;
                 --surface: #ffffff;
-                --surface-soft: #f8fafc;
-                --line: #e8edf5;
-                --line-strong: #d9e2ef;
+                --surface-soft: #fff8f0;
+                --line: #ece0d4;
+                --line-strong: #dccbbc;
                 --text: #19202e;
                 --muted: #687385;
-                --primary: #5d87ff;
-                --primary-soft: #edf3ff;
-                --success: #13deb9;
-                --success-soft: #e6fffa;
-                --warning: #ffae1f;
-                --warning-soft: #fff6e5;
-                --danger: #fa896b;
+                --primary: #f45a24;
+                --primary-soft: #fff0e8;
+                --success: #0b8f80;
+                --success-soft: #e6fbf7;
+                --warning: #d69a27;
+                --warning-soft: #fff7e4;
+                --danger: #ef5b35;
                 --danger-soft: #fff1ed;
                 --sidebar: #ffffff;
-                --rail: #f1f5fb;
+                --rail: #fff4ea;
                 --shadow: 0 16px 34px rgba(31, 42, 68, 0.08);
                 --shadow-soft: 0 8px 22px rgba(31, 42, 68, 0.06);
                 --radius-xl: 24px;
@@ -92,10 +92,12 @@
                 height: 46px;
                 border-radius: 16px;
                 color: #fff;
-                background: linear-gradient(135deg, var(--primary), #7c5cff);
-                box-shadow: 0 14px 24px rgba(93, 135, 255, 0.28);
+                background: #21140f;
+                box-shadow: 0 14px 24px rgba(244, 90, 36, 0.24);
                 font: 800 0.9rem var(--font-mono);
+                overflow: hidden;
             }
+            .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
             .rail-stack { display: grid; gap: 10px; width: 100%; margin-top: 14px; }
             .rail-link {
                 width: 50px;
@@ -607,8 +609,8 @@
             .button {
                 color: #fff;
                 border-color: transparent;
-                background: linear-gradient(135deg, var(--primary), #7c5cff);
-                box-shadow: 0 12px 22px rgba(93, 135, 255, 0.22);
+                background: linear-gradient(135deg, var(--primary), #ba3c16);
+                box-shadow: 0 12px 22px rgba(244, 90, 36, 0.22);
             }
             .button-secondary { background: var(--surface-soft); }
             .logout-button {
@@ -1001,7 +1003,9 @@
         <div class="admin-shell">
             <aside class="sidebar">
                 <div class="sidebar-rail">
-                    <a class="brand-mark" href="{{ route('admin.dashboard') }}">MP</a>
+                    <a class="brand-mark" href="{{ route('admin.dashboard') }}">
+                        <img src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="Mania de Preco">
+                    </a>
                     <nav class="rail-stack" aria-label="Atalhos do painel">
                         <a class="rail-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}" aria-label="Dashboard">
                             <x-ui.icon name="home" />
@@ -1155,7 +1159,9 @@
                     <header class="topbar">
                         <div class="topbar-left">
                             <a class="topbar-compact-brand" href="{{ route('admin.dashboard') }}">
-                                <span class="brand-mark">MP</span>
+                                <span class="brand-mark">
+                                    <img src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="">
+                                </span>
                                 <span>Mania de Preco</span>
                             </a>
 

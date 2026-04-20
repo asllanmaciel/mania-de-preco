@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChamadoSuporte;
+use App\Notifications\ChamadoSuporteAbertoNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -58,6 +60,9 @@ class PublicTrustController extends Controller
             'ip' => $request->ip(),
             'user_agent' => Str::limit((string) $request->userAgent(), 1024, ''),
         ]);
+
+        Notification::route('mail', $chamado->email)
+            ->notify(new ChamadoSuporteAbertoNotification($chamado));
 
         return redirect()
             ->route('suporte')

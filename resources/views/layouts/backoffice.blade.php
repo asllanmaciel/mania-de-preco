@@ -9,19 +9,19 @@
 
         <style>
             :root {
-                --bg:#f6f8fb;
+                --bg:#f7f2ea;
                 --surface:#fff;
-                --surface-soft:#f8fafc;
-                --line:#e8edf5;
+                --surface-soft:#fff8f0;
+                --line:#ece0d4;
                 --text:#19202e;
                 --muted:#687385;
-                --primary:#5d87ff;
-                --primary-soft:#edf3ff;
-                --success:#13deb9;
-                --success-soft:#e6fffa;
-                --warning:#ffae1f;
-                --warning-soft:#fff6e5;
-                --danger:#fa896b;
+                --primary:#f45a24;
+                --primary-soft:#fff0e8;
+                --success:#0b8f80;
+                --success-soft:#e6fbf7;
+                --warning:#d69a27;
+                --warning-soft:#fff7e4;
+                --danger:#ef5b35;
                 --danger-soft:#fff1ed;
                 --shadow:0 14px 34px rgba(31,42,68,.07);
                 --radius-xl:24px;
@@ -79,10 +79,12 @@
                 height:46px;
                 border-radius:16px;
                 color:#fff;
-                background:linear-gradient(135deg,var(--primary),#7c5cff);
-                box-shadow:0 14px 24px rgba(93,135,255,.28);
+                background:#21140f;
+                box-shadow:0 14px 24px rgba(244,90,36,.24);
                 font:800 .9rem var(--font-mono);
+                overflow:hidden;
             }
+            .brand-badge img { width:100%; height:100%; object-fit:cover; display:block; }
             .brand span:last-child { line-height:1.25; }
             .side-card {
                 padding:16px;
@@ -389,7 +391,7 @@
                 display:block;
                 height:100%;
                 border-radius:inherit;
-                background:linear-gradient(90deg,var(--primary),#7c5cff);
+                background:linear-gradient(90deg,var(--primary),#ba3c16);
             }
             .progress-fill.is-teal { background:linear-gradient(90deg,#0f8f78,var(--success)); }
             .checklist-item {
@@ -485,8 +487,8 @@
             .button {
                 color:#fff;
                 border-color:transparent;
-                background:linear-gradient(135deg,var(--primary),#7c5cff);
-                box-shadow:0 12px 22px rgba(93,135,255,.22);
+                background:linear-gradient(135deg,var(--primary),#ba3c16);
+                box-shadow:0 12px 22px rgba(244,90,36,.22);
             }
             .button-secondary { background:var(--surface-soft); }
             .logout-button { color:#fff; border-color:#172033; background:#172033; }
@@ -531,7 +533,9 @@
         <div class="backoffice-shell">
             <aside class="sidebar">
                 <a class="brand" href="@yield('brand_route', route('painel.redirect'))">
-                    <span class="brand-badge">MP</span>
+                    <span class="brand-badge">
+                        <img src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="Mania de Preco">
+                    </span>
                     <span>@yield('brand_label', 'Mania de Preco')</span>
                 </a>
 

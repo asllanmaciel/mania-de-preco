@@ -10,7 +10,10 @@ use App\Models\Marca;
 use App\Models\Preco;
 use App\Models\Produto;
 use App\Models\User;
+use App\Notifications\ChamadoSuporteAbertoNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class PublicCatalogTest extends TestCase
@@ -223,6 +226,8 @@ class PublicCatalogTest extends TestCase
 
     public function test_public_support_page_can_open_ticket_with_protocol(): void
     {
+        Notification::fake();
+
         $this->post(route('suporte.chamados.store'), [
             'nome' => 'Cliente em Lancamento',
             'email' => 'cliente-suporte@example.com',
@@ -242,11 +247,18 @@ class PublicCatalogTest extends TestCase
         $this->assertSame('novo', $chamado->status);
         $this->assertSame('catalogo', $chamado->categoria);
         $this->assertSame('alta', $chamado->prioridade);
+
+        Notification::assertSentOnDemand(ChamadoSuporteAbertoNotification::class, function ($notification, array $channels, AnonymousNotifiable $notifiable) use ($chamado) {
+            return $channels === ['mail']
+                && $notifiable->routes['mail'] === 'cliente-suporte@example.com'
+                && $notification->toArray($notifiable)['protocolo'] === $chamado->protocolo;
+        });
     }
 
     public function test_public_support_ticket_creation_is_rate_limited(): void
     {
         \Illuminate\Support\Facades\Cache::flush();
+        Notification::fake();
 
         for ($i = 1; $i <= 5; $i++) {
             $this->post(route('suporte.chamados.store'), [
