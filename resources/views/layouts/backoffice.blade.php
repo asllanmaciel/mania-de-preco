@@ -26,6 +26,8 @@
                 --shadow:0 14px 34px rgba(31,42,68,.07);
                 --radius-xl:24px;
                 --radius-lg:18px;
+                --sidebar-width:318px;
+                --rail:#fff4ea;
                 --font-sans:"Plus Jakarta Sans", sans-serif;
                 --font-mono:"IBM Plex Mono", monospace;
                 --tracking-tight:-.045em;
@@ -54,22 +56,40 @@
                 vertical-align:-.18em;
             }
 
-            .backoffice-shell { display:grid; grid-template-columns:300px minmax(0, 1fr); min-height:100vh; }
+            .backoffice-shell { display:grid; grid-template-columns:var(--sidebar-width) minmax(0, 1fr); min-height:100vh; }
             .sidebar {
                 position:sticky;
                 top:0;
                 align-self:start;
+                display:grid;
+                grid-template-columns:74px minmax(0, 1fr);
                 min-height:100vh;
-                padding:22px 18px;
                 background:var(--surface);
                 border-right:1px solid var(--line);
                 box-shadow:10px 0 30px rgba(31,42,68,.03);
+                z-index:20;
+            }
+            .sidebar-rail {
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                gap:12px;
+                padding:18px 12px;
+                background:var(--rail);
+                border-right:1px solid var(--line);
+            }
+            .sidebar-panel {
+                display:flex;
+                flex-direction:column;
+                gap:18px;
+                min-height:100vh;
+                padding:22px 18px;
+                overflow-y:auto;
             }
             .brand {
                 display:flex;
                 align-items:center;
                 gap:12px;
-                margin-bottom:20px;
                 font-weight:800;
             }
             .brand-badge {
@@ -86,13 +106,85 @@
             }
             .brand-badge img { width:100%; height:100%; object-fit:cover; display:block; }
             .brand span:last-child { line-height:1.25; }
+            .rail-link {
+                position:relative;
+                display:inline-grid;
+                place-items:center;
+                width:50px;
+                height:50px;
+                padding:0;
+                border-radius:16px;
+                border:1px solid transparent;
+                background:transparent;
+                color:#7a869a;
+                cursor:pointer;
+                transition:.18s ease;
+            }
+            .rail-link:hover, .rail-link.is-active {
+                color:var(--primary);
+                background:#fff;
+                border-color:var(--line);
+                box-shadow:0 8px 22px rgba(31,42,68,.06);
+            }
+            .rail-link:focus-visible {
+                outline:3px solid rgba(244,90,36,.18);
+                outline-offset:3px;
+            }
+            .rail-link::after {
+                content:attr(data-label);
+                position:absolute;
+                left:calc(100% + 12px);
+                top:50%;
+                z-index:60;
+                min-width:max-content;
+                max-width:180px;
+                padding:8px 10px;
+                border-radius:11px;
+                color:#fff;
+                background:#172033;
+                box-shadow:0 8px 22px rgba(31,42,68,.10);
+                font-size:.75rem;
+                font-weight:800;
+                line-height:1;
+                opacity:0;
+                pointer-events:none;
+                transform:translate(4px,-50%);
+                transition:.16s ease;
+            }
+            .rail-link::before {
+                content:"";
+                position:absolute;
+                left:calc(100% + 6px);
+                top:50%;
+                z-index:61;
+                width:8px;
+                height:8px;
+                border-radius:2px;
+                background:#172033;
+                opacity:0;
+                pointer-events:none;
+                transform:translate(4px,-50%) rotate(45deg);
+                transition:.16s ease;
+            }
+            .rail-link:hover::after,
+            .rail-link:hover::before,
+            .rail-link:focus-visible::after,
+            .rail-link:focus-visible::before {
+                opacity:1;
+                transform:translate(0,-50%);
+            }
+            .rail-stack {
+                display:grid;
+                gap:10px;
+                width:100%;
+                margin-top:14px;
+            }
             .side-card {
                 padding:16px;
                 border-radius:20px;
                 background:linear-gradient(135deg,#22304b,#2f4f9f);
                 color:#fff;
                 box-shadow:var(--shadow);
-                margin-bottom:18px;
             }
             .side-card strong { display:block; margin-bottom:6px; font-size:1rem; }
             .side-card p { margin:0; color:rgba(255,255,255,.72); line-height:1.6; font-size:.88rem; }
@@ -108,6 +200,70 @@
             .nav {
                 display:grid;
                 gap:8px;
+            }
+            .backoffice-module-panel { display:none; }
+            .backoffice-module-panel.is-active { display:block; }
+            .module-kicker {
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:12px;
+                margin:6px 4px 12px;
+            }
+            .module-kicker strong {
+                display:block;
+                font-size:1rem;
+                letter-spacing:-.03em;
+            }
+            .module-kicker span {
+                display:block;
+                margin-top:2px;
+                color:var(--muted);
+                font-size:.78rem;
+                line-height:1.45;
+            }
+            .module-count {
+                display:inline-grid;
+                place-items:center;
+                min-width:30px;
+                height:30px;
+                padding:0 9px;
+                border-radius:999px;
+                color:var(--primary);
+                background:var(--primary-soft);
+                border:1px solid var(--line);
+                font:800 .74rem var(--font-mono);
+            }
+            .menu-links { display:grid; gap:6px; }
+            .menu-link {
+                display:grid;
+                grid-template-columns:38px minmax(0, 1fr) auto;
+                gap:12px;
+                align-items:center;
+                min-height:48px;
+                padding:8px 10px;
+                border-radius:14px;
+                color:#5f6b7a;
+                border:1px solid transparent;
+                transition:.18s ease;
+            }
+            .menu-link:hover, .menu-link.is-active {
+                color:var(--primary);
+                background:var(--primary-soft);
+                border-color:#dce7ff;
+            }
+            .menu-link span:not(.menu-icon) { display:block; color:inherit; font-weight:800; font-size:.92rem; }
+            .menu-link small { display:block; margin-top:2px; color:var(--muted); font-size:.74rem; }
+            .menu-icon {
+                display:inline-grid;
+                place-items:center;
+                width:38px;
+                height:38px;
+                border-radius:13px;
+                background:#fff;
+                border:1px solid var(--line);
+                color:currentColor;
+                font-size:1.05rem;
             }
             .chip {
                 display:flex;
@@ -214,6 +370,21 @@
                 width:44px;
                 font-size:1.05rem;
             }
+            .icon-button.has-caret {
+                display:inline-grid;
+                grid-template-columns:auto auto;
+                gap:4px;
+                width:auto;
+                min-width:50px;
+                padding:0 11px;
+            }
+            .dropdown-caret {
+                width:14px;
+                height:14px;
+                color:var(--muted);
+                transition:.18s ease;
+            }
+            .topbar-menu[open] .dropdown-caret { transform:rotate(180deg); }
             .notification-dot {
                 position:absolute;
                 top:8px;
@@ -511,8 +682,12 @@
 
             @media (max-width:1100px) {
                 .backoffice-shell { grid-template-columns:1fr; }
-                .sidebar { position:static; min-height:auto; }
+                .sidebar { position:static; display:block; min-height:auto; }
+                .sidebar-rail { display:none; }
+                .sidebar-panel { min-height:auto; padding:16px 12px; }
                 .nav { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+                .backoffice-module-panel { display:block; }
+                .backoffice-module-panel:not(.is-active) { display:block; }
                 .grid-4, .grid-3, .grid-2, .readiness-panel { grid-template-columns:1fr; }
                 .list-row { grid-template-columns:1fr; }
             }
@@ -523,7 +698,6 @@
                 .topbar-menu, .icon-button, .profile-trigger { width:100%; }
                 .dropdown-panel { position:static; width:100%; margin-top:10px; }
                 .button, .button-secondary, .chip, .logout-button { width:100%; }
-                .sidebar { padding:16px 12px; }
                 .checklist-item { grid-template-columns:1fr; }
                 .checklist-actions { justify-content:flex-start; }
             }
@@ -531,62 +705,179 @@
     </head>
     <body>
         <div class="backoffice-shell">
+            @php
+                $usuarioBackoffice = auth()->user();
+                $nomeUsuarioBackoffice = $usuarioBackoffice?->name ?? 'Usuario';
+                $avatarUsuarioBackoffice = $usuarioBackoffice?->avatar_url;
+                $iniciaisBackoffice = collect(preg_split('/\s+/', trim($nomeUsuarioBackoffice)))
+                    ->filter()
+                    ->take(2)
+                    ->map(fn ($parte) => mb_strtoupper(mb_substr($parte, 0, 1)))
+                    ->implode('') ?: 'U';
+                $perfilBackoffice = $usuarioBackoffice?->perfilPainel() ?? 'usuario';
+                $isSuperAdminArea = request()->routeIs('super-admin.*') && $usuarioBackoffice?->ehSuperAdmin();
+
+                $centralNotificacoesBackoffice = app(\App\Support\Notificacoes\CentralNotificacoes::class);
+                $notificacoesBackoffice = $isSuperAdminArea
+                    ? $centralNotificacoesBackoffice->superAdmin($usuarioBackoffice)
+                    : $centralNotificacoesBackoffice->cliente($usuarioBackoffice);
+                $notificacoesPendentesBackoffice = $notificacoesBackoffice
+                    ->reject(fn ($notificacao) => $notificacao['lida'] || $notificacao['dispensada'] || $notificacao['tipo'] === 'sucesso')
+                    ->values();
+                $notificacoesTopbarBackoffice = $notificacoesPendentesBackoffice->isNotEmpty()
+                    ? $notificacoesPendentesBackoffice
+                    : $notificacoesBackoffice;
+                $rotaCentralNotificacoesBackoffice = $isSuperAdminArea
+                    ? route('super-admin.suporte.index')
+                    : route('cliente.notificacoes');
+
+                $atalhosBackoffice = collect([
+                    ['titulo' => 'Super admin', 'descricao' => 'Governanca da plataforma.', 'rota' => route('super-admin.dashboard'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                    ['titulo' => 'Contas', 'descricao' => 'Clientes e operacoes ativas.', 'rota' => route('super-admin.contas.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                    ['titulo' => 'Suporte', 'descricao' => 'Fila de chamados e prioridades.', 'rota' => route('super-admin.suporte.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
+                    ['titulo' => 'Painel lojista', 'descricao' => 'Operacao da conta vinculada.', 'rota' => route('admin.dashboard'), 'ativo' => $usuarioBackoffice?->possuiAcessoAdmin()],
+                    ['titulo' => 'Area do cliente', 'descricao' => 'Visao do usuario final.', 'rota' => route('cliente.dashboard'), 'ativo' => true],
+                ])->filter(fn ($atalho) => $atalho['ativo'])->take(4);
+
+                $backofficeModules = $isSuperAdminArea
+                    ? collect([
+                        [
+                            'id' => 'governanca',
+                            'titulo' => 'Governanca',
+                            'descricao' => 'Visao executiva da plataforma.',
+                            'icone' => 'shield',
+                            'active' => request()->routeIs('super-admin.dashboard'),
+                            'items' => collect([
+                                ['titulo' => 'Visao geral', 'descricao' => 'saude global', 'rota' => route('super-admin.dashboard'), 'icone' => 'home', 'active' => request()->routeIs('super-admin.dashboard')],
+                            ]),
+                        ],
+                        [
+                            'id' => 'contas',
+                            'titulo' => 'Contas',
+                            'descricao' => 'Clientes, detalhes e assinaturas.',
+                            'icone' => 'store',
+                            'active' => request()->routeIs('super-admin.contas.*') || request()->routeIs('super-admin.assinaturas.*'),
+                            'items' => collect([
+                                ['titulo' => 'Contas', 'descricao' => 'clientes ativos', 'rota' => route('super-admin.contas.index'), 'icone' => 'store', 'active' => request()->routeIs('super-admin.contas.index')],
+                                isset($conta) ? ['titulo' => 'Conta atual', 'descricao' => 'detalhe e consumo', 'rota' => route('super-admin.contas.show', $conta), 'icone' => 'grid', 'active' => request()->routeIs('super-admin.contas.show') || request()->routeIs('super-admin.contas.assinaturas.*')] : null,
+                            ])->filter()->values(),
+                        ],
+                        [
+                            'id' => 'receita',
+                            'titulo' => 'Receita',
+                            'descricao' => 'Planos e monetizacao.',
+                            'icone' => 'credit-card',
+                            'active' => request()->routeIs('super-admin.planos.*'),
+                            'items' => collect([
+                                ['titulo' => 'Planos', 'descricao' => 'catalogo comercial', 'rota' => route('super-admin.planos.index'), 'icone' => 'credit-card', 'active' => request()->routeIs('super-admin.planos.*')],
+                            ]),
+                        ],
+                        [
+                            'id' => 'suporte',
+                            'titulo' => 'Suporte',
+                            'descricao' => 'Fila, prioridade e riscos.',
+                            'icone' => 'bell',
+                            'active' => request()->routeIs('super-admin.suporte.*'),
+                            'items' => collect([
+                                ['titulo' => 'Chamados', 'descricao' => 'fila operacional', 'rota' => route('super-admin.suporte.index'), 'icone' => 'bell', 'active' => request()->routeIs('super-admin.suporte.*')],
+                                ['titulo' => 'Pagina publica', 'descricao' => 'canal de abertura', 'rota' => route('suporte'), 'icone' => 'search', 'active' => false],
+                            ]),
+                        ],
+                    ])
+                    : collect([
+                        [
+                            'id' => 'cliente',
+                            'titulo' => 'Cliente',
+                            'descricao' => 'Radar pessoal e alertas.',
+                            'icone' => 'spark',
+                            'active' => request()->routeIs('cliente.dashboard') || request()->routeIs('cliente.notificacoes'),
+                            'items' => collect([
+                                ['titulo' => 'Meu radar', 'descricao' => 'ofertas e alertas', 'rota' => route('cliente.dashboard'), 'icone' => 'spark', 'active' => request()->routeIs('cliente.dashboard')],
+                                ['titulo' => 'Notificacoes', 'descricao' => 'sinais recentes', 'rota' => route('cliente.notificacoes'), 'icone' => 'bell', 'active' => request()->routeIs('cliente.notificacoes')],
+                            ]),
+                        ],
+                        [
+                            'id' => 'atalhos',
+                            'titulo' => 'Atalhos',
+                            'descricao' => 'Voltar para areas principais.',
+                            'icone' => 'grid',
+                            'active' => false,
+                            'items' => collect([
+                                ['titulo' => 'Ofertas publicas', 'descricao' => 'comparar precos', 'rota' => route('home'), 'icone' => 'search', 'active' => false],
+                                $usuarioBackoffice?->ehSuperAdmin() ? ['titulo' => 'Super admin', 'descricao' => 'governanca', 'rota' => route('super-admin.dashboard'), 'icone' => 'shield', 'active' => false] : null,
+                                $usuarioBackoffice?->possuiAcessoAdmin() ? ['titulo' => 'Painel lojista', 'descricao' => 'operacao', 'rota' => route('admin.dashboard'), 'icone' => 'store', 'active' => false] : null,
+                            ])->filter()->values(),
+                        ],
+                    ]);
+
+                $backofficeModules = $backofficeModules->filter(fn (array $module) => $module['items']->isNotEmpty())->values();
+                $activeBackofficeModule = $backofficeModules->firstWhere('active', true)['id'] ?? $backofficeModules->first()['id'];
+            @endphp
+
             <aside class="sidebar">
-                <a class="brand" href="@yield('brand_route', route('painel.redirect'))">
-                    <span class="brand-badge">
+                <div class="sidebar-rail">
+                    <a class="brand-badge" href="@yield('brand_route', route('painel.redirect'))">
                         <img src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="Mania de Preco">
-                    </span>
-                    <span>@yield('brand_label', 'Mania de Preco')</span>
-                </a>
+                    </a>
+                    <nav class="rail-stack" aria-label="Modulos do backoffice">
+                        @foreach ($backofficeModules as $module)
+                            <button
+                                class="rail-link {{ $module['id'] === $activeBackofficeModule ? 'is-active' : '' }}"
+                                type="button"
+                                aria-label="Abrir modulo {{ $module['titulo'] }}"
+                                aria-controls="backoffice-module-{{ $module['id'] }}"
+                                aria-pressed="{{ $module['id'] === $activeBackofficeModule ? 'true' : 'false' }}"
+                                data-label="{{ $module['titulo'] }}"
+                                data-backoffice-module-trigger="{{ $module['id'] }}"
+                            >
+                                <x-ui.icon :name="$module['icone']" />
+                            </button>
+                        @endforeach
+                    </nav>
+                </div>
 
-                <section class="side-card">
-                    <strong>Backoffice</strong>
-                    <p>Governanca da plataforma com leitura clara de contas, planos, suporte e acesso.</p>
-                </section>
+                <div class="sidebar-panel">
+                    <a class="brand" href="@yield('brand_route', route('painel.redirect'))">
+                        <span>@yield('brand_label', 'Mania de Preco')</span>
+                    </a>
 
-                <span class="nav-title">Navegacao</span>
-                <nav class="nav">
-                    @yield('nav')
-                    <a class="chip" href="{{ url('/') }}">Home publica</a>
-                </nav>
+                    <section class="side-card">
+                        <strong>{{ $isSuperAdminArea ? 'Backoffice' : 'Area do cliente' }}</strong>
+                        <p>{{ $isSuperAdminArea ? 'Governanca da plataforma com leitura clara de contas, planos, suporte e acesso.' : 'Radar pessoal para acompanhar ofertas, alertas e oportunidades de economia.' }}</p>
+                    </section>
+
+                    <nav class="nav" aria-label="Navegacao principal">
+                        @foreach ($backofficeModules as $module)
+                            <section
+                                class="backoffice-module-panel {{ $module['id'] === $activeBackofficeModule ? 'is-active' : '' }}"
+                                id="backoffice-module-{{ $module['id'] }}"
+                                data-backoffice-module-panel="{{ $module['id'] }}"
+                            >
+                                <div class="module-kicker">
+                                    <span>
+                                        <strong>{{ $module['titulo'] }}</strong>
+                                        <span>{{ $module['descricao'] }}</span>
+                                    </span>
+                                    <span class="module-count">{{ $module['items']->count() }}</span>
+                                </div>
+
+                                <span class="nav-title">Subitens</span>
+                                <div class="menu-links">
+                                    @foreach ($module['items'] as $item)
+                                        <a class="menu-link {{ $item['active'] ? 'is-active' : '' }}" href="{{ $item['rota'] }}">
+                                            <span class="menu-icon"><x-ui.icon :name="$item['icone']" /></span>
+                                            <span>{{ $item['titulo'] }}<small>{{ $item['descricao'] }}</small></span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endforeach
+                    </nav>
+                </div>
             </aside>
 
             <div class="page-wrapper">
                 <div class="shell">
-                    @php
-                        $usuarioBackoffice = auth()->user();
-                        $nomeUsuarioBackoffice = $usuarioBackoffice?->name ?? 'Usuario';
-                        $avatarUsuarioBackoffice = $usuarioBackoffice?->avatar_url;
-                        $iniciaisBackoffice = collect(preg_split('/\s+/', trim($nomeUsuarioBackoffice)))
-                            ->filter()
-                            ->take(2)
-                            ->map(fn ($parte) => mb_strtoupper(mb_substr($parte, 0, 1)))
-                            ->implode('') ?: 'U';
-                        $perfilBackoffice = $usuarioBackoffice?->perfilPainel() ?? 'usuario';
-
-                        $centralNotificacoesBackoffice = app(\App\Support\Notificacoes\CentralNotificacoes::class);
-                        $notificacoesBackoffice = request()->routeIs('super-admin.*') && $usuarioBackoffice?->ehSuperAdmin()
-                            ? $centralNotificacoesBackoffice->superAdmin($usuarioBackoffice)
-                            : $centralNotificacoesBackoffice->cliente($usuarioBackoffice);
-                        $notificacoesPendentesBackoffice = $notificacoesBackoffice
-                            ->reject(fn ($notificacao) => $notificacao['lida'] || $notificacao['dispensada'] || $notificacao['tipo'] === 'sucesso')
-                            ->values();
-                        $notificacoesTopbarBackoffice = $notificacoesPendentesBackoffice->isNotEmpty()
-                            ? $notificacoesPendentesBackoffice
-                            : $notificacoesBackoffice;
-                        $rotaCentralNotificacoesBackoffice = request()->routeIs('super-admin.*') && $usuarioBackoffice?->ehSuperAdmin()
-                            ? route('super-admin.suporte.index')
-                            : route('cliente.notificacoes');
-
-                        $atalhosBackoffice = collect([
-                            ['titulo' => 'Super admin', 'descricao' => 'Governanca da plataforma.', 'rota' => route('super-admin.dashboard'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
-                            ['titulo' => 'Contas', 'descricao' => 'Clientes e operacoes ativas.', 'rota' => route('super-admin.contas.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
-                            ['titulo' => 'Suporte', 'descricao' => 'Fila de chamados e prioridades.', 'rota' => route('super-admin.suporte.index'), 'ativo' => $usuarioBackoffice?->ehSuperAdmin()],
-                            ['titulo' => 'Painel lojista', 'descricao' => 'Operacao da conta vinculada.', 'rota' => route('admin.dashboard'), 'ativo' => $usuarioBackoffice?->possuiAcessoAdmin()],
-                            ['titulo' => 'Area do cliente', 'descricao' => 'Visao do usuario final.', 'rota' => route('cliente.dashboard'), 'ativo' => true],
-                        ])->filter(fn ($atalho) => $atalho['ativo'])->take(4);
-                    @endphp
-
                     <header class="topbar">
                         <div>
                             <h1>@yield('title', 'Painel')</h1>
@@ -596,8 +887,9 @@
                         <div class="topbar-actions">
                             <div class="topbar-tools">
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir notificacoes">
+                                    <summary class="icon-button has-caret" aria-label="Abrir notificacoes">
                                         <x-ui.icon name="bell" />
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                         <span class="notification-dot">{{ $notificacoesPendentesBackoffice->count() }}</span>
                                     </summary>
                                     <div class="dropdown-panel">
@@ -623,8 +915,9 @@
                                 </details>
 
                                 <details class="topbar-menu">
-                                    <summary class="icon-button" aria-label="Abrir atalhos rapidos">
+                                    <summary class="icon-button has-caret" aria-label="Abrir atalhos rapidos">
                                         <x-ui.icon name="grid" />
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Atalhos rapidos</h3>
@@ -656,6 +949,7 @@
                                             <strong>{{ $nomeUsuarioBackoffice }}</strong>
                                             <small>{{ $perfilBackoffice }}</small>
                                         </span>
+                                        <x-ui.icon name="chevron-down" class="dropdown-caret" />
                                     </summary>
                                     <div class="dropdown-panel">
                                         <h3>Minha conta</h3>
@@ -696,5 +990,73 @@
                 </div>
             </div>
         </div>
+        <script>
+            (() => {
+                const menus = Array.from(document.querySelectorAll('details.topbar-menu'));
+
+                if (!menus.length) {
+                    return;
+                }
+
+                menus.forEach((menu) => {
+                    menu.addEventListener('toggle', () => {
+                        if (!menu.open) {
+                            return;
+                        }
+
+                        menus.forEach((otherMenu) => {
+                            if (otherMenu !== menu) {
+                                otherMenu.open = false;
+                            }
+                        });
+                    });
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (event.target.closest('details.topbar-menu')) {
+                        return;
+                    }
+
+                    menus.forEach((menu) => {
+                        menu.open = false;
+                    });
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key !== 'Escape') {
+                        return;
+                    }
+
+                    menus.forEach((menu) => {
+                        menu.open = false;
+                    });
+                });
+            })();
+
+            (() => {
+                const triggers = Array.from(document.querySelectorAll('[data-backoffice-module-trigger]'));
+                const panels = Array.from(document.querySelectorAll('[data-backoffice-module-panel]'));
+
+                if (!triggers.length || !panels.length) {
+                    return;
+                }
+
+                const activateModule = (moduleId) => {
+                    triggers.forEach((trigger) => {
+                        const isActive = trigger.dataset.backofficeModuleTrigger === moduleId;
+                        trigger.classList.toggle('is-active', isActive);
+                        trigger.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                    });
+
+                    panels.forEach((panel) => {
+                        panel.classList.toggle('is-active', panel.dataset.backofficeModulePanel === moduleId);
+                    });
+                };
+
+                triggers.forEach((trigger) => {
+                    trigger.addEventListener('click', () => activateModule(trigger.dataset.backofficeModuleTrigger));
+                });
+            })();
+        </script>
     </body>
 </html>

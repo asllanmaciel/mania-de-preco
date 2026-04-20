@@ -100,6 +100,7 @@
             .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
             .rail-stack { display: grid; gap: 10px; width: 100%; margin-top: 14px; }
             .rail-link {
+                position: relative;
                 width: 50px;
                 height: 50px;
                 border-radius: 16px;
@@ -119,6 +120,49 @@
             .rail-link:focus-visible {
                 outline: 3px solid rgba(244, 90, 36, 0.18);
                 outline-offset: 3px;
+            }
+            .rail-link::after {
+                content: attr(data-label);
+                position: absolute;
+                left: calc(100% + 12px);
+                top: 50%;
+                z-index: 60;
+                min-width: max-content;
+                max-width: 180px;
+                padding: 8px 10px;
+                border-radius: 11px;
+                color: #fff;
+                background: #172033;
+                box-shadow: var(--shadow-soft);
+                font-size: 0.75rem;
+                font-weight: 800;
+                line-height: 1;
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(4px, -50%);
+                transition: 0.16s ease;
+            }
+            .rail-link::before {
+                content: "";
+                position: absolute;
+                left: calc(100% + 6px);
+                top: 50%;
+                z-index: 61;
+                width: 8px;
+                height: 8px;
+                border-radius: 2px;
+                background: #172033;
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(4px, -50%) rotate(45deg);
+                transition: 0.16s ease;
+            }
+            .rail-link:hover::after,
+            .rail-link:hover::before,
+            .rail-link:focus-visible::after,
+            .rail-link:focus-visible::before {
+                opacity: 1;
+                transform: translate(0, -50%);
             }
             .sidebar-panel {
                 display: flex;
@@ -1129,6 +1173,7 @@
                                 aria-label="Abrir modulo {{ $module['titulo'] }}"
                                 aria-controls="sidebar-module-{{ $module['id'] }}"
                                 aria-pressed="{{ $module['id'] === $activeSidebarModule ? 'true' : 'false' }}"
+                                data-label="{{ $module['titulo'] }}"
                                 data-sidebar-module-trigger="{{ $module['id'] }}"
                             >
                                 <x-ui.icon :name="$module['icone']" />
@@ -1469,6 +1514,48 @@
         </nav>
 
         <script>
+            (() => {
+                const menus = Array.from(document.querySelectorAll('details.topbar-menu'));
+
+                if (!menus.length) {
+                    return;
+                }
+
+                menus.forEach((menu) => {
+                    menu.addEventListener('toggle', () => {
+                        if (!menu.open) {
+                            return;
+                        }
+
+                        menus.forEach((otherMenu) => {
+                            if (otherMenu !== menu) {
+                                otherMenu.open = false;
+                            }
+                        });
+                    });
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (event.target.closest('details.topbar-menu')) {
+                        return;
+                    }
+
+                    menus.forEach((menu) => {
+                        menu.open = false;
+                    });
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key !== 'Escape') {
+                        return;
+                    }
+
+                    menus.forEach((menu) => {
+                        menu.open = false;
+                    });
+                });
+            })();
+
             (() => {
                 const triggers = Array.from(document.querySelectorAll('[data-sidebar-module-trigger]'));
                 const panels = Array.from(document.querySelectorAll('[data-sidebar-module-panel]'));
