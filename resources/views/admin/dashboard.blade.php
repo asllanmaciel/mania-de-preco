@@ -77,6 +77,30 @@
         <div class="card-body stack">
             <div class="section-header">
                 <div>
+                    <span class="pill">Plano do dia</span>
+                    <h2>O que mais aproxima a conta do lancamento</h2>
+                    <p>Prioridades calculadas com base em prontidao, financeiro, vitrine e saude operacional da conta.</p>
+                </div>
+                <a class="button-secondary" href="{{ route('admin.lancamento') }}">Ver centro de lancamento</a>
+            </div>
+
+            <div class="highlight-grid">
+                @foreach ($planoDoDia as $acao)
+                    <article class="highlight-card">
+                        <span class="pill">{{ $acao['impacto'] }}</span>
+                        <strong>{{ $acao['titulo'] }}</strong>
+                        <span>{{ $acao['descricao'] }}</span>
+                        <a class="ghost-link" href="{{ $acao['rota'] }}">{{ $acao['acao'] }}</a>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body stack">
+            <div class="section-header">
+                <div>
                     <h2>Saude da conta</h2>
                     <p>Score executivo que combina assinatura, operacao, financeiro e governanca para indicar onde agir primeiro.</p>
                 </div>

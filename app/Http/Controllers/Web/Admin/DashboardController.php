@@ -121,6 +121,16 @@ class DashboardController extends AdminController
         $onboarding = $checklist->build($conta, $request->user()->capacidadesNaConta($conta));
         $usoPlano = $usageMeter->resumo($conta);
         $saudeConta = $healthAnalyzer->analisar($conta);
+        $capacidadesConta = $request->user()->capacidadesNaConta($conta);
+        $planoDoDia = $this->montarPlanoDoDia(
+            $onboarding,
+            $saudeConta,
+            $capacidadesConta,
+            $titulosCriticos,
+            $totalPrecosMonitorados,
+            $totalProdutosCatalogo,
+            $contasReceberPendentes
+        );
 
         return $this->responder($request, 'admin.dashboard', [
             'conta' => $conta,
@@ -145,7 +155,101 @@ class DashboardController extends AdminController
             'onboarding' => $onboarding,
             'usoPlano' => $usoPlano,
             'saudeConta' => $saudeConta,
+            'planoDoDia' => $planoDoDia,
         ], $conta);
+    }
+
+    private function montarPlanoDoDia(
+        array $onboarding,
+        array $saudeConta,
+        array $capacidadesConta,
+        int $titulosCriticos,
+        int $totalPrecosMonitorados,
+        int $totalProdutosCatalogo,
+        int $contasReceberPendentes
+    ): Collection {
+        $acoes = collect();
+
+        if ($onboarding['percentual'] < 100 && in_array('onboarding', $capacidadesConta, true)) {
+            $acoes->push([
+                'impacto' => 'lancamento',
+                'titulo' => 'Concluir a proxima etapa de prontidao',
+                'descricao' => $onboarding['proxima_etapa']['titulo'] ?? 'Finalize os pontos pendentes para deixar a conta pronta para apresentacao.',
+                'acao' => 'Abrir onboarding',
+                'rota' => route('admin.onboarding'),
+                'prioridade' => 100 - $onboarding['percentual'],
+            ]);
+        }
+
+        if ($titulosCriticos > 0 && in_array('financeiro', $capacidadesConta, true)) {
+            $acoes->push([
+                'impacto' => 'caixa',
+                'titulo' => "{$titulosCriticos} titulos pedem atencao esta semana",
+                'descricao' => 'Resolva vencimentos proximos para proteger previsao de caixa e reduzir risco operacional.',
+                'acao' => 'Abrir financeiro',
+                'rota' => route('admin.financeiro.index'),
+                'prioridade' => 90 + $titulosCriticos,
+            ]);
+        }
+
+        if (($totalPrecosMonitorados < 12 || $totalProdutosCatalogo < 8) && in_array('precos', $capacidadesConta, true)) {
+            $acoes->push([
+                'impacto' => 'vitrine',
+                'titulo' => 'Fortalecer vitrine de precos',
+                'descricao' => 'Mais produtos com precos ativos melhoram o comparador publico e deixam o radar mais convincente.',
+                'acao' => 'Revisar precos',
+                'rota' => route('admin.precos.index'),
+                'prioridade' => 82,
+            ]);
+        }
+
+        if ($contasReceberPendentes > 0 && in_array('financeiro', $capacidadesConta, true)) {
+            $acoes->push([
+                'impacto' => 'recebimento',
+                'titulo' => 'Acompanhar recebimentos em aberto',
+                'descricao' => 'Entradas pendentes ajudam a entender capital disponivel e previsao para a operacao.',
+                'acao' => 'Ver contas a receber',
+                'rota' => route('admin.financeiro.contas-receber.index'),
+                'prioridade' => 76,
+            ]);
+        }
+
+        $proximaAcao = $saudeConta['proxima_acao'] ?? null;
+        $rotaSaude = $proximaAcao['rota'] ?? null;
+        $capacidadeSaude = [
+            'admin.assinatura' => 'gestao',
+            'admin.configuracoes.edit' => 'gestao',
+            'admin.financeiro.index' => 'financeiro',
+            'admin.precos.index' => 'precos',
+            'admin.equipe.index' => 'equipe',
+        ][$rotaSaude] ?? null;
+
+        if ($proximaAcao && $rotaSaude && (! $capacidadeSaude || in_array($capacidadeSaude, $capacidadesConta, true))) {
+            $acoes->push([
+                'impacto' => 'saude',
+                'titulo' => $proximaAcao['titulo'],
+                'descricao' => $proximaAcao['descricao'],
+                'acao' => $proximaAcao['acao'] ?? 'Resolver agora',
+                'rota' => route($rotaSaude),
+                'prioridade' => 72,
+            ]);
+        }
+
+        if ($acoes->isEmpty()) {
+            $acoes->push([
+                'impacto' => 'crescimento',
+                'titulo' => 'Conta pronta para demonstracao',
+                'descricao' => 'A base principal esta saudavel. Use o centro de lancamento para acompanhar detalhes finos antes de apresentar.',
+                'acao' => 'Ver prontidao',
+                'rota' => route('admin.lancamento'),
+                'prioridade' => 50,
+            ]);
+        }
+
+        return $acoes
+            ->sortByDesc('prioridade')
+            ->values()
+            ->take(3);
     }
 
     private function montarSerieMensal($conta): Collection

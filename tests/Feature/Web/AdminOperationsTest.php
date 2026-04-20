@@ -569,6 +569,8 @@ class AdminOperationsTest extends TestCase
             ->assertSee('Onboarding da conta')
             ->assertSee('Saude da conta')
             ->assertSee('Score executivo')
+            ->assertSee('Plano do dia')
+            ->assertSee('O que mais aproxima a conta do lancamento')
             ->assertSee('Ver prontidao')
             ->assertSee('Abrir onboarding');
     }
