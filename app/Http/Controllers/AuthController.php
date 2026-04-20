@@ -18,6 +18,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
+            'aceite_termos' => 'accepted',
         ]);
 
         $user = DB::transaction(function () use ($request) {
@@ -25,6 +26,11 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'termos_aceitos_em' => now(),
+                'termos_versao' => config('legal.termos_versao'),
+                'privacidade_versao' => config('legal.privacidade_versao'),
+                'consentimento_ip' => $request->ip(),
+                'consentimento_user_agent' => Str::limit((string) $request->userAgent(), 1024, ''),
             ]);
 
             $conta = Conta::create([

@@ -52,6 +52,9 @@
             .field-group-full { grid-column:1 / -1; }
             .field-group label, .field-group-full label { font-weight:700; }
             input, select, textarea { width:100%; padding:14px 16px; border-radius:14px; border:1px solid rgba(76,42,22,.12); background:rgba(255,255,255,.92); color:var(--text); font:inherit; }
+            .terms-check { display:flex; align-items:flex-start; gap:11px; padding:14px 16px; border-radius:16px; border:1px solid rgba(76,42,22,.12); background:rgba(255,255,255,.72); color:var(--muted); line-height:1.62; }
+            .terms-check input { width:18px; min-width:18px; height:18px; margin-top:4px; padding:0; accent-color:var(--accent); }
+            .terms-check a { color:#bd4115; font-weight:700; }
             textarea { min-height:140px; resize:vertical; }
             .form-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
             .flash-box, .error-box { padding:16px 18px; border-radius:18px; line-height:1.7; }

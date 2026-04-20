@@ -134,6 +134,17 @@
                         <textarea id="mensagem" name="mensagem" required placeholder="Conte o que você tentou fazer, o que esperava ver e o que apareceu na tela.">{{ old('mensagem') }}</textarea>
                         @error('mensagem') <span class="small">{{ $message }}</span> @enderror
                     </div>
+
+                    <div class="field-group-full">
+                        <label class="terms-check" for="aceite_termos">
+                            <input id="aceite_termos" type="checkbox" name="aceite_termos" value="1" @checked(old('aceite_termos')) required>
+                            <span>
+                                Li e aceito os <a href="{{ route('termos') }}" target="_blank" rel="noopener">Termos de Uso</a>
+                                e a <a href="{{ route('privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>. Versões {{ $versaoTermos }} e {{ $versaoPrivacidade }}.
+                            </span>
+                        </label>
+                        @error('aceite_termos') <span class="small">{{ $message }}</span> @enderror
+                    </div>
                 </div>
 
                 <div class="form-actions">

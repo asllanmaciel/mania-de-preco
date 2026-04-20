@@ -192,7 +192,9 @@ class PublicCatalogTest extends TestCase
         $this->get(route('suporte'))
             ->assertOk()
             ->assertSee('Suporte')
-            ->assertSee('Quando algo trava');
+            ->assertSee('Quando algo trava')
+            ->assertSee('Termos de Uso')
+            ->assertSee('Política de Privacidade');
     }
 
     public function test_public_robots_txt_blocks_private_areas_and_points_to_sitemap(): void
@@ -238,6 +240,7 @@ class PublicCatalogTest extends TestCase
             'assunto' => 'Preco divergente na vitrine',
             'mensagem' => 'Estou vendo um preco diferente no card publico e preciso de ajuda para corrigir rapidamente.',
             'origem_url' => route('suporte'),
+            'aceite_termos' => '1',
         ])->assertRedirect(route('suporte'))
             ->assertSessionHas('status');
 
@@ -247,6 +250,9 @@ class PublicCatalogTest extends TestCase
         $this->assertSame('novo', $chamado->status);
         $this->assertSame('catalogo', $chamado->categoria);
         $this->assertSame('alta', $chamado->prioridade);
+        $this->assertNotNull($chamado->termos_aceitos_em);
+        $this->assertSame(config('legal.termos_versao'), $chamado->termos_versao);
+        $this->assertSame(config('legal.privacidade_versao'), $chamado->privacidade_versao);
 
         Notification::assertSentOnDemand(ChamadoSuporteAbertoNotification::class, function ($notification, array $channels, AnonymousNotifiable $notifiable) use ($chamado) {
             return $channels === ['mail']
@@ -271,6 +277,7 @@ class PublicCatalogTest extends TestCase
                 'assunto' => "Teste de limite {$i}",
                 'mensagem' => 'Mensagem valida para abertura de chamado publico com limite de abuso.',
                 'origem_url' => route('suporte'),
+                'aceite_termos' => '1',
             ])->assertRedirect(route('suporte'));
         }
 
@@ -284,7 +291,28 @@ class PublicCatalogTest extends TestCase
             'assunto' => 'Tentativa bloqueada',
             'mensagem' => 'Mensagem valida para confirmar que a sexta tentativa recebe rate limit.',
             'origem_url' => route('suporte'),
+            'aceite_termos' => '1',
         ])->assertTooManyRequests();
+    }
+
+    public function test_public_support_ticket_requires_terms_acceptance(): void
+    {
+        Notification::fake();
+
+        $this->post(route('suporte.chamados.store'), [
+            'nome' => 'Cliente Sem Aceite',
+            'email' => 'cliente-sem-aceite@example.com',
+            'telefone' => '(11) 99999-0000',
+            'empresa' => 'Mercado Modelo',
+            'categoria' => 'catalogo',
+            'prioridade' => 'alta',
+            'assunto' => 'Preciso de ajuda',
+            'mensagem' => 'Mensagem valida para confirmar que o aceite legal e obrigatorio no suporte publico.',
+            'origem_url' => route('suporte'),
+        ])->assertSessionHasErrors('aceite_termos');
+
+        $this->assertDatabaseCount('chamados_suporte', 0);
+        Notification::assertNothingSent();
     }
 
     private function seedCatalogoDemo(): array

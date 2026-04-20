@@ -31,6 +31,9 @@ class ChamadoSuporte extends Model
         'resolvido_em',
         'ip',
         'user_agent',
+        'termos_aceitos_em',
+        'termos_versao',
+        'privacidade_versao',
     ];
 
     protected function casts(): array
@@ -38,6 +41,7 @@ class ChamadoSuporte extends Model
         return [
             'respondido_em' => 'datetime',
             'resolvido_em' => 'datetime',
+            'termos_aceitos_em' => 'datetime',
         ];
     }
 

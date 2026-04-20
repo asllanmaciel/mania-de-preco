@@ -19,13 +19,16 @@ class ClienteExperienceTest extends TestCase
     {
         $this->get(route('register'))
             ->assertOk()
-            ->assertSee('Conta gratuita de consumidor');
+            ->assertSee('Conta gratuita de consumidor')
+            ->assertSee('Termos de Uso')
+            ->assertSee('Política de Privacidade');
 
         $this->post(route('register.store'), [
             'name' => 'Cliente Lancamento',
             'email' => 'cliente-lancamento@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'aceite_termos' => '1',
         ])->assertRedirect(route('cliente.dashboard'));
 
         $this->assertAuthenticated();
@@ -34,10 +37,31 @@ class ClienteExperienceTest extends TestCase
             'is_super_admin' => false,
         ]);
 
+        $user = User::where('email', 'cliente-lancamento@example.com')->firstOrFail();
+
+        $this->assertNotNull($user->termos_aceitos_em);
+        $this->assertSame(config('legal.termos_versao'), $user->termos_versao);
+        $this->assertSame(config('legal.privacidade_versao'), $user->privacidade_versao);
+
         $this->get(route('cliente.dashboard'))
             ->assertOk()
             ->assertSee('Seu radar pessoal de bons precos')
             ->assertSee('Criar alerta');
+    }
+
+    public function test_customer_registration_requires_terms_acceptance(): void
+    {
+        $this->post(route('register.store'), [
+            'name' => 'Cliente Sem Aceite',
+            'email' => 'cliente-sem-aceite@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertSessionHasErrors('aceite_termos');
+
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', [
+            'email' => 'cliente-sem-aceite@example.com',
+        ]);
     }
 
     public function test_customer_can_create_update_and_remove_price_alert_from_web_panel(): void

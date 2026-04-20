@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Notifications\ChamadoSuporteAbertoNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PlatformLaunchReadiness
@@ -26,6 +27,7 @@ class PlatformLaunchReadiness
             'produtos_com_imagem' => Produto::whereNotNull('imagem_principal')->where('imagem_principal', '!=', '')->count(),
             'precos' => Preco::count(),
             'usuarios' => User::count(),
+            'usuarios_com_consentimento' => User::whereNotNull('termos_aceitos_em')->count(),
             'super_admins' => User::where('is_super_admin', true)->count(),
             'planos_ativos' => Plano::where('status', 'ativo')->count(),
             'assinaturas_operacionais' => Assinatura::whereIn('status', ['trial', 'ativa'])->count(),
@@ -229,6 +231,15 @@ class PlatformLaunchReadiness
                     'critica' => false,
                     'acao' => 'Validar e-mail de suporte',
                     'rota' => route('suporte'),
+                ],
+                [
+                    'titulo' => 'Consentimento legal nos formulários',
+                    'descricao' => 'Cadastro e suporte registram aceite de Termos e Privacidade com versão, data e origem.',
+                    'concluida' => Schema::hasColumn('users', 'termos_aceitos_em')
+                        && Schema::hasColumn('chamados_suporte', 'termos_aceitos_em'),
+                    'critica' => true,
+                    'acao' => 'Validar consentimento LGPD',
+                    'rota' => route('termos'),
                 ],
             ],
         ];

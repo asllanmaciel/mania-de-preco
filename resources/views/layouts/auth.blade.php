@@ -218,6 +218,31 @@
                 min-height:auto;
                 accent-color:var(--primary);
             }
+            .terms-check {
+                display:flex;
+                align-items:flex-start;
+                gap:11px;
+                padding:14px 15px;
+                border:1px solid var(--line);
+                border-radius:15px;
+                background:var(--surface-soft);
+                color:var(--muted);
+                font-size:.92rem;
+                line-height:1.55;
+                font-weight:700;
+            }
+            .terms-check input {
+                width:18px;
+                min-width:18px;
+                height:18px;
+                min-height:18px;
+                margin-top:3px;
+                accent-color:var(--primary);
+            }
+            .terms-check a {
+                color:var(--primary);
+                font-weight:800;
+            }
             .button {
                 width:100%;
                 color:#fff;

@@ -46,19 +46,23 @@ class PublicTrustController extends Controller
             'assunto' => ['required', 'string', 'max:255'],
             'mensagem' => ['required', 'string', 'min:20', 'max:5000'],
             'origem_url' => ['nullable', 'url', 'max:255'],
+            'aceite_termos' => ['accepted'],
         ]);
 
         $usuario = $request->user();
         $conta = $usuario?->contasAtivas()->first();
 
         $chamado = ChamadoSuporte::create([
-            ...$dados,
+            ...collect($dados)->except('aceite_termos')->all(),
             'conta_id' => $conta?->id,
             'user_id' => $usuario?->id,
             'protocolo' => $this->gerarProtocolo(),
             'status' => 'novo',
             'ip' => $request->ip(),
             'user_agent' => Str::limit((string) $request->userAgent(), 1024, ''),
+            'termos_aceitos_em' => now(),
+            'termos_versao' => config('legal.termos_versao'),
+            'privacidade_versao' => config('legal.privacidade_versao'),
         ]);
 
         Notification::route('mail', $chamado->email)
@@ -72,7 +76,9 @@ class PublicTrustController extends Controller
     private function dadosBase(): array
     {
         return [
-            'ultimaAtualizacao' => '19/04/2026',
+            'ultimaAtualizacao' => config('legal.ultima_atualizacao'),
+            'versaoTermos' => config('legal.termos_versao'),
+            'versaoPrivacidade' => config('legal.privacidade_versao'),
             'emailSuporte' => config('mail.from.address', 'suporte@maniadepreco.com.br'),
         ];
     }

@@ -106,13 +106,19 @@
                 color: #7a869a;
                 background: transparent;
                 border: 1px solid transparent;
+                padding: 0;
                 transition: 0.18s ease;
+                cursor: pointer;
             }
             .rail-link:hover, .rail-link.is-active {
                 color: var(--primary);
                 background: #fff;
                 border-color: var(--line);
                 box-shadow: var(--shadow-soft);
+            }
+            .rail-link:focus-visible {
+                outline: 3px solid rgba(244, 90, 36, 0.18);
+                outline-offset: 3px;
             }
             .sidebar-panel {
                 display: flex;
@@ -135,6 +141,39 @@
                 text-transform: uppercase;
             }
             .menu-links { display: grid; gap: 6px; }
+            .sidebar-module-panel { display: none; }
+            .sidebar-module-panel.is-active { display: block; }
+            .module-kicker {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin: 6px 4px 12px;
+            }
+            .module-kicker strong {
+                display: block;
+                font-size: 1rem;
+                letter-spacing: -0.03em;
+            }
+            .module-kicker span {
+                display: block;
+                margin-top: 2px;
+                color: var(--muted);
+                font-size: 0.78rem;
+                line-height: 1.45;
+            }
+            .module-count {
+                display: inline-grid;
+                place-items: center;
+                min-width: 30px;
+                height: 30px;
+                padding: 0 9px;
+                border-radius: 999px;
+                color: var(--primary);
+                background: var(--primary-soft);
+                border: 1px solid var(--line);
+                font: 800 0.74rem var(--font-mono);
+            }
             .menu-link {
                 display: grid;
                 grid-template-columns: 38px minmax(0, 1fr) auto;
@@ -1001,30 +1040,100 @@
     </head>
     <body>
         <div class="admin-shell">
+            @php
+                $sidebarModules = collect([
+                    [
+                        'id' => 'geral',
+                        'titulo' => 'Geral',
+                        'descricao' => 'Visao, lancamento e acoes da conta.',
+                        'icone' => 'home',
+                        'active' => request()->routeIs('admin.dashboard')
+                            || request()->routeIs('admin.lancamento')
+                            || request()->routeIs('admin.onboarding')
+                            || request()->routeIs('admin.notificacoes'),
+                        'items' => collect([
+                            ['titulo' => 'Dashboard', 'descricao' => 'visao geral', 'rota' => route('admin.dashboard'), 'icone' => 'home', 'active' => request()->routeIs('admin.dashboard')],
+                            ['titulo' => 'Lancamento', 'descricao' => 'prontidao', 'rota' => route('admin.lancamento'), 'icone' => 'spark', 'active' => request()->routeIs('admin.lancamento')],
+                            ['titulo' => 'Onboarding', 'descricao' => 'implantacao', 'rota' => route('admin.onboarding'), 'icone' => 'compass', 'active' => request()->routeIs('admin.onboarding'), 'capacidade' => 'onboarding'],
+                            ['titulo' => 'Notificacoes', 'descricao' => 'central de acoes', 'rota' => route('admin.notificacoes'), 'icone' => 'bell', 'active' => request()->routeIs('admin.notificacoes')],
+                        ]),
+                    ],
+                    [
+                        'id' => 'vitrine',
+                        'titulo' => 'Vitrine',
+                        'descricao' => 'Lojas, produtos e precos publicados.',
+                        'icone' => 'store',
+                        'active' => request()->routeIs('admin.lojas.*')
+                            || request()->routeIs('admin.produtos.*')
+                            || request()->routeIs('admin.precos.*'),
+                        'items' => collect([
+                            ['titulo' => 'Lojas', 'descricao' => 'operacao', 'rota' => route('admin.lojas.index'), 'icone' => 'store', 'active' => request()->routeIs('admin.lojas.*'), 'capacidade' => 'lojas'],
+                            ['titulo' => 'Produtos', 'descricao' => 'catalogo', 'rota' => route('admin.produtos.index'), 'icone' => 'package', 'active' => request()->routeIs('admin.produtos.*'), 'capacidade' => 'catalogo'],
+                            ['titulo' => 'Precos', 'descricao' => 'comparador', 'rota' => route('admin.precos.index'), 'icone' => 'tag', 'active' => request()->routeIs('admin.precos.*'), 'capacidade' => 'precos'],
+                        ]),
+                    ],
+                    [
+                        'id' => 'financeiro',
+                        'titulo' => 'Financeiro',
+                        'descricao' => 'Caixa, titulos e classificacoes.',
+                        'icone' => 'wallet',
+                        'active' => request()->routeIs('admin.financeiro.*'),
+                        'items' => collect([
+                            ['titulo' => 'Resumo financeiro', 'descricao' => 'painel de caixa', 'rota' => route('admin.financeiro.index'), 'icone' => 'wallet', 'active' => request()->routeIs('admin.financeiro.index'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Lancamentos', 'descricao' => 'entradas e saidas', 'rota' => route('admin.financeiro.lancamentos.index'), 'icone' => 'tag', 'active' => request()->routeIs('admin.financeiro.lancamentos.*'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Contas', 'descricao' => 'bancos e carteiras', 'rota' => route('admin.financeiro.contas.index'), 'icone' => 'credit-card', 'active' => request()->routeIs('admin.financeiro.contas.*'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Categorias', 'descricao' => 'classificacao', 'rota' => route('admin.financeiro.categorias.index'), 'icone' => 'grid', 'active' => request()->routeIs('admin.financeiro.categorias.*'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Contas a pagar', 'descricao' => 'compromissos', 'rota' => route('admin.financeiro.contas-pagar.index'), 'icone' => 'shield', 'active' => request()->routeIs('admin.financeiro.contas-pagar.*'), 'capacidade' => 'financeiro'],
+                            ['titulo' => 'Contas a receber', 'descricao' => 'recebiveis', 'rota' => route('admin.financeiro.contas-receber.index'), 'icone' => 'spark', 'active' => request()->routeIs('admin.financeiro.contas-receber.*'), 'capacidade' => 'financeiro'],
+                        ]),
+                    ],
+                    [
+                        'id' => 'gestao',
+                        'titulo' => 'Gestao',
+                        'descricao' => 'Conta, equipe, plano e seguranca.',
+                        'icone' => 'settings',
+                        'active' => request()->routeIs('admin.assinatura')
+                            || request()->routeIs('admin.configuracoes.*')
+                            || request()->routeIs('admin.equipe.*')
+                            || request()->routeIs('admin.auditoria')
+                            || request()->routeIs('admin.perfil.*'),
+                        'items' => collect([
+                            ['titulo' => 'Meu perfil', 'descricao' => 'usuario e senha', 'rota' => route('admin.perfil.edit'), 'icone' => 'user', 'active' => request()->routeIs('admin.perfil.*')],
+                            ['titulo' => 'Assinatura', 'descricao' => 'plano e cobranca', 'rota' => route('admin.assinatura'), 'icone' => 'credit-card', 'active' => request()->routeIs('admin.assinatura'), 'capacidade' => 'gestao'],
+                            ['titulo' => 'Configuracoes', 'descricao' => 'minha empresa', 'rota' => route('admin.configuracoes.edit'), 'icone' => 'settings', 'active' => request()->routeIs('admin.configuracoes.*'), 'capacidade' => 'gestao'],
+                            ['titulo' => 'Equipe', 'descricao' => 'acessos e papeis', 'rota' => route('admin.equipe.index'), 'icone' => 'users', 'active' => request()->routeIs('admin.equipe.*'), 'capacidade' => 'equipe'],
+                            ['titulo' => 'Auditoria', 'descricao' => 'historico de acoes', 'rota' => route('admin.auditoria'), 'icone' => 'shield', 'active' => request()->routeIs('admin.auditoria'), 'capacidade' => 'equipe'],
+                        ]),
+                    ],
+                ])->map(function (array $module) use ($capacidadesConta) {
+                    $module['items'] = $module['items']
+                        ->filter(fn (array $item) => empty($item['capacidade']) || in_array($item['capacidade'], $capacidadesConta, true))
+                        ->values();
+
+                    return $module;
+                })->filter(fn (array $module) => $module['items']->isNotEmpty())->values();
+
+                $activeSidebarModule = $sidebarModules->firstWhere('active', true)['id'] ?? $sidebarModules->first()['id'];
+            @endphp
+
             <aside class="sidebar">
                 <div class="sidebar-rail">
                     <a class="brand-mark" href="{{ route('admin.dashboard') }}">
                         <img src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="Mania de Preco">
                     </a>
-                    <nav class="rail-stack" aria-label="Atalhos do painel">
-                        <a class="rail-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}" aria-label="Dashboard">
-                            <x-ui.icon name="home" />
-                        </a>
-                        @if (in_array('financeiro', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}" aria-label="Financeiro">
-                                <x-ui.icon name="wallet" />
-                            </a>
-                        @endif
-                        @if (in_array('catalogo', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}" aria-label="Produtos">
-                                <x-ui.icon name="package" />
-                            </a>
-                        @endif
-                        @if (in_array('lojas', $capacidadesConta, true))
-                            <a class="rail-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}" aria-label="Lojas">
-                                <x-ui.icon name="store" />
-                            </a>
-                        @endif
+                    <nav class="rail-stack" aria-label="Modulos do painel">
+                        @foreach ($sidebarModules as $module)
+                            <button
+                                class="rail-link {{ $module['id'] === $activeSidebarModule ? 'is-active' : '' }}"
+                                type="button"
+                                aria-label="Abrir modulo {{ $module['titulo'] }}"
+                                aria-controls="sidebar-module-{{ $module['id'] }}"
+                                aria-pressed="{{ $module['id'] === $activeSidebarModule ? 'true' : 'false' }}"
+                                data-sidebar-module-trigger="{{ $module['id'] }}"
+                            >
+                                <x-ui.icon :name="$module['icone']" />
+                            </button>
+                        @endforeach
                     </nav>
                 </div>
 
@@ -1037,84 +1146,36 @@
                     </a>
 
                     <nav class="menu-card" aria-label="Navegacao administrativa">
-                        <span class="menu-title">Geral</span>
-                        <div class="menu-links">
-                            <a class="menu-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <span class="menu-icon"><x-ui.icon name="home" /></span>
-                                <span>Dashboard<small>visao geral</small></span>
-                            </a>
-                            <a class="menu-link {{ request()->routeIs('admin.lancamento') ? 'is-active' : '' }}" href="{{ route('admin.lancamento') }}">
-                                <span class="menu-icon"><x-ui.icon name="spark" /></span>
-                                <span>Lancamento<small>prontidao</small></span>
-                            </a>
-                            <a class="menu-link {{ request()->routeIs('admin.onboarding') ? 'is-active' : '' }}" href="{{ route('admin.onboarding') }}">
-                                <span class="menu-icon"><x-ui.icon name="compass" /></span>
-                                <span>Onboarding<small>implantacao</small></span>
-                            </a>
-                            <a class="menu-link {{ request()->routeIs('admin.notificacoes') ? 'is-active' : '' }}" href="{{ route('admin.notificacoes') }}">
-                                <span class="menu-icon"><x-ui.icon name="bell" /></span>
-                                <span>Notificacoes<small>central de acoes</small></span>
-                            </a>
-                        </div>
+                        @foreach ($sidebarModules as $module)
+                            <section
+                                class="sidebar-module-panel {{ $module['id'] === $activeSidebarModule ? 'is-active' : '' }}"
+                                id="sidebar-module-{{ $module['id'] }}"
+                                data-sidebar-module-panel="{{ $module['id'] }}"
+                            >
+                                <div class="module-kicker">
+                                    <span>
+                                        <strong>{{ $module['titulo'] }}</strong>
+                                        <span>{{ $module['descricao'] }}</span>
+                                    </span>
+                                    <span class="module-count">{{ $module['items']->count() }}</span>
+                                </div>
 
-                        <span class="menu-title">Operacao</span>
-                        <div class="menu-links">
-                            @if (in_array('lojas', $capacidadesConta, true))
-                                <a class="menu-link {{ request()->routeIs('admin.lojas.*') ? 'is-active' : '' }}" href="{{ route('admin.lojas.index') }}">
-                                    <span class="menu-icon"><x-ui.icon name="store" /></span>
-                                    <span>Lojas<small>operacao</small></span>
-                                </a>
-                            @endif
-                            @if (in_array('catalogo', $capacidadesConta, true))
-                                <a class="menu-link {{ request()->routeIs('admin.produtos.*') ? 'is-active' : '' }}" href="{{ route('admin.produtos.index') }}">
-                                    <span class="menu-icon"><x-ui.icon name="package" /></span>
-                                    <span>Produtos<small>catalogo</small></span>
-                                </a>
-                            @endif
-                            @if (in_array('precos', $capacidadesConta, true))
-                                <a class="menu-link {{ request()->routeIs('admin.precos.*') ? 'is-active' : '' }}" href="{{ route('admin.precos.index') }}">
-                                    <span class="menu-icon"><x-ui.icon name="tag" /></span>
-                                    <span>Precos<small>comparador</small></span>
-                                </a>
-                            @endif
-                            @if (in_array('financeiro', $capacidadesConta, true))
-                                <a class="menu-link {{ request()->routeIs('admin.financeiro.*') ? 'is-active' : '' }}" href="{{ route('admin.financeiro.index') }}">
-                                    <span class="menu-icon"><x-ui.icon name="wallet" /></span>
-                                    <span>Financeiro<small>caixa e titulos</small></span>
-                                </a>
-                            @endif
-                        </div>
-
-                        @if (in_array('gestao', $capacidadesConta, true) || in_array('equipe', $capacidadesConta, true))
-                            <span class="menu-title">Gestao</span>
-                            <div class="menu-links">
-                                @if (in_array('gestao', $capacidadesConta, true))
-                                    <a class="menu-link {{ request()->routeIs('admin.assinatura') ? 'is-active' : '' }}" href="{{ route('admin.assinatura') }}">
-                                        <span class="menu-icon"><x-ui.icon name="credit-card" /></span>
-                                        <span>Assinatura<small>plano e cobranca</small></span>
-                                    </a>
-                                    <a class="menu-link {{ request()->routeIs('admin.configuracoes.*') ? 'is-active' : '' }}" href="{{ route('admin.configuracoes.edit') }}">
-                                        <span class="menu-icon"><x-ui.icon name="settings" /></span>
-                                        <span>Configuracoes<small>minha empresa</small></span>
-                                    </a>
-                                @endif
-                                @if (in_array('equipe', $capacidadesConta, true))
-                                    <a class="menu-link {{ request()->routeIs('admin.equipe.*') ? 'is-active' : '' }}" href="{{ route('admin.equipe.index') }}">
-                                        <span class="menu-icon"><x-ui.icon name="users" /></span>
-                                        <span>Equipe<small>acessos e papeis</small></span>
-                                    </a>
-                                    <a class="menu-link {{ request()->routeIs('admin.auditoria') ? 'is-active' : '' }}" href="{{ route('admin.auditoria') }}">
-                                        <span class="menu-icon"><x-ui.icon name="shield" /></span>
-                                        <span>Auditoria<small>historico de acoes</small></span>
-                                    </a>
-                                @endif
-                            </div>
-                        @endif
+                                <span class="menu-title">Subitens</span>
+                                <div class="menu-links">
+                                    @foreach ($module['items'] as $item)
+                                        <a class="menu-link {{ $item['active'] ? 'is-active' : '' }}" href="{{ $item['rota'] }}">
+                                            <span class="menu-icon"><x-ui.icon :name="$item['icone']" /></span>
+                                            <span>{{ $item['titulo'] }}<small>{{ $item['descricao'] }}</small></span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endforeach
                     </nav>
 
                     <section class="support-card">
                         <strong>Operacao guiada</strong>
-                        <p>Use o menu por contexto: primeiro venda e catalogo, depois financeiro, equipe e ajustes de conta.</p>
+                        <p>Escolha um modulo na coluna de icones e use os subitens para navegar com mais contexto.</p>
                     </section>
                 </div>
             </aside>
@@ -1408,6 +1469,31 @@
         </nav>
 
         <script>
+            (() => {
+                const triggers = Array.from(document.querySelectorAll('[data-sidebar-module-trigger]'));
+                const panels = Array.from(document.querySelectorAll('[data-sidebar-module-panel]'));
+
+                if (!triggers.length || !panels.length) {
+                    return;
+                }
+
+                const activateModule = (moduleId) => {
+                    triggers.forEach((trigger) => {
+                        const isActive = trigger.dataset.sidebarModuleTrigger === moduleId;
+                        trigger.classList.toggle('is-active', isActive);
+                        trigger.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                    });
+
+                    panels.forEach((panel) => {
+                        panel.classList.toggle('is-active', panel.dataset.sidebarModulePanel === moduleId);
+                    });
+                };
+
+                triggers.forEach((trigger) => {
+                    trigger.addEventListener('click', () => activateModule(trigger.dataset.sidebarModuleTrigger));
+                });
+            })();
+
             (() => {
                 const palette = document.querySelector('[data-command-palette]');
 

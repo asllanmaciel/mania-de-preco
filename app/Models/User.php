@@ -26,6 +26,11 @@ class User extends Authenticatable
         'password',
         'avatar_path',
         'is_super_admin',
+        'termos_aceitos_em',
+        'termos_versao',
+        'privacidade_versao',
+        'consentimento_ip',
+        'consentimento_user_agent',
     ];
 
     /**
@@ -36,6 +41,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'consentimento_ip',
+        'consentimento_user_agent',
     ];
 
     /**
@@ -49,6 +56,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_super_admin' => 'boolean',
+            'termos_aceitos_em' => 'datetime',
         ];
     }
 

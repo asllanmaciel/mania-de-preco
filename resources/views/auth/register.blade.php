@@ -49,6 +49,14 @@
             <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required>
         </label>
 
+        <label class="terms-check" for="aceite_termos">
+            <input id="aceite_termos" type="checkbox" name="aceite_termos" value="1" @checked(old('aceite_termos')) required>
+            <span>
+                Li e aceito os <a href="{{ route('termos') }}" target="_blank" rel="noopener">Termos de Uso</a>
+                e a <a href="{{ route('privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
+            </span>
+        </label>
+
         <button class="button" type="submit">Criar minha conta</button>
 
         <div class="demo-box">
