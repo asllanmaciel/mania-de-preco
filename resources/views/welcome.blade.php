@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mania de Preço</title>
         <meta name="description" content="Compare preços reais, descubra onde comprar melhor hoje e encontre ofertas publicadas por lojas ativas perto de você.">
+        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="{{ asset('images/brand/mania-de-preco-mark.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700|ibm-plex-mono:400,500" rel="stylesheet" />
 
@@ -19,6 +21,7 @@
             .topbar { position:sticky; top:14px; z-index:20; margin:16px 0 20px; padding:12px; align-items:center; border:1px solid rgba(255,255,255,.72); border-radius:24px; background:rgba(255,251,245,.72); box-shadow:0 18px 50px rgba(72,38,19,.1); backdrop-filter:blur(18px); }
             .brand { display:inline-flex; align-items:center; gap:14px; font-weight:700; letter-spacing:-.03em; }
             .brand-badge { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; color:#fff7ef; background:linear-gradient(135deg,#ff6b2c 0%,#cf4e1b 100%); box-shadow:0 14px 30px rgba(207,78,27,.28); }
+            .brand-mark { width:44px; height:44px; border-radius:14px; box-shadow:0 14px 30px rgba(207,78,27,.22); }
             .brand-copy { display:grid; gap:2px; }
             .brand-copy small { color:var(--muted); font-weight:500; letter-spacing:0; }
             .top-links { flex-wrap:wrap; justify-content:flex-end; align-items:center; }
@@ -30,7 +33,7 @@
             .chip { border:1px solid var(--line); background:rgba(255,255,255,.58); color:var(--muted); font-size:.92rem; }
             .chip.primary { color:#fff7ef; border-color:transparent; background:linear-gradient(135deg,#ff6b2c 0%,#d4511d 100%); box-shadow:0 14px 28px rgba(212,81,29,.22); }
             .hero, .chart-grid, .offer-grid, .metrics-grid, .trust-grid, .cta-grid { display:grid; gap:16px; }
-            .hero { grid-template-columns:1.02fr .98fr; padding:10px 0 22px; align-items:stretch; }
+            .hero { grid-template-columns:1fr; padding:18px 0 18px; align-items:stretch; }
             .chart-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
             .offer-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
             .metrics-grid { grid-template-columns:repeat(4, minmax(0, 1fr)); }
@@ -39,14 +42,16 @@
             .card, .hero-card { background:var(--surface); border:1px solid rgba(255,255,255,.62); box-shadow:var(--shadow); backdrop-filter:blur(16px); }
             .hero-card { position:relative; overflow:hidden; padding:38px; border-radius:var(--r1); }
             .hero-card::before { content:""; position:absolute; inset:0; background:linear-gradient(120deg, rgba(255,107,44,.1), transparent 40%), linear-gradient(160deg, transparent 55%, rgba(15,159,143,.12)); pointer-events:none; }
-            .hero-card.featured { min-height:628px; display:flex; flex-direction:column; justify-content:space-between; border-color:rgba(255,255,255,.74); background:linear-gradient(145deg,rgba(255,251,245,.92),rgba(255,247,235,.78)); }
+            .hero-card.featured { min-height:560px; display:flex; flex-direction:column; justify-content:space-between; border-color:rgba(255,255,255,.74); background:linear-gradient(145deg,rgba(255,251,245,.92),rgba(255,247,235,.78)); }
             .hero-card.featured::after { content:""; position:absolute; width:320px; height:320px; right:-110px; bottom:-120px; border-radius:50%; background:radial-gradient(circle, rgba(25,183,137,.18), transparent 66%); pointer-events:none; }
             .hero-copy, .hero-card .stats { position:relative; z-index:1; }
+            .hero-copy { max-width:840px; }
+            .hero-card.featured .stats { max-width:820px; }
             .card { padding:24px; border-radius:var(--r2); }
             .eyebrow, .kicker { font:400 .82rem "IBM Plex Mono", monospace; text-transform:uppercase; letter-spacing:.08em; }
             .eyebrow { display:inline-flex; align-items:center; gap:10px; padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.76); border:1px solid rgba(255,107,44,.12); color:#6a3b24; }
             .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 8px rgba(255,107,44,.12); }
-            h1 { margin:22px 0 14px; font-size:clamp(2.8rem,5vw,5.6rem); line-height:.9; letter-spacing:-.085em; max-width:10.8ch; }
+            h1 { margin:22px 0 14px; font-size:clamp(3.2rem,7vw,7.8rem); line-height:.86; letter-spacing:-.09em; max-width:11.6ch; }
             h2 { margin:0; font-size:clamp(1.8rem,3vw,2.7rem); letter-spacing:-.06em; }
             h3 { margin:0; font-size:1.18rem; letter-spacing:-.04em; }
             p, .muted, .small { color:var(--muted); line-height:1.72; }
@@ -63,8 +68,13 @@
             .trust-card strong { display:block; margin-bottom:8px; font-size:1.08rem; }
             .pulse-wrap, .offer-list article { padding:16px; border-radius:18px; background:rgba(255,255,255,.72); border:1px solid rgba(76,42,22,.08); }
             .market-card { position:relative; overflow:hidden; min-height:628px; padding:24px; border-radius:var(--r1); background:linear-gradient(180deg,rgba(25,21,18,.96),rgba(43,29,20,.94)); color:#fff8ef; border:1px solid rgba(255,255,255,.16); box-shadow:0 28px 80px rgba(24,13,8,.22); }
+            .market-section { padding-top:8px; }
+            .market-card.wide { min-height:auto; display:grid; grid-template-columns:1.16fr .84fr; gap:18px; align-items:stretch; }
+            .market-copy { display:flex; flex-direction:column; justify-content:space-between; gap:18px; }
+            .market-side { display:flex; flex-direction:column; justify-content:space-between; gap:14px; }
             .market-card::before { content:""; position:absolute; inset:-1px; background:radial-gradient(circle at 84% 10%, rgba(25,183,137,.24), transparent 28%), radial-gradient(circle at 4% 0%, rgba(255,107,44,.2), transparent 22%); pointer-events:none; }
             .market-card > * { position:relative; z-index:1; }
+            .market-card.is-refreshing { border-color:rgba(25,183,137,.34); }
             .market-card h3 { color:#fffaf4; font-size:1.35rem; }
             .market-card .muted, .market-card .small { color:rgba(255,248,239,.68); }
             .market-status { align-items:center; justify-content:space-between; margin-bottom:18px; }
@@ -126,7 +136,7 @@
             @keyframes drawLine { to { stroke-dashoffset:0; } }
             @keyframes floatLine { 50% { transform:translateY(-3px); } }
             @keyframes pointGlow { 50% { filter:drop-shadow(0 0 9px rgba(25,183,137,.85)); } }
-            @media (max-width:1100px) { .hero, .chart-grid, .offer-grid, .metrics-grid, .trust-grid, .cta-grid, form.filter { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } .hero-card.featured, .market-card { min-height:auto; } .nav-links { order:3; width:100%; overflow-x:auto; justify-content:flex-start; } }
+            @media (max-width:1100px) { .hero, .chart-grid, .offer-grid, .metrics-grid, .trust-grid, .cta-grid, .market-card.wide, form.filter { grid-template-columns:1fr; } .section-head, .footer { flex-direction:column; align-items:flex-start; } .hero-card.featured, .market-card { min-height:auto; } .nav-links { order:3; width:100%; overflow-x:auto; justify-content:flex-start; } }
             @media (max-width:720px) { .topbar, .top-links, .hero-actions, .section-head, .grid-head, .pulse-meta, .footer, .top-actions { flex-direction:column; align-items:stretch; } .topbar { position:static; border-radius:20px; } .brand-copy small { display:none; } .hero-card, .card, .market-card { padding:20px; } .stats, .offer-price-grid, .market-grid { grid-template-columns:1fr; } .button, .button-secondary, .chip { width:100%; justify-content:center; } .nav-link { white-space:nowrap; } .offer-media img { height:190px; } }
         </style>
     </head>
@@ -143,7 +153,7 @@
         <div class="container">
             <header class="topbar">
                 <a class="brand" href="{{ route('home') }}">
-                    <span class="brand-badge">MP</span>
+                    <img class="brand-mark" src="{{ asset('images/brand/mania-de-preco-mark.svg') }}" alt="" width="44" height="44">
                     <span class="brand-copy">
                         <span>Mania de Preço</span>
                         <small>comparador local inteligente</small>
@@ -152,7 +162,7 @@
 
                 <nav class="nav-links" aria-label="Navegação principal">
                     <a class="nav-link" href="#descoberta">Buscar</a>
-                    <a class="nav-link" href="#inteligencia">Radar</a>
+                    <a class="nav-link" href="#radar">Radar</a>
                     <a class="nav-link" href="#ofertas">Ofertas</a>
                     <a class="nav-link" href="{{ route('projeto') }}">Para lojas</a>
                     <a class="nav-link" href="{{ route('novidades.index') }}">Novidades</a>
@@ -173,12 +183,12 @@
                 <section class="hero">
                     <article class="hero-card featured">
                         <div class="hero-copy">
-                            <div class="eyebrow"><span class="dot"></span> ofertas reais publicadas por lojas ativas</div>
-                            <h1>O jeito mais rápido de saber onde comprar melhor hoje.</h1>
-                            <p>Compare preços reais, veja a loja que está puxando o valor para baixo e descubra oportunidades antes de perder tempo abrindo várias abas.</p>
+                            <div class="eyebrow"><span class="dot"></span> comparação clara para comprar melhor</div>
+                            <h1>Preço bom aparece antes de você perder tempo procurando.</h1>
+                            <p>O Mania de Preço mostra onde cada produto está valendo mais a pena, compara lojas ativas e transforma ofertas soltas em uma decisão simples para o seu bolso.</p>
 
                             <div class="hero-actions">
-                                <a class="button" href="#ofertas">Ver melhores ofertas</a>
+                                <a class="button" href="#descoberta">Buscar ofertas agora</a>
                                 <a class="button-secondary" href="#descoberta">Filtrar minha busca</a>
                             </div>
                         </div>
@@ -189,78 +199,87 @@
                             <div class="stat"><strong>R$ {{ number_format($faixaMedia, 2, ',', '.') }}</strong><span>média de diferença encontrada</span></div>
                         </div>
                     </article>
+                </section>
 
-                    <aside class="market-card">
-                        <div class="market-status">
-                            <div>
-                                <h3>Radar de preços</h3>
-                                <p class="muted" style="margin:8px 0 0;">Um painel vivo da vitrine publicada para enxergar quedas, faixas e oportunidades com leitura de mercado.</p>
-                            </div>
-                            <span class="live-badge">atualizando</span>
-                        </div>
-
-                        <div class="market-terminal">
-                            <div class="terminal-head">
-                                <span>índice de ofertas</span>
-                                <span>{{ now()->format('H:i') }} BRT</span>
-                            </div>
-
-                            @if ($pulse['path'] !== '')
-                                <div class="market-chart">
-                                    <svg viewBox="0 0 320 100" preserveAspectRatio="none" aria-label="Variação de preços publicados">
-                                        <defs>
-                                            <linearGradient id="pulseGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                                                <stop offset="0%" stop-color="#ff6b2c" />
-                                                <stop offset="52%" stop-color="#ffd089" />
-                                                <stop offset="100%" stop-color="#19b789" />
-                                            </linearGradient>
-                                            <linearGradient id="areaGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                                                <stop offset="0%" stop-color="#19b789" />
-                                                <stop offset="100%" stop-color="#19b789" stop-opacity="0" />
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M0,25 L320,25 M0,50 L320,50 M0,75 L320,75" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"></path>
-                                        <path class="market-area" d="{{ $pulseArea }}" fill="url(#areaGradient)"></path>
-                                        <path class="market-line" d="{{ $pulse['path'] }}" fill="none" stroke="url(#pulseGradient)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                        @foreach ($pulse['pontos'] as $ponto)
-                                            <circle class="chart-point" cx="{{ $ponto['x'] }}" cy="{{ $ponto['y'] }}" r="4.5" fill="#14100d" stroke="#bcfff0" stroke-width="2"></circle>
-                                        @endforeach
-                                    </svg>
+                <section class="section market-section" id="radar">
+                    <aside class="market-card wide" data-radar-card data-radar-url="{{ route('radar.precos', request()->query()) }}">
+                        <div class="market-copy">
+                            <div class="market-status">
+                                <div>
+                                    <span class="kicker">Radar de preços</span>
+                                    <h2 style="margin-top:14px;">O mercado se mexe. Sua decisão acompanha.</h2>
+                                    <p class="muted" style="margin:10px 0 0;">Um painel vivo da vitrine publicada para enxergar quedas, faixas e oportunidades com leitura de mercado.</p>
                                 </div>
-                            @else
-                                <div class="empty">Ainda não há ofertas suficientes para desenhar o pulso do mercado.</div>
-                            @endif
-                            <div class="pulse-meta market">
-                                <span>mín. R$ {{ number_format($pulse['menor'], 2, ',', '.') }}</span>
-                                <span>máx. R$ {{ number_format($pulse['maior'], 2, ',', '.') }}</span>
+                                <span class="live-badge" data-radar-status>atualizando</span>
                             </div>
-                        </div>
 
-                        <div class="market-grid">
-                            <div class="market-metric"><strong>{{ number_format($lojasAtivas, 0, ',', '.') }}</strong><span class="small">lojas ativas no recorte</span></div>
-                            <div class="market-metric"><strong>{{ $ordenar === 'maior_economia' ? 'economia' : ($ordenar === 'mais_ofertas' ? 'volume' : 'preço') }}</strong><span class="small">sinal que ordena o painel</span></div>
-                        </div>
+                            <div class="market-terminal">
+                                <div class="terminal-head">
+                                    <span>índice de ofertas</span>
+                                    <span><span data-radar-updated>{{ now()->format('H:i') }}</span> BRT</span>
+                                </div>
 
-                        @if ($radarMercado->isNotEmpty())
-                            <div class="ticker-board" aria-label="Oportunidades em destaque">
-                                @foreach ($radarMercado as $item)
-                                    <div class="ticker-row" style="--ticker-width: {{ min(100, ($item['economia'] / $radarMax) * 100) }}%;">
-                                        <div class="ticker-name">
-                                            <strong>{{ $item['produto'] }}</strong>
-                                            <span class="small">{{ $item['loja'] }} · {{ $item['cidade'] }}</span>
-                                        </div>
-                                        <div class="ticker-value">
-                                            <span>{{ $item['sinal'] }}</span><br>
-                                            <strong>-{{ number_format($item['variacao'], 1, ',', '.') }}%</strong>
-                                        </div>
+                                @if ($pulse['path'] !== '')
+                                    <div class="market-chart">
+                                        <svg viewBox="0 0 320 100" preserveAspectRatio="none" aria-label="Variação de preços publicados">
+                                            <defs>
+                                                <linearGradient id="pulseGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                                                    <stop offset="0%" stop-color="#ff6b2c" />
+                                                    <stop offset="52%" stop-color="#ffd089" />
+                                                    <stop offset="100%" stop-color="#19b789" />
+                                                </linearGradient>
+                                                <linearGradient id="areaGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                                                    <stop offset="0%" stop-color="#19b789" />
+                                                    <stop offset="100%" stop-color="#19b789" stop-opacity="0" />
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0,25 L320,25 M0,50 L320,50 M0,75 L320,75" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"></path>
+                                            <path class="market-area" data-radar-area d="{{ $pulseArea }}" fill="url(#areaGradient)"></path>
+                                            <path class="market-line" data-radar-line d="{{ $pulse['path'] }}" fill="none" stroke="url(#pulseGradient)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <g data-radar-points>
+                                                @foreach ($pulse['pontos'] as $ponto)
+                                                    <circle class="chart-point" cx="{{ $ponto['x'] }}" cy="{{ $ponto['y'] }}" r="4.5" fill="#14100d" stroke="#bcfff0" stroke-width="2"></circle>
+                                                @endforeach
+                                            </g>
+                                        </svg>
                                     </div>
-                                @endforeach
+                                @else
+                                    <div class="empty">Ainda não há ofertas suficientes para desenhar o pulso do mercado.</div>
+                                @endif
+                                <div class="pulse-meta market">
+                                    <span data-radar-min>mín. R$ {{ number_format($pulse['menor'], 2, ',', '.') }}</span>
+                                    <span data-radar-max>máx. R$ {{ number_format($pulse['maior'], 2, ',', '.') }}</span>
+                                </div>
                             </div>
-                        @endif
+                        </div>
 
-                        <div class="signal-row">
-                            <span class="small">Janela de economia</span>
-                            <strong>até R$ {{ number_format((float) $radarMercado->max('economia'), 2, ',', '.') }}</strong>
+                        <div class="market-side">
+                            <div class="market-grid">
+                                <div class="market-metric"><strong data-radar-stores>{{ number_format($lojasAtivas, 0, ',', '.') }}</strong><span class="small">lojas ativas no recorte</span></div>
+                                <div class="market-metric"><strong data-radar-ranking>{{ $ordenar === 'maior_economia' ? 'economia' : ($ordenar === 'mais_ofertas' ? 'volume' : 'preço') }}</strong><span class="small">sinal que ordena o painel</span></div>
+                            </div>
+
+                            <div class="ticker-board" data-radar-ticker aria-label="Oportunidades em destaque">
+                                @if ($radarMercado->isNotEmpty())
+                                    @foreach ($radarMercado as $item)
+                                        <div class="ticker-row" style="--ticker-width: {{ min(100, ($item['economia'] / $radarMax) * 100) }}%;">
+                                            <div class="ticker-name">
+                                                <strong>{{ $item['produto'] }}</strong>
+                                                <span class="small">{{ $item['loja'] }} · {{ $item['cidade'] }}</span>
+                                            </div>
+                                            <div class="ticker-value">
+                                                <span>{{ $item['sinal'] }}</span><br>
+                                                <strong>-{{ number_format($item['variacao'], 1, ',', '.') }}%</strong>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+
+                            <div class="signal-row">
+                                <span class="small">Janela de economia</span>
+                                <strong data-radar-window>até R$ {{ number_format((float) $radarMercado->max('economia'), 2, ',', '.') }}</strong>
+                            </div>
                         </div>
                     </aside>
                 </section>
@@ -509,5 +528,133 @@
                 </span>
             </footer>
         </div>
+
+        <script>
+            (() => {
+                const card = document.querySelector('[data-radar-card]');
+
+                if (!card || !window.fetch) {
+                    return;
+                }
+
+                const url = card.dataset.radarUrl;
+                const currency = new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' });
+                const percent = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+                const namespace = 'http://www.w3.org/2000/svg';
+
+                const text = (selector, value) => {
+                    const element = card.querySelector(selector);
+
+                    if (element) {
+                        element.textContent = value;
+                    }
+                };
+
+                const escapeHtml = (value) => String(value ?? '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#039;');
+
+                const renderPulse = (pulse) => {
+                    const line = card.querySelector('[data-radar-line]');
+                    const area = card.querySelector('[data-radar-area]');
+                    const points = card.querySelector('[data-radar-points]');
+
+                    if (!line || !area || !points || !pulse?.path) {
+                        return;
+                    }
+
+                    const lastPoint = pulse.pontos?.at(-1);
+
+                    line.setAttribute('d', pulse.path);
+                    area.setAttribute('d', lastPoint ? `${pulse.path} L${lastPoint.x},100 L0,100 Z` : '');
+                    points.innerHTML = '';
+
+                    for (const point of pulse.pontos ?? []) {
+                        const circle = document.createElementNS(namespace, 'circle');
+                        circle.setAttribute('class', 'chart-point');
+                        circle.setAttribute('cx', point.x);
+                        circle.setAttribute('cy', point.y);
+                        circle.setAttribute('r', '4.5');
+                        circle.setAttribute('fill', '#14100d');
+                        circle.setAttribute('stroke', '#bcfff0');
+                        circle.setAttribute('stroke-width', '2');
+                        points.append(circle);
+                    }
+                };
+
+                const renderTicker = (items, maxEconomia) => {
+                    const ticker = card.querySelector('[data-radar-ticker]');
+
+                    if (!ticker) {
+                        return;
+                    }
+
+                    const max = Math.max(0.01, Number(maxEconomia || 0));
+
+                    ticker.innerHTML = (items ?? []).map((item) => {
+                        const width = Math.min(100, (Number(item.economia || 0) / max) * 100);
+
+                        return `
+                            <div class="ticker-row" style="--ticker-width: ${width}%;">
+                                <div class="ticker-name">
+                                    <strong>${escapeHtml(item.produto)}</strong>
+                                    <span class="small">${escapeHtml(item.loja)} · ${escapeHtml(item.cidade)}</span>
+                                </div>
+                                <div class="ticker-value">
+                                    <span>${escapeHtml(item.sinal)}</span><br>
+                                    <strong>-${percent.format(Number(item.variacao || 0))}%</strong>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                };
+
+                const renderSnapshot = (snapshot) => {
+                    text('[data-radar-updated]', String(snapshot.atualizado_em ?? '').slice(0, 5));
+                    text('[data-radar-min]', `mín. ${currency.format(Number(snapshot.pulse?.menor || 0))}`);
+                    text('[data-radar-max]', `máx. ${currency.format(Number(snapshot.pulse?.maior || 0))}`);
+                    text('[data-radar-stores]', new Intl.NumberFormat('pt-BR').format(Number(snapshot.lojas_ativas || 0)));
+                    text('[data-radar-ranking]', snapshot.ranking ?? 'preço');
+                    text('[data-radar-window]', `até ${currency.format(Number(snapshot.maior_economia || 0))}`);
+
+                    renderPulse(snapshot.pulse);
+                    renderTicker(snapshot.radar_mercado, snapshot.maior_economia);
+                };
+
+                const refreshRadar = async () => {
+                    if (document.hidden) {
+                        return;
+                    }
+
+                    card.classList.add('is-refreshing');
+                    text('[data-radar-status]', 'sincronizando');
+
+                    try {
+                        const response = await fetch(url, { headers: { Accept: 'application/json' } });
+
+                        if (!response.ok) {
+                            throw new Error('Falha ao atualizar radar');
+                        }
+
+                        renderSnapshot(await response.json());
+                        text('[data-radar-status]', 'atualizado');
+                    } catch (error) {
+                        text('[data-radar-status]', 'sem conexão');
+                    } finally {
+                        window.setTimeout(() => {
+                            card.classList.remove('is-refreshing');
+                            text('[data-radar-status]', 'atualizando');
+                        }, 900);
+                    }
+                };
+
+                window.setTimeout(refreshRadar, 3500);
+                window.setInterval(refreshRadar, 15000);
+                window.addEventListener('focus', refreshRadar);
+            })();
+        </script>
     </body>
 </html>

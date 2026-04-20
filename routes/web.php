@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicCatalogController::class)->name('home');
 Route::get('/ofertas', PublicCatalogController::class)->name('ofertas');
+Route::get('/radar-precos', [PublicCatalogController::class, 'radar'])->name('radar.precos');
 Route::get('/projeto', PublicProjectController::class)->name('projeto');
 Route::get('/novidades', [PublicUpdatesController::class, 'index'])->name('novidades.index');
 Route::get('/novidades/{slug}', [PublicUpdatesController::class, 'show'])->name('novidades.show');

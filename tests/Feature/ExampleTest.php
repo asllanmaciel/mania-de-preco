@@ -18,6 +18,6 @@ class ExampleTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertSee('O jeito mais rápido de saber onde comprar melhor hoje.');
+            ->assertSee('Preço bom aparece antes de você perder tempo procurando.');
     }
 }

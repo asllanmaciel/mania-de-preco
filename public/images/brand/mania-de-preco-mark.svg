@@ -1,0 +1,16 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+    <title id="title">Mania de Preco</title>
+    <desc id="desc">Marca com etiqueta de preco e grafico de economia</desc>
+    <rect width="96" height="96" rx="28" fill="#21140F"/>
+    <path d="M24 29C24 24.5817 27.5817 21 32 21H63.5147C65.6364 21 67.6713 21.8429 69.1716 23.3431L75.6569 29.8284C77.1571 31.3287 78 33.3636 78 35.4853V64C78 68.4183 74.4183 72 70 72H32C27.5817 72 24 68.4183 24 64V29Z" fill="url(#paint0_linear)"/>
+    <circle cx="65" cy="35" r="5" fill="#FFF7EB"/>
+    <path d="M34 59L43.5 49.5L51 55L64 39" stroke="#FFF7EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M34 37H51" stroke="#FFF7EB" stroke-width="6" stroke-linecap="round"/>
+    <defs>
+        <linearGradient id="paint0_linear" x1="24" y1="21" x2="80.5" y2="68.5" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF7A35"/>
+            <stop offset="0.55" stop-color="#F45A24"/>
+            <stop offset="1" stop-color="#19B789"/>
+        </linearGradient>
+    </defs>
+</svg>

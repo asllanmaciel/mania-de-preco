@@ -23,11 +23,35 @@ class PublicCatalogTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('O jeito mais rápido de saber onde comprar melhor hoje.')
+            ->assertSee('Preço bom aparece antes de você perder tempo procurando.')
             ->assertSee('Radar de preços')
             ->assertSee('Janela de economia')
+            ->assertSee('favicon.svg')
+            ->assertSee('mania-de-preco-mark.svg')
+            ->assertSee('data-radar-card', false)
+            ->assertSee('radar-precos')
             ->assertSee('Cafe Premium 500g')
             ->assertSee('Loja Centro');
+    }
+
+    public function test_public_price_radar_endpoint_returns_market_snapshot(): void
+    {
+        $this->seedCatalogoDemo();
+
+        $this->getJson(route('radar.precos', ['ordenar' => 'maior_economia']))
+            ->assertOk()
+            ->assertJsonPath('total_ofertas', 2)
+            ->assertJsonPath('total_resultados', 1)
+            ->assertJsonPath('lojas_ativas', 2)
+            ->assertJsonPath('ranking', 'economia')
+            ->assertJsonPath('radar_mercado.0.produto', 'Cafe Premium 500g')
+            ->assertJsonStructure([
+                'atualizado_em',
+                'pulse' => ['path', 'pontos', 'menor', 'maior'],
+                'radar_mercado' => [
+                    '*' => ['produto', 'loja', 'cidade', 'economia', 'variacao', 'sinal'],
+                ],
+            ]);
     }
 
     public function test_public_catalog_can_filter_by_city(): void

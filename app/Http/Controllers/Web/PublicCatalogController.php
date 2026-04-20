@@ -8,6 +8,7 @@ use App\Models\Loja;
 use App\Models\Preco;
 use App\Models\Produto;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -16,73 +17,20 @@ class PublicCatalogController extends Controller
 {
     public function __invoke(Request $request): View
     {
-        $busca = trim((string) $request->string('busca'));
-        $categoriaSlug = trim((string) $request->string('categoria'));
-        $cidade = trim((string) $request->string('cidade'));
-        $tipoPreco = trim((string) $request->string('tipo_preco'));
-        $precoAte = $request->filled('preco_ate') ? (float) $request->input('preco_ate') : null;
-        $ordenar = trim((string) $request->string('ordenar', 'menor_preco'));
-
-        $produtosBase = Produto::query()
-            ->where('status', 'ativo')
-            ->with(['categoria', 'marca'])
-            ->withCount('precos')
-            ->withMin('precos as menor_preco', 'preco')
-            ->withMax('precos as maior_preco', 'preco')
-            ->whereHas('precos.loja', fn (Builder $query) => $query->where('status', 'ativo'))
-            ->when($busca !== '', function (Builder $query) use ($busca) {
-                $query->where(function (Builder $subquery) use ($busca) {
-                    $subquery
-                        ->where('nome', 'like', "%{$busca}%")
-                        ->orWhere('descricao', 'like', "%{$busca}%")
-                        ->orWhereHas('marca', fn (Builder $marcaQuery) => $marcaQuery->where('nome', 'like', "%{$busca}%"));
-                });
-            })
-            ->when($categoriaSlug !== '', fn (Builder $query) => $query->whereHas('categoria', fn (Builder $categoriaQuery) => $categoriaQuery->where('slug', $categoriaSlug)))
-            ->when($cidade !== '', fn (Builder $query) => $query->whereHas('precos.loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $cidade)))
-            ->when($tipoPreco !== '', fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('tipo_preco', $tipoPreco)))
-            ->when($precoAte !== null, fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('preco', '<=', $precoAte)));
-
-        $produtos = (clone $produtosBase)
-            ->when($ordenar === 'maior_economia', fn (Builder $query) => $query->orderByRaw('(COALESCE(maior_preco, 0) - COALESCE(menor_preco, 0)) desc'))
-            ->when($ordenar === 'mais_ofertas', fn (Builder $query) => $query->orderByDesc('precos_count'))
-            ->when($ordenar === 'alfabetica', fn (Builder $query) => $query->orderBy('nome'))
-            ->when(! in_array($ordenar, ['maior_economia', 'mais_ofertas', 'alfabetica'], true), fn (Builder $query) => $query->orderBy('menor_preco'))
+        $filtros = $this->normalizarFiltros($request);
+        $produtos = $this->ordenarProdutos($this->produtosBase($filtros), $filtros['ordenar'])
             ->paginate(9)
             ->withQueryString();
 
-        $produtos->getCollection()->transform(function (Produto $produto) use ($cidade, $tipoPreco, $precoAte) {
-            $melhoresOfertas = $produto->precos()
-                ->with('loja')
-                ->when($cidade !== '', fn (Builder $query) => $query->whereHas('loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $cidade)))
-                ->when($tipoPreco !== '', fn (Builder $query) => $query->where('tipo_preco', $tipoPreco))
-                ->when($precoAte !== null, fn (Builder $query) => $query->where('preco', '<=', $precoAte))
-                ->orderBy('preco')
-                ->take(3)
-                ->get();
+        $this->carregarMelhoresOfertas($produtos->getCollection(), $filtros);
 
-            $produto->setRelation('melhores_ofertas', $melhoresOfertas);
-
-            return $produto;
-        });
-
-        $precosFiltrados = Preco::query()
-            ->select('precos.*')
-            ->join('produtos', 'produtos.id', '=', 'precos.produto_id')
-            ->join('lojas', 'lojas.id', '=', 'precos.loja_id')
-            ->leftJoin('categorias', 'categorias.id', '=', 'produtos.categoria_id')
-            ->when($busca !== '', function ($query) use ($busca) {
-                $query->where(function ($subquery) use ($busca) {
-                    $subquery
-                        ->where('produtos.nome', 'like', "%{$busca}%")
-                        ->orWhere('produtos.descricao', 'like', "%{$busca}%");
-                });
-            })
-            ->when($categoriaSlug !== '', fn ($query) => $query->where('categorias.slug', $categoriaSlug))
-            ->when($cidade !== '', fn ($query) => $query->where('lojas.cidade', $cidade))
-            ->when($tipoPreco !== '', fn ($query) => $query->where('precos.tipo_preco', $tipoPreco))
-            ->when($precoAte !== null, fn ($query) => $query->where('precos.preco', '<=', $precoAte))
-            ->get();
+        $precosFiltrados = $this->precosFiltrados($filtros)->get();
+        $snapshot = $this->montarSnapshotMercado(
+            $produtos->getCollection(),
+            $precosFiltrados,
+            $filtros['ordenar'],
+            $produtos->total()
+        );
 
         $categorias = Categoria::query()
             ->orderBy('nome')
@@ -100,38 +48,147 @@ class PublicCatalogController extends Controller
             ->orderBy('tipo_preco')
             ->pluck('tipo_preco');
 
-        $totalResultados = $produtos->total();
-        $totalOfertas = $precosFiltrados->count();
-        $lojasAtivas = $precosFiltrados->pluck('loja_id')->filter()->unique()->count();
-        $faixaMedia = round((float) $produtos->getCollection()->avg(fn (Produto $produto) => ((float) $produto->maior_preco - (float) $produto->menor_preco)), 2);
-
-        $categoriaChart = $this->montarCategoriasChart($precosFiltrados);
-        $cidadeChart = $this->montarCidadesChart($precosFiltrados);
-        $spreadChart = $this->montarSpreadChart($produtos->getCollection());
-        $pulse = $this->montarPulse($precosFiltrados);
-        $radarMercado = $this->montarRadarMercado($produtos->getCollection());
-
         return view('welcome', [
-            'busca' => $busca,
-            'categoriaSlug' => $categoriaSlug,
-            'cidade' => $cidade,
-            'tipoPreco' => $tipoPreco,
-            'precoAte' => $precoAte,
-            'ordenar' => $ordenar,
+            'busca' => $filtros['busca'],
+            'categoriaSlug' => $filtros['categoriaSlug'],
+            'cidade' => $filtros['cidade'],
+            'tipoPreco' => $filtros['tipoPreco'],
+            'precoAte' => $filtros['precoAte'],
+            'ordenar' => $filtros['ordenar'],
             'categorias' => $categorias,
             'cidades' => $cidades,
             'tiposPreco' => $tiposPreco,
             'produtos' => $produtos,
-            'totalResultados' => $totalResultados,
-            'totalOfertas' => $totalOfertas,
-            'lojasAtivas' => $lojasAtivas,
-            'faixaMedia' => $faixaMedia,
-            'categoriaChart' => $categoriaChart,
-            'cidadeChart' => $cidadeChart,
-            'spreadChart' => $spreadChart,
-            'pulse' => $pulse,
-            'radarMercado' => $radarMercado,
+            'totalResultados' => $snapshot['total_resultados'],
+            'totalOfertas' => $snapshot['total_ofertas'],
+            'lojasAtivas' => $snapshot['lojas_ativas'],
+            'faixaMedia' => $snapshot['faixa_media'],
+            'categoriaChart' => $this->montarCategoriasChart($precosFiltrados),
+            'cidadeChart' => $this->montarCidadesChart($precosFiltrados),
+            'spreadChart' => $this->montarSpreadChart($produtos->getCollection()),
+            'pulse' => $snapshot['pulse'],
+            'radarMercado' => $snapshot['radar_mercado'],
         ]);
+    }
+
+    public function radar(Request $request): JsonResponse
+    {
+        $filtros = $this->normalizarFiltros($request);
+        $produtos = $this->ordenarProdutos($this->produtosBase($filtros), $filtros['ordenar'])
+            ->take(9)
+            ->get();
+
+        $this->carregarMelhoresOfertas($produtos, $filtros);
+
+        $snapshot = $this->montarSnapshotMercado(
+            $produtos,
+            $this->precosFiltrados($filtros)->get(),
+            $filtros['ordenar'],
+            $this->produtosBase($filtros)->count()
+        );
+
+        return response()->json($snapshot);
+    }
+
+    private function normalizarFiltros(Request $request): array
+    {
+        return [
+            'busca' => trim((string) $request->string('busca')),
+            'categoriaSlug' => trim((string) $request->string('categoria')),
+            'cidade' => trim((string) $request->string('cidade')),
+            'tipoPreco' => trim((string) $request->string('tipo_preco')),
+            'precoAte' => $request->filled('preco_ate') ? (float) $request->input('preco_ate') : null,
+            'ordenar' => trim((string) $request->string('ordenar', 'menor_preco')),
+        ];
+    }
+
+    private function produtosBase(array $filtros): Builder
+    {
+        return Produto::query()
+            ->where('status', 'ativo')
+            ->with(['categoria', 'marca'])
+            ->withCount('precos')
+            ->withMin('precos as menor_preco', 'preco')
+            ->withMax('precos as maior_preco', 'preco')
+            ->whereHas('precos.loja', fn (Builder $query) => $query->where('status', 'ativo'))
+            ->when($filtros['busca'] !== '', function (Builder $query) use ($filtros) {
+                $query->where(function (Builder $subquery) use ($filtros) {
+                    $subquery
+                        ->where('nome', 'like', "%{$filtros['busca']}%")
+                        ->orWhere('descricao', 'like', "%{$filtros['busca']}%")
+                        ->orWhereHas('marca', fn (Builder $marcaQuery) => $marcaQuery->where('nome', 'like', "%{$filtros['busca']}%"));
+                });
+            })
+            ->when($filtros['categoriaSlug'] !== '', fn (Builder $query) => $query->whereHas('categoria', fn (Builder $categoriaQuery) => $categoriaQuery->where('slug', $filtros['categoriaSlug'])))
+            ->when($filtros['cidade'] !== '', fn (Builder $query) => $query->whereHas('precos.loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $filtros['cidade'])))
+            ->when($filtros['tipoPreco'] !== '', fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('tipo_preco', $filtros['tipoPreco'])))
+            ->when($filtros['precoAte'] !== null, fn (Builder $query) => $query->whereHas('precos', fn (Builder $precoQuery) => $precoQuery->where('preco', '<=', $filtros['precoAte'])));
+    }
+
+    private function ordenarProdutos(Builder $query, string $ordenar): Builder
+    {
+        return $query
+            ->when($ordenar === 'maior_economia', fn (Builder $query) => $query->orderByRaw('(COALESCE(maior_preco, 0) - COALESCE(menor_preco, 0)) desc'))
+            ->when($ordenar === 'mais_ofertas', fn (Builder $query) => $query->orderByDesc('precos_count'))
+            ->when($ordenar === 'alfabetica', fn (Builder $query) => $query->orderBy('nome'))
+            ->when(! in_array($ordenar, ['maior_economia', 'mais_ofertas', 'alfabetica'], true), fn (Builder $query) => $query->orderBy('menor_preco'));
+    }
+
+    private function carregarMelhoresOfertas(Collection $produtos, array $filtros): void
+    {
+        $produtos->transform(function (Produto $produto) use ($filtros) {
+            $melhoresOfertas = $produto->precos()
+                ->with('loja')
+                ->when($filtros['cidade'] !== '', fn (Builder $query) => $query->whereHas('loja', fn (Builder $lojaQuery) => $lojaQuery->where('cidade', $filtros['cidade'])))
+                ->when($filtros['tipoPreco'] !== '', fn (Builder $query) => $query->where('tipo_preco', $filtros['tipoPreco']))
+                ->when($filtros['precoAte'] !== null, fn (Builder $query) => $query->where('preco', '<=', $filtros['precoAte']))
+                ->orderBy('preco')
+                ->take(3)
+                ->get();
+
+            $produto->setRelation('melhores_ofertas', $melhoresOfertas);
+
+            return $produto;
+        });
+    }
+
+    private function precosFiltrados(array $filtros): Builder
+    {
+        return Preco::query()
+            ->select('precos.*')
+            ->join('produtos', 'produtos.id', '=', 'precos.produto_id')
+            ->join('lojas', 'lojas.id', '=', 'precos.loja_id')
+            ->leftJoin('categorias', 'categorias.id', '=', 'produtos.categoria_id')
+            ->where('produtos.status', 'ativo')
+            ->where('lojas.status', 'ativo')
+            ->when($filtros['busca'] !== '', function ($query) use ($filtros) {
+                $query->where(function ($subquery) use ($filtros) {
+                    $subquery
+                        ->where('produtos.nome', 'like', "%{$filtros['busca']}%")
+                        ->orWhere('produtos.descricao', 'like', "%{$filtros['busca']}%");
+                });
+            })
+            ->when($filtros['categoriaSlug'] !== '', fn ($query) => $query->where('categorias.slug', $filtros['categoriaSlug']))
+            ->when($filtros['cidade'] !== '', fn ($query) => $query->where('lojas.cidade', $filtros['cidade']))
+            ->when($filtros['tipoPreco'] !== '', fn ($query) => $query->where('precos.tipo_preco', $filtros['tipoPreco']))
+            ->when($filtros['precoAte'] !== null, fn ($query) => $query->where('precos.preco', '<=', $filtros['precoAte']));
+    }
+
+    private function montarSnapshotMercado(Collection $produtos, Collection $precos, string $ordenar, int $totalResultados): array
+    {
+        $radarMercado = $this->montarRadarMercado($produtos);
+
+        return [
+            'atualizado_em' => now()->format('H:i:s'),
+            'total_resultados' => $totalResultados,
+            'total_ofertas' => $precos->count(),
+            'lojas_ativas' => $precos->pluck('loja_id')->filter()->unique()->count(),
+            'faixa_media' => round((float) $produtos->avg(fn (Produto $produto) => ((float) $produto->maior_preco - (float) $produto->menor_preco)), 2),
+            'ranking' => $ordenar === 'maior_economia' ? 'economia' : ($ordenar === 'mais_ofertas' ? 'volume' : 'preço'),
+            'pulse' => $this->montarPulse($precos),
+            'radar_mercado' => $radarMercado,
+            'maior_economia' => (float) $radarMercado->max('economia'),
+        ];
     }
 
     private function montarCategoriasChart(Collection $precos): Collection
