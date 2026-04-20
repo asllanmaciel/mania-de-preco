@@ -111,6 +111,14 @@ class PlatformLaunchReadiness
                     'critica' => false,
                     'acao' => 'Ajustar locale e timezone',
                 ],
+                [
+                    'titulo' => 'Health check operacional',
+                    'descricao' => 'Um endpoint de saúde permite monitorar aplicação, banco, cache e storage em produção.',
+                    'concluida' => Route::has('health'),
+                    'critica' => false,
+                    'acao' => 'Validar /health',
+                    'rota' => route('health'),
+                ],
             ],
         ];
     }
