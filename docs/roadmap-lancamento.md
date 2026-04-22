@@ -1,87 +1,162 @@
-# Roadmap de lançamento
+# Roadmap de lancamento
 
-## Decisão atual
-- O lançamento do MVP será web-first, com painel lojista, super admin, área do cliente e vitrine pública.
-- O app mobile será iniciado depois que o MVP web estiver vendável, com foco inicial no consumidor.
-- A cobrança recorrente terá Asaas como provedor principal do MVP.
-- Mercado Pago fica como alternativa planejada, mas não deve bloquear o lançamento inicial.
+Atualizado em 22/04/2026.
 
-## Por que Asaas primeiro
-- O código já possui integração inicial com Asaas para cliente, assinatura, checkout e webhook.
-- O fluxo B2B recorrente do SaaS combina bem com assinatura, boleto, Pix e cobrança recorrente.
-- Implementar dois gateways antes do lançamento aumenta risco operacional e QA sem aumentar o valor imediato do MVP.
+## Decisao atual
+- O Mania de Preco sera lancado como SaaS web-first.
+- O cliente pagante principal e o lojista.
+- O consumidor final usa a vitrine, ofertas, alertas e futuramente o app.
+- O provedor de pagamento definido para o MVP passa a ser Mercado Pago.
+- A integracao Asaas existente fica como referencia tecnica/legado, nao como caminho principal do lancamento.
+- O app mobile deve nascer depois que o MVP web estiver validado, com Flutter como recomendacao principal.
 
-## Papel do Mercado Pago
-- Deve permanecer no roadmap como opção futura para checkout, Pix e canais mais voltados a varejo/consumidor.
-- A entrada do Mercado Pago deve acontecer depois que o fluxo Asaas estiver validado em produção.
-- Antes de implementar, será necessário definir se ele será usado para assinatura do lojista, pagamento avulso, marketplace ou compra direta.
+## Onde estamos agora
+- Sistema local carregando apos subir Docker com `docker compose up -d`.
+- Home publica respondendo `200`.
+- Login respondendo `200`.
+- Todas as migrations aplicadas.
+- Suite completa passando com 85 testes e 563 assertions.
+- Base demo atual com 9 usuarios, 3 contas, 7 lojas, 8 produtos, 23 precos, 3 planos, 3 assinaturas e 3 chamados.
+- Painel super admin possui roadmap, analytics e pre-flight.
+- Pre-flight agora deve considerar Mercado Pago como caminho principal de cobranca.
 
-## Fase 1: MVP web vendável
-Status: em andamento.
+## Leitura honesta de lancamento
+O produto esta em MVP avancado, mas ainda nao esta pronto para producao aberta. Ele ja serve para demonstracao, validacao assistida e preparacao de contas piloto. Para lancar como SaaS de verdade, precisamos fechar quatro blocos: producao, Mercado Pago, QA por perfil e polimento visual/comercial.
 
-Objetivo:
-- Permitir apresentar, vender e operar o Mania de Preço para contas piloto com confiança.
+## Bloqueios criticos
+- Configurar ambiente final com `APP_ENV=production`.
+- Configurar `APP_DEBUG=false`.
+- Configurar `APP_URL` com dominio real e HTTPS.
+- Implementar gateway Mercado Pago.
+- Criar webhook Mercado Pago.
+- Configurar `MERCADO_PAGO_ACCESS_TOKEN`.
+- Configurar `MERCADO_PAGO_PUBLIC_KEY`.
+- Configurar `MERCADO_PAGO_WEBHOOK_SECRET`.
+- Validar pagamento/assinatura Mercado Pago em sandbox.
 
-Entregas concluídas:
-- Painel lojista com dashboard, onboarding, financeiro, lojas, produtos, preços, equipe, assinatura e auditoria.
-- Super admin com contas, planos, assinaturas, suporte em cards, analytics e prontidão global de lançamento.
-- Área do cliente com alertas de preço.
-- Vitrine pública com ofertas, lojas, produtos, novidades, suporte, termos, privacidade, sitemap e robots.
+## O que ja existe
+- Plataforma SaaS multi-conta.
+- Separacao de paineis: super admin, lojista e cliente.
+- Painel lojista com dashboard, onboarding, financeiro, lojas, produtos, precos, equipe, assinatura e auditoria.
+- Super admin com contas, planos, assinaturas, suporte, analytics, roadmap e pre-flight.
+- Vitrine publica com home, ofertas, radar, produto, loja, novidades, suporte, termos, privacidade, sitemap e robots.
+- Area do cliente com alertas de preco.
 - API mobile v1 para consumidores.
-- Seeds demo para navegação sem cadastro manual.
+- Seeds demo para apresentacao.
+- Integracao Asaas inicial para cliente, assinatura, checkout e webhook.
+- Configuracao Mercado Pago mapeada em `config/billing.php`.
+- Health check operacional.
+- Rate limit em rotas sensiveis.
+- Consentimento legal nos formularios.
+- Changelogs e documentacao evolutiva.
 
-Pendências antes de lançamento controlado:
-- Refinar visual geral e tipografia das telas principais.
-- Fechar jornada comercial de onboarding do lojista.
-- Configurar Asaas em sandbox com credenciais reais de teste.
-- Validar webhook Asaas ponta a ponta.
-- Configurar e-mail transacional real.
-- Configurar produção com domínio, SSL, fila, scheduler, backup e monitoramento.
-- Rodar QA completo com perfis super admin, lojista, cliente e visitante.
+## O que falta para lancar
+- Gateway Mercado Pago operacional.
+- Webhook Mercado Pago com auditoria de eventos.
+- Tela/fluxo de assinatura ajustado para Mercado Pago.
+- Credenciais Mercado Pago sandbox configuradas.
+- Teste ponta a ponta de assinatura, checkout, pagamento aprovado, pagamento recusado, atraso e cancelamento.
+- Ambiente de producao com dominio, SSL, fila, scheduler, backup e monitoramento.
+- QA completo com visitante, cliente, lojista owner, gestor, financeiro e super admin.
+- Revisao visual da landing e dos paineis para parecer SaaS premium.
+- Copy comercial final sem linguagem interna de projeto.
+- Eventos de analytics reais ou demo para validar funil.
+- Ritual operacional de suporte, cobranca e acompanhamento de contas piloto.
 
-## Fase 2: Cobrança real com Asaas
-Status: próximo bloco estrutural.
+## Roadmap por fase
 
-Objetivo:
-- Permitir ativar plano, gerar cobrança recorrente e refletir inadimplência/recebimento no sistema.
+### Fase 1: Base SaaS web
+Status: avancado.
 
-Entregas já existentes:
-- Configuração `billing.default_provider`.
-- Gateway Asaas para sincronizar conta e assinatura.
-- Webhook Asaas com token.
-- Auditoria de eventos de webhook.
-- Link de cobrança visível para o lojista quando existe checkout.
+Concluido:
+- Multi-conta.
+- Usuarios por conta.
+- Papeis e permissoes por modulo.
+- Planos e assinaturas.
+- Painel lojista.
+- Painel super admin.
+- Area do cliente.
+- Auditoria e notificacoes.
 
-Próximas ações:
-- Preencher `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN` e `ASAAS_SUBSCRIPTION_BILLING_TYPE`.
-- Criar uma assinatura real de teste no super admin e sincronizar com Asaas sandbox.
-- Validar criação de cliente no Asaas.
-- Validar criação de assinatura no Asaas.
-- Validar geração de link de cobrança.
-- Simular pagamento confirmado e atraso via webhook.
-- Exibir estados de cobrança com mais clareza para lojista e super admin.
+Falta:
+- Refinar a experiencia visual geral.
+- Fechar QA por papel.
+- Ajustar narrativa comercial para SaaS de mercado.
 
-## Fase 3: Polimento visual e conversão
-Status: em andamento contínuo.
+### Fase 2: Produto publico e demanda
+Status: funcional, precisa polimento.
 
-Objetivo:
-- Aumentar percepção de qualidade, confiança e valor comercial.
+Concluido:
+- Home publica.
+- Ofertas.
+- Radar de precos.
+- Pagina de produto.
+- Pagina de loja.
+- Novidades/changelogs publicos.
+- Suporte publico.
+- Termos, privacidade, robots e sitemap.
 
-Próximas ações:
-- Revisar tipografia geral.
-- Padronizar cards, métricas, tabelas, empty states e botões.
-- Melhorar landing pública com copy mais forte e visual menos pesado.
-- Melhorar páginas de loja e produto.
-- Revisar responsividade mobile-first.
-- Garantir que textos públicos não usem linguagem de documentação interna.
+Falta:
+- Landing mais forte e comercial.
+- Cards e tipografia mais consistentes.
+- Prova social e narrativa de valor para lojistas.
+- Melhor leitura mobile-first.
+- Dados de analytics para funil real.
 
-## Fase 4: App mobile cliente
-Status: base de API criada, app ainda não iniciado.
+### Fase 3: Mercado Pago
+Status: decisao tomada, implementacao pendente.
 
-Objetivo:
-- Criar app Android/iOS para consumidor acompanhar ofertas e alertas de preço.
+Concluido:
+- Mercado Pago definido como provedor principal do MVP.
+- Variaveis de configuracao mapeadas: `MERCADO_PAGO_ACCESS_TOKEN`, `MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_WEBHOOK_SECRET`.
+- Estrutura de billing existente pode servir de referencia pela integracao Asaas.
 
-Base pronta:
+Falta:
+- Criar `MercadoPagoClient`.
+- Criar `MercadoPagoBillingGateway`.
+- Registrar Mercado Pago no `BillingManager`.
+- Criar controller de webhook Mercado Pago.
+- Criar processor de webhook Mercado Pago.
+- Persistir eventos em `billing_webhook_events`.
+- Atualizar formulario de assinatura para usar Mercado Pago quando habilitado.
+- Criar testes de sincronizacao e webhook Mercado Pago.
+- Atualizar pre-flight para ficar verde quando o gateway existir.
+
+### Fase 4: Producao segura
+Status: bloqueada por ambiente final.
+
+Falta:
+- Servidor/hospedagem definida.
+- Dominio final.
+- HTTPS.
+- Variaveis production.
+- Banco de producao.
+- Storage persistente.
+- Backup.
+- Worker de fila.
+- Scheduler.
+- Monitoramento de uptime.
+- Logs e alertas.
+
+### Fase 5: QA de lancamento
+Status: parcialmente coberto por testes automatizados.
+
+Concluido:
+- 85 testes automatizados passando.
+- Cobertura para catalogo publico, admin, cliente, mobile API, webhook Asaas, pre-flight e health.
+
+Falta:
+- Checklist manual por perfil.
+- QA de responsividade real em celular.
+- QA dos fluxos financeiros principais.
+- QA de assinatura com Mercado Pago.
+- QA de suporte publico.
+- QA de recuperacao de senha/e-mail real.
+
+### Fase 6: App mobile
+Status: API pronta, app ainda nao iniciado.
+
+Concluido:
 - `GET /api/mobile/v1/ofertas`
 - `GET /api/mobile/v1/produtos/{produto}`
 - `GET /api/mobile/v1/lojas/{loja}`
@@ -89,42 +164,65 @@ Base pronta:
 - `POST /api/mobile/v1/login`
 - `GET /api/mobile/v1/me`
 - `POST /api/mobile/v1/logout`
-- CRUD de `/api/mobile/v1/alertas`
+- CRUD de alertas em `/api/mobile/v1/alertas`
 
-Escopo sugerido para o primeiro app:
-- Login e cadastro.
-- Busca e filtros de ofertas.
-- Detalhe de produto com comparação de preços.
-- Detalhe de loja.
-- Alertas de preço.
-- Perfil simples.
+Falta:
+- Criar projeto Flutter.
+- Criar design system mobile.
+- Implementar login/cadastro.
+- Implementar home/ofertas/filtros.
+- Implementar produto/loja.
+- Implementar alertas.
+- Implementar perfil.
+- Preparar build Android/iOS.
+- Publicacao nas lojas depois do MVP web validado.
 
-Tecnologia recomendada:
-- Flutter para lançar Android e iOS com uma base única.
+## App: estrategia recomendada
+Flutter continua sendo a melhor opcao para este momento. Ele reduz custo, entrega Android e iOS com uma base unica e conversa bem com a API mobile v1 ja criada.
 
-## Fase 5: Expansão pós-MVP
-Status: planejado.
+O app nao deve bloquear o lancamento web. O papel dele e ser uma frente de crescimento para consumidores depois que o SaaS web estiver gerando valor para lojistas.
 
-Possíveis frentes:
-- Mercado Pago como segundo provedor de pagamento.
-- Notificações push no app.
-- Importação de produtos e preços por planilha.
-- Relatórios avançados para lojistas.
-- Automação de alertas por e-mail, WhatsApp ou push.
-- Painel comercial para acompanhar funil de contas e upgrades.
+## Ordem recomendada agora
+1. Implementar Mercado Pago como gateway principal.
+2. Validar Mercado Pago em sandbox ponta a ponta.
+3. Ajustar formulario e comunicacao de assinaturas para Mercado Pago.
+4. Resolver ambiente de producao e variaveis criticas.
+5. Rodar QA completo por perfil.
+6. Revisar visual/copy da landing e paineis principais.
+7. Preparar contas piloto e dados reais.
+8. Ligar monitoramento, backup e rotina operacional.
+9. Lancar producao controlada.
+10. Iniciar projeto Flutter do app cliente.
 
-## Critério para lançamento controlado
-- Nenhum bloqueio crítico no centro de prontidão global.
-- Asaas sandbox validado ponta a ponta.
+## Criterio para dizer que pode lancar
+- Pre-flight sem bloqueios criticos.
+- Mercado Pago validado em sandbox.
+- Dominio real com HTTPS.
 - E-mail transacional funcionando.
-- Produção com domínio, SSL, fila, backup e monitoramento.
-- Jornada do lojista testada sem intervenção técnica.
-- Vitrine pública com dados suficientes para demonstrar valor.
-- Suporte operacional com fila revisada.
-- QA final concluído em desktop e mobile.
+- Backup, fila, scheduler e monitoramento configurados.
+- Jornada do lojista validada sem intervencao tecnica.
+- Jornada do cliente validada em desktop e celular.
+- Suporte operacional com chamados criticos zerados ou justificados.
+- Landing com cara de SaaS profissional.
+- QA final concluido com todos os perfis.
 
-## Ferramenta de pré-flight
-- O super admin possui o painel `super-admin/roadmap` com o checklist operacional de produção.
-- O mesmo diagnóstico pode ser executado no terminal com `php artisan launch:check`.
-- O comando retorna falha quando existem bloqueios críticos, permitindo uso em QA manual, deploy controlado ou esteira de validação.
-- Os grupos avaliados são ambiente, infraestrutura, cobrança, produto e operação.
+## Comandos uteis
+Subir ambiente:
+```bash
+docker compose up -d
+```
+
+Rodar pre-flight:
+```bash
+docker compose exec laravel.test php artisan launch:check
+```
+
+Rodar testes:
+```bash
+docker compose exec laravel.test php artisan test
+```
+
+Recriar base demo:
+```bash
+docker compose exec laravel.test php artisan demo:refresh --force
+```

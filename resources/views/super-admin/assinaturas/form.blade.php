@@ -75,10 +75,13 @@
                         <select name="billing_provider" style="padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.8); font:inherit;">
                             <option value="">Definir depois</option>
                             <option value="asaas" @selected(old('billing_provider', $assinatura->billing_provider ?: config('billing.default_provider')) === 'asaas')>
-                                Asaas | recomendado para o MVP
+                                Asaas | integracao atual temporaria
+                            </option>
+                            <option value="mercado_pago" disabled>
+                                Mercado Pago | decidido para o MVP, em implementacao
                             </option>
                         </select>
-                        <small style="color:var(--muted); line-height:1.6;">Mercado Pago está no roadmap como alternativa futura, mas o fluxo operacional do lançamento será validado primeiro com Asaas.</small>
+                        <small style="color:var(--muted); line-height:1.6;">Mercado Pago foi definido como provedor do lancamento, mas ainda precisa de gateway e webhook operacionais. Ate la, Asaas permanece como integracao tecnica temporaria.</small>
                     </label>
                 </div>
 

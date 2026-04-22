@@ -83,17 +83,18 @@ class LaunchRoadmap
     {
         return [
             'codigo' => 'cobranca',
-            'titulo' => 'Cobrança real com Asaas',
-            'descricao' => 'Plano comercial, assinatura recorrente, checkout e webhook funcionando antes de vender sem intervenção manual.',
+            'titulo' => 'Cobrança real com Mercado Pago',
+            'descricao' => 'Plano comercial, assinatura recorrente, checkout e webhook do Mercado Pago funcionando antes de vender sem intervenção manual.',
             'icone' => 'credit-card',
-            'marco' => 'Primeira assinatura real validada em sandbox',
+            'marco' => 'Primeira assinatura Mercado Pago validada em sandbox',
             'itens' => [
-                $this->item('Asaas definido como provedor principal', 'Mercado Pago fica no roadmap, sem bloquear o MVP.', config('billing.default_provider') === 'asaas', true, 'Revisar cobrança'),
+                $this->item('Mercado Pago definido como provedor do lançamento', 'A decisão de produto agora é lançar o SaaS com Mercado Pago como gateway principal.', config('billing.providers.mercado_pago.status') === 'mvp_decidido', true, 'Manter decisão Mercado Pago'),
+                $this->item('Gateway Mercado Pago implementado', 'Ainda falta criar o serviço que sincroniza cliente, assinatura, checkout e status de pagamento.', class_exists('App\\Services\\Billing\\MercadoPago\\MercadoPagoBillingGateway'), true, 'Implementar gateway Mercado Pago'),
+                $this->item('Webhook Mercado Pago publicado', 'Ainda falta endpoint próprio para receber e auditar eventos de pagamento do Mercado Pago.', Route::has('billing.webhooks.mercado-pago'), true, 'Criar webhook Mercado Pago'),
+                $this->item('Credenciais Mercado Pago configuradas', 'MERCADO_PAGO_ACCESS_TOKEN, public key e segredo de webhook precisam estar definidos no ambiente.', filled(config('billing.providers.mercado_pago.access_token')) && filled(config('billing.providers.mercado_pago.public_key')) && filled(config('billing.providers.mercado_pago.webhook_secret')), true, 'Configurar credenciais Mercado Pago'),
                 $this->item('Planos ativos cadastrados', 'O portfólio comercial precisa estar pronto para venda assistida e demonstração.', $metricas['planos_ativos'] > 0, true, 'Abrir planos', $this->rota('super-admin.planos.index')),
                 $this->item('Assinaturas operacionais', 'A base deve ter assinaturas em trial, ativa ou inadimplente para testar a gestão.', $metricas['assinaturas_operacionais'] > 0, false, 'Abrir contas', $this->rota('super-admin.contas.index')),
-                $this->item('Chave Asaas configurada', 'ASAAS_API_KEY habilita sincronização de clientes e assinaturas.', filled(config('billing.providers.asaas.api_key')), true, 'Configurar ASAAS_API_KEY'),
-                $this->item('Webhook Asaas protegido', 'ASAAS_WEBHOOK_TOKEN permite validar eventos recebidos do provedor.', filled(config('billing.providers.asaas.webhook_token')), true, 'Configurar ASAAS_WEBHOOK_TOKEN'),
-                $this->item('Rota de webhook publicada', 'Endpoint para receber eventos de cobrança está registrado na API.', Route::has('billing.webhooks.asaas'), true, 'Validar webhook'),
+                $this->item('Base Asaas existente preservada', 'A integração Asaas continua como referência técnica e pode ser mantida como alternativa futura.', Route::has('billing.webhooks.asaas'), false, 'Preservar como legado'),
             ],
         ];
     }
@@ -165,7 +166,7 @@ class LaunchRoadmap
             'icone' => 'layers',
             'marco' => 'Produto validado com clientes reais',
             'itens' => [
-                $this->item('Mercado Pago mapeado', 'Segundo provedor planejado para evoluções depois do Asaas validado.', config('billing.providers.mercado_pago.status') === 'roadmap', false, 'Manter no roadmap'),
+                $this->item('Asaas como alternativa futura', 'Depois do Mercado Pago validado, Asaas pode permanecer como segundo provedor para cenários B2B específicos.', config('billing.providers.asaas.status') === 'legado_operacional', false, 'Manter alternativa'),
                 $this->item('Importação por planilha', 'Entrada em massa de produtos e preços pode acelerar onboarding de lojistas.', false, false, 'Planejar importador'),
                 $this->item('Push no app', 'Notificações mobile aumentam recorrência depois que o app existir.', false, false, 'Planejar push'),
                 $this->item('Relatórios avançados', 'Camada premium para lojistas acompanharem margem, preço e oportunidade.', false, false, 'Planejar relatórios'),
